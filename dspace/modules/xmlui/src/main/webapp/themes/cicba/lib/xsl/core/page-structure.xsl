@@ -392,8 +392,9 @@
                  var allFieldsWithAuthorityInForm = $('input[name $= "_authority"]');
                  allFieldsWithAuthorityInForm.each(function(index, field){
                      var fieldName = $(field).attr('name');
-                     //Primero verificamos que los inputs correspondientes a los fields "authority.required" sean consistentes...
+                     //Verificamos que el field actual se corresponda con un field marcado como "authority.required"...
                      if(isAuthorityRequired(fieldName.replace('_authority','').replace(/\_/g,'.'))){
+                         //Primero, verificamos el caso de los campos no repetibles
                          var mdtValueInput = $('input#' + fieldIDPrefix + fieldName.replace('_authority',''));
                          var authMdtInput = $(field);
                          var errorMssg_P_Id = (fieldName + 'errormssg_p');
@@ -415,11 +416,33 @@
                                  $('p#' + errorMssg_P_Id).remove();
                              }
                          }
+                         
+                         //Segundo, hay que verificar que los "previous-values" tambien tengan authority. Los &lt;fields&gt; configurados como &lt;repeteable&gt; desde el input-forms, pueden llegar a tener "previous-values"...
+                         //Hay que buscar todos los campo con la siguiente forma: 'dcterms_isVersionOf_authority_1', 'dcterms_isVersionOf_authority_2', etc. y que además tengan la class 'ds-authority-value'...
+                         $("input[name^='"+fieldName+"_'].ds-authority-value");
+                         $("input[name^='"+fieldName+"_'].ds-authority-value").each(function(index, repeteableField){
+                             var authMdtInput = $(repeteableField);
+                            var repeteableFieldName = $(repeteableField).attr('name');
+                           var mdtValueInput = $('input[name="'+ repeteableFieldName.replace('_authority','') +'"]');
+                            if($(mdtValueInput).val() != '' &amp;&amp; $(authMdtInput).val() == ''){
+                                var errorMssg_Span_Id = (repeteableFieldName + 'errormssg');
+                                var mtdValueCheckbox = $('input[type="checkbox"][value="'+ repeteableFieldName.replace('_authority','') +'"]');
+                                $(mtdValueCheckbox).next('span').css('color','red');
+                                if($('span#' + errorMssg_Span_Id).length == 0){
+                                    //Deshabilitamos el checkbox ya que de todas formas no se va a poder enviar el formulario para su eliminación, sino que debe editarselo
+                                    $(mtdValueCheckbox).prop('disabled',true);
+                                    $(mtdValueCheckbox).next('span').after("&lt;span id='"+ errorMssg_Span_Id +"' class='errormssg leftmargin' title='Para que esta campo sea válido, debe seleccionar un valor de la lista desplegable o desde la ventana de Lookup'&gt;¡Debe seleccionar un valor válido! &lt;/span&gt;");
+                                 }
+                                 //TODO: agregar un botón que permita editar el repeteable actual...
+                                //Si es el primer campo examinado que le falta el valor de autoridad, entonces movemos la vista hacia allí...
+                                 if(allMdtAreAuthConsistent){                                
+                                    scrollToObject(mtdValueCheckbox);
+                                 }
+                                 //Setear el flag indicando que existen metadatos que deben tener authority y no los tienen...
+                                 allMdtAreAuthConsistent = false;
+                            }
+                         });
                      }
-                     //Segundo, hay que verificar que los "previous-values" tambien tengan authority. Los &lt;fields&gt; configurados como &lt;repeteable&gt; desde el input-forms, pueden llegar a tener "previous-values"...
-                     //Hay que buscar todos los campo con la siguiente forma: 'dcterms_isVersionOf_authority_1', 'dcterms_isVersionOf_authority_2', etc...
-                     //TODO: terminar...
-                     //$("input[name^='"+fieldName+"_']");
                  });
                  return allMdtAreAuthConsistent;
              }
@@ -656,6 +679,11 @@
 				function scrollTo(fieldId){              
                             $("body").animate({scrollTop: $("label[for='"+fieldId+"']").parent().offset().top });
                             $('#'+fieldId).focus();
+                }
+                
+                function scrollToObject(jqueryObject){              
+                            $("body").animate({scrollTop: $(jqueryObject).parent().offset().top });
+                            $(jqueryObject).focus();
                 }
                 		        
 		        $(document).ready(function(){

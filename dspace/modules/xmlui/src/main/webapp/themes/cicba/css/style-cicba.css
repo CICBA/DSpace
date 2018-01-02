@@ -988,4 +988,8 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 	color: #c22121;
     font-weight: bold;  
 }
+
+.leftmargin{
+    margin-left:10px;  
+}
 }
