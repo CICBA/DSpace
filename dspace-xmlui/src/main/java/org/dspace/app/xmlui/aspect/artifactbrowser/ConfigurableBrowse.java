@@ -355,8 +355,27 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
 
                     // Create an entry in the table, and a linked entry
                     Cell cell = singleTable.addRow().addCell();
-                    cell.addXref(super.generateURL(BROWSE_URL_BASE, queryParams),
-                          singleEntry[0]);
+//                  cell.addXref(super.generateURL(BROWSE_URL_BASE, queryParams),
+//                          singleEntry[0]);
+                    
+                    //Se evalua si existe la autoridad y asi elegir que busca el discover 
+                    String authorPath;
+                    if (singleEntry[1] != null)
+                    {
+                    	authorPath=	contextPath  +
+		                         "/discover?" +
+		                         "filtertype=author" + "&filter_relational_operator=authority" +
+		                         "&filter=" + singleEntry[1] ;
+                    
+                    }
+	                else 
+	                {	
+	                	authorPath=	contextPath  +
+			                     "/discover?" + "filtertype=author"
+			                	 + "&filter_relational_operator=equals" +
+			                     "&filter=" +  encodeForURL(singleEntry[0]);
+	                }
+	                cell.addXref(authorPath , singleEntry[0]);
                     if (StringUtils.isNotEmpty(singleEntry[2]))
                     {
                         cell.addContent(" ["+singleEntry[2]+"]");
