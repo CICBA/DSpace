@@ -255,6 +255,7 @@
 				fields.forEach(executePreprocessors);
 				fields.forEach(makeReadonly);
 				emptyAuthorityFields.forEach(setPlaceHolders);
+				makeRepeteableValuesEditable();
 			});
 			
 			/**
@@ -379,6 +380,46 @@
 				    $(this).val(oldTypeValue);
 				  }
 				});
+			}
+			
+			/**
+			* Por cada conjunto de 'previous-values' o valores repetibles de los metadatos en el formulario de Submission, agregamos un botón de edicion individual
+			*/
+			function makeRepeteableValuesEditable(){
+			     //TODO para editar los valores de los valores relativos a CKEditor usar CKEDITOR.instances['aspect_submission_StepTransformer_field_dcterms_abstract'].setData(VALOR_REPETIBLE).val());
+			     $('div.ds-previous-values').each( function(index, previousValues){
+			         $(previousValues).find( 'input[type="checkbox"]' ).each( function(index, checkboxField){
+			             var repeteableFieldName = $(checkboxField).val();
+			             //Nos fijamos cual va a ser el elemento previo al botón de edición
+			             if($('input[value="' + repeteableFieldName + '"]').next('span').next('img').length > 0){
+			                    var previousSibling =  $('input[value="' + repeteableFieldName + '"]').next('span').next('img');
+			             } else {
+			                 var previousSibling = $('input[value="' + repeteableFieldName + '"]').next('span');
+			             }
+			             //Ponemos el botón de edición y asociamos un evento que maneje el 'click' para la edición
+			             var elementWhereToEditId = 'aspect_submission_StepTransformer_field_' +  repeteableFieldName.replace( /\_\d+/g , '' );
+			             previousSibling.after('&lt;span id="' + repeteableFieldName + '_edit" class="edit-repeteable" onclick="editRepeteable(\'' + repeteableFieldName + '\', \'' + elementWhereToEditId + '\')"&gt;&lt;i class="glyphicon glyphicon-edit"&gt;&lt;/i&gt;&lt;/span&gt;');
+			         });
+			     }); 
+			}
+			
+			/**
+			*
+			* @param fieldToEditName example value: 'dcterms_creator_corporate_1'
+			* @param elementWhereEditId example value: 'aspect_submission_StepTransformer_field_dcterms_creator_corporate'
+			*/
+			function editRepeteable(fieldToEditName,  elementWhereEditId){
+                var checkbox = $('input[value=' + fieldToEditName +']');
+                var span = $('input[value=' + fieldToEditName +']').next('span');
+                var img = $('input[value=' + fieldToEditName +']').next('span').next('img');
+                var inputOrTextarea = $('#' + elementWhereEditId);
+                //Obtenemos los valores de los campos ocultos 'value', 'authority', 'confidence'
+                var repeteableHiddenValue = $('input[name=' + fieldToEditName +']');
+                var repeteablePositionRegex = /\_(\d+)/g;
+                var repeteablePosition = repeteablePositionRegex.exec(fieldToEditName)[1];
+                var repeteableHiddenAuthority = $('input[name=' + fieldToEditName.replace( /\_\d+/g , '' ) + '_authority_' + repeteablePosition + ']');
+                console.log(repeteableHiddenValue);
+                console.log(repeteableHiddenAuthority);                
 			}
 			
 			/**
