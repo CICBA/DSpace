@@ -443,7 +443,7 @@
 			<xsl:variable name="file_url">
 				<xsl:value-of select="substring-before(mets:FLocat[@LOCTYPE='URL']/@xlink:href, substring-after(/mets:METS/@ID, ':'))"/><xsl:value-of select="substring-after(/mets:METS/@ID, ':')"/>/<xsl:value-of select="$documentTitle"/>.<xsl:value-of select="$extension"/>?<xsl:value-of select="$sequence"/>
 			</xsl:variable>
-			<a class="media-left thumbnail_file" href="{$file_url}">
+			<a class="media-left thumbnail_file" href="{$file_url}" target="_blank">
 				<xsl:variable name="file_type" select="substring-before(@MIMETYPE, '/')" />
 				<xsl:variable name="file_subtype" select="substring-after(@MIMETYPE, '/')" />
 				<xsl:variable name="img_path">
@@ -462,7 +462,7 @@
 			</a>
 			<div class="media-body">
 				<p>
-					<a href="{$file_url}">
+					<a href="{$file_url}" target="_blank">
 						<xsl:value-of select="mets:FLocat/@xlink:label" />&#160;
 					</a>
 				</p>
