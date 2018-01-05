@@ -289,6 +289,7 @@
 				<xsl:call-template name="build-anchor">
 					<xsl:with-param name="img.src">images/Header_cic.png</xsl:with-param>
 					<xsl:with-param name="img.alt">CIC-DIGITAL</xsl:with-param>
+					<xsl:with-param name="img.class">img-responsive inline-element</xsl:with-param>
 				</xsl:call-template>
 			</span> 
 				<span id="banner-cic-digital"  class="hidden-xs">

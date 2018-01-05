@@ -47,6 +47,7 @@
 					</xsl:with-param>
 					<xsl:with-param name="img.src"><xsl:text>images/logo_cic_footer.png</xsl:text></xsl:with-param>
 					<xsl:with-param name="img.alt"><xsl:text>CIC</xsl:text></xsl:with-param>
+					<xsl:with-param name="img.class">img-responsive inline-element</xsl:with-param>
 				</xsl:call-template>
 			</div>
 		

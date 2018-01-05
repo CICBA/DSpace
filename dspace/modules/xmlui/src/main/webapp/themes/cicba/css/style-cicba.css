@@ -983,3 +983,9 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 	text-align:center; 
 	margin-bottom:10px;
 }
+
+
+.inline-element {
+	display:inline;
+
+}
