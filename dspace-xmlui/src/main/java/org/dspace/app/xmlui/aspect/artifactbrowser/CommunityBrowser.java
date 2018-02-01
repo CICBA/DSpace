@@ -38,8 +38,10 @@ import org.dspace.browse.ItemCounter;
 import org.dspace.content.Collection;
 import org.dspace.content.Community;
 import org.dspace.content.DSpaceObject;
+import org.dspace.content.MetadataValue;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CommunityService;
+import org.dspace.content.service.DSpaceObjectService;
 import org.dspace.core.Context;
 import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.core.Constants;
@@ -248,18 +250,29 @@ public class CommunityBrowser extends AbstractDSpaceTransformer implements Cache
         TreeNode treeRoot = buildTree(communityService.findAllTop(context));
 
         boolean full = DSpaceServicesFactory.getInstance().getConfigurationService().getBooleanProperty("xmlui.community-list.render.full", true);
+        boolean metadataList = DSpaceServicesFactory.getInstance().getConfigurationService().getBooleanProperty("xmlui.community-list.render.metadata-list", true);
 
         if (full)
         {
-	        ReferenceSet referenceSet = division.addReferenceSet("community-browser",
-	                ReferenceSet.TYPE_SUMMARY_LIST,null,"hierarchy");
+            java.util.List<TreeNode> rootNodes = treeRoot.getChildrenOfType(Constants.COMMUNITY);
 	        
-	        java.util.List<TreeNode> rootNodes = treeRoot.getChildrenOfType(Constants.COMMUNITY);
-	        
-	        for (TreeNode node : rootNodes)
-	        {
-	            buildReferenceSet(referenceSet,node);   
-	        }
+            if (metadataList)
+            {
+            	org.dspace.app.xmlui.wing.element.List list = division.addList("community-result-list");
+    	        for (TreeNode node : rootNodes)
+    	        {
+   	            	buildSubList(list, node);
+    	        }            	
+            }
+            else
+            {
+    	        ReferenceSet referenceSet = division.addReferenceSet("community-browser",
+    	                ReferenceSet.TYPE_SUMMARY_LIST,null,"hierarchy");
+    	        for (TreeNode node : rootNodes)
+    	        {
+    	            buildReferenceSet(referenceSet,node);   
+    	        }            	
+            }
         }
         else
         {
@@ -514,6 +527,61 @@ public class CommunityBrowser extends AbstractDSpaceTransformer implements Cache
                 }
             }
             return results;
+        }
+    }
+    /**
+     * Recursively build a list of the community / collection hierarchy based upon
+     * the given NodeTree.
+     * 
+     * @param sublist The parent list
+     * @param node The current node of the hierarchy.
+     * @throws org.dspace.app.xmlui.wing.WingException passed through.
+     */
+    public void buildSubList(List resultList, TreeNode node) throws WingException
+    {
+        DSpaceObject dso = node.getDSO();
+        DSpaceObjectService<DSpaceObject> dsoService = ContentServiceFactory.getInstance().getDSpaceObjectService(dso);
+        String type = dsoService.getTypeText(dso).toLowerCase();
+        String handle = dso.getHandle();
+        String url = contextPath + "/handle/" + handle;
+        List list = resultList.addList(handle+":"+type);
+        String name = dsoService.getMetadataFirstValue(dso, "dc", "title", "*", "*");
+        String count = "";
+        String description = dsoService.getMetadataFirstValue(dso, "dc", "description", "abstract", "*");
+		{
+            try
+            {	//try to determine Collection size (i.e. # of items)
+            	count = String.valueOf(new ItemCounter(context).getCount(node.getDSO()));
+            }
+            catch(ItemCountException e) { /* ignore */ }
+		}
+       	
+        list.addList(handle + ":dc.title").addItem(name);
+        if (description != null){
+        	list.addList(handle + ":dc.description.abstract").addItem(description);
+        }
+        list.addList(handle + ":dc.format.extent").addItem(count);
+        list.addList(handle + ":url").addItem(url);
+        
+        // Add all the sub-collections and sub-communities;
+        java.util.List<TreeNode> subCollections = node.getChildrenOfType(Constants.COLLECTION);
+        java.util.List<TreeNode> subCommunities= node.getChildrenOfType(Constants.COMMUNITY);
+                
+        if (subCommunities != null && subCommunities.size() > 0)
+        {
+        	List subNodeList = list.addList(handle + ":sub-communities");
+            for (TreeNode subNode : subCommunities)
+            {
+	        	buildSubList(subNodeList, subNode);
+            }
+        }
+        if (subCollections != null && subCollections.size() > 0)
+        {
+        	List subNodeList = list.addList(handle + ":sub-collections");
+            for (TreeNode subNode : subCollections)
+            {
+	        	buildSubList(subNodeList, subNode);
+            }
         }
     }
 
