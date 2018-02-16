@@ -618,12 +618,11 @@ p.intro-text > a {
 }
 
 
-#aspect_discovery_SimpleSearch_list_primary-search .ds-form-item:FIRST-CHILD {
-	display: none;
-}
 
 input#aspect_discovery_SimpleSearch_field_query {
 height: 33px;
+max-width: 100%;
+width: 700px;
 }
 
 .searchTime{
@@ -988,4 +987,22 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 .inline-element {
 	display:inline;
 
+}
+
+
+#aspect_discovery_SimpleSearch_list_primary-search ol{
+	padding-left: 0;
+}
+
+#aspect_discovery_CommunitySearch_div_community-search input.ds-text-field{
+    width: 400px;
+    max-width: 100%;	
+}
+
+#aspect_discovery_CommunitySearch_div_community-search  input{
+	 height: 35px;	
+}
+
+#aspect_discovery_CommunitySearch_div_community-search  input.ds-button-field{
+    width: 50px;
 }
