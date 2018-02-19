@@ -103,7 +103,7 @@ public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 		if (!"".equals(text)) {
 			String[] tokens = text.split(",");
 			if (tokens.length > 1 && tokens[0].trim().length() > 0 && tokens[1].trim().length() > 0) {
-				pqs.append("FILTER(REGEX(?name, ?text2, \"i\") && REGEX(?surname, ?text1, \"i\"))\n");
+				pqs.append("FILTER(REGEX(?name, ?text2, \"i\") || REGEX(?surname, ?text1, \"i\"))\n");
 				pqs.setLiteral("text1", tokens[0].trim());
 				pqs.setLiteral("text2", tokens[1].trim());
 			} else {
