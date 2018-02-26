@@ -347,7 +347,7 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
                         queryParams.put(BrowseParams.FILTER_VALUE[1], encodeForURL(
                             singleEntry[1]));
                     }
-                    else
+                    if (singleEntry[0] != null)
                     {
                         queryParams.put(BrowseParams.FILTER_VALUE[0], encodeForURL(
                             singleEntry[0]));
@@ -748,13 +748,15 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
             params.scope.setResultsPerPage(RequestUtils.getIntParameter(request, BrowseParams.RESULTS_PER_PAGE));
             params.scope.setStartsWith(decodeFromURL(request.getParameter(BrowseParams.STARTS_WITH)));
             String filterValue = request.getParameter(BrowseParams.FILTER_VALUE[0]);
-            if (filterValue == null)
-            {
-                filterValue = request.getParameter(BrowseParams.FILTER_VALUE[1]);
-                params.scope.setAuthorityValue(filterValue);
+            if (filterValue != null)
+            {	 params.scope.setFilterValue(filterValue);
+                
             }
-            
-            params.scope.setFilterValue(filterValue);
+            String authorityValue = request.getParameter(BrowseParams.FILTER_VALUE[1]);
+            if (authorityValue != null) {
+            	params.scope.setAuthorityValue(authorityValue);
+            }
+           
             params.scope.setJumpToValue(decodeFromURL(request.getParameter(BrowseParams.JUMPTO_VALUE)));
             params.scope.setJumpToValueLang(decodeFromURL(request.getParameter(BrowseParams.JUMPTO_VALUE_LANG)));
             params.scope.setFilterValueLang(decodeFromURL(request.getParameter(BrowseParams.FILTER_VALUE_LANG)));
@@ -920,7 +922,7 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
                 if (bix.isAuthorityIndex())
                 {
                     String fk = bix.getMetadata(0).replace(".", "_");
-                    value = "\""+choicheAuthorityService.getLabel(fk, info.getValue(), null)+"\"";
+                    value = "\""+choicheAuthorityService.getLabel(fk, info.getAuthority(), null)+"\"";
                 }
                 else
                 {
