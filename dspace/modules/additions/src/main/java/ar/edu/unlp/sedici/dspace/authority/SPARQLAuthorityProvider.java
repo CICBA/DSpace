@@ -65,7 +65,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 
 		ParameterizedSparqlString query = this.getSparqlSearchByIdQuery(field,
 				key, locale);
-		Choice[] choices = this.evalSparql(query, 0, 1);
+		Choice[] choices = this.evalSparql(query, 0,0);
 		if (choices.length == 0)
 			return null;
 		else

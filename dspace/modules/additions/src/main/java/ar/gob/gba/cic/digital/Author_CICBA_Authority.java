@@ -74,7 +74,7 @@ public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 		pqs.append("	}\n");
 		pqs.append("FILTER(REGEX(?person, ?key, \"i\"))\n");
 		pqs.append("}\n");
-		pqs.append("ORDER BY ?inicio");
+		pqs.append("ORDER BY ?surname ?link\n");
 
 		pqs.setLiteral("key", key);
 		return pqs;
@@ -112,7 +112,7 @@ public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 			}
 		}
 		pqs.append("}\n");
-		pqs.append("ORDER BY ASC(?surname)\n");
+		pqs.append("ORDER BY ?surname ?link\n");
 		
 		return pqs;
 	}
