@@ -2049,17 +2049,17 @@ public class SolrServiceImpl implements SearchService, IndexingService {
         if(StringUtils.isNotBlank(field) && StringUtils.isNotBlank(value))
         {
             filterQuery.append(field);
-            if("equals".equals(operator))
+            if("equals".equals(operator) || "notequals".equals(operator))
             {
                 //Query the keyword indexed field !
                 filterQuery.append("_keyword");
             }
-            else if ("authority".equals(operator))
+            else if ("authority".equals(operator) || "notauthority".equals(operator))
             {
                 //Query the authority indexed field !
                 filterQuery.append("_authority");
             }
-            else if ("notequals".equals(operator)
+            if ("notequals".equals(operator)
                     || "notcontains".equals(operator)
                     || "notauthority".equals(operator))
             {

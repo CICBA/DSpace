@@ -323,6 +323,7 @@
 <message key="xmlui.ArtifactBrowser.SimpleSearch.filter.subject">Materia</message>
 <message key="xmlui.ArtifactBrowser.SimpleSearch.filter.dateIssued">Fecha de Publicación</message>
 <message key="xmlui.ArtifactBrowser.SimpleSearch.filter.keyword">Palabra clave</message>
+<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.lugarDesarrollo">Lugar de desarrollo</message>
 
 	<!-- org.dspace.app.xmlui.artifactbrowser.RestrictedItem.java -->
 <message key="xmlui.ArtifactBrowser.RestrictedItem.title">Este recurso está restringido</message>
