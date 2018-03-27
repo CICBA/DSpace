@@ -1,0 +1,42 @@
+# Systemd Unit file for Handle Service used by DSpace
+#
+# Based on the script https://gist.github.com/cwilper/cd1fe3525edba1cc7a32340327a359ed
+#
+# On hosts that use systemd, like RHEL7, this can be used to auto-start
+# the handle service and provide the familiar "servicectl start|status|stop"
+# commands for controlling execution.
+#
+# To install:
+#
+# 1) As dspace:
+#      REQUIRED:
+#      - Edit dspace/bin/start-handle-server and remove "nohup" and the trailing ampersand 
+#        from the last line.
+#     
+# 2) As root:
+#      REQUIRED:
+#      - Copy this file into /etc/systemd/system and change the path for
+#        ExecStart's value as appropriate.
+#      - Run the following to install and make it start at system startup:
+#        systemctl daemon-reload
+#        systemctl enable handle
+#      OPTIONAL:
+#      - Modify /etc/sudoers (using visudo) to allow the dspace user
+#        to run "sudo systemctl start|stop|status handle" with no password:
+#          dspace ALL=(root) NOPASSWD: /bin/systemctl start handle
+#          dspace ALL=(root) NOPASSWD: /bin/systemctl stop handle
+#          dspace ALL=(root) NOPASSWD: /bin/systemctl status handle
+
+[Unit]
+Description=Handle Service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/path/to/dspace/bin/start-handle-server
+ExecStop=/bin/kill $MAINPID
+User=dspace
+Group=dspace
+
+[Install]
+WantedBy=multi-user.target
