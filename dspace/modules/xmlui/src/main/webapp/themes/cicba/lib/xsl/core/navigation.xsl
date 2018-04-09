@@ -77,7 +77,14 @@
 				     					</xsl:choose>
 									</a>
 								</xsl:for-each>
-								<xsl:value-of select="text()" />
+								<xsl:choose>
+					     			<xsl:when test="../@n='author' and not(i18n:text)">
+					     				<xsl:copy-of select="xmlui:replaceAll(text(),'(\([a-zA-Z]+.*[^1-9]\))',' ')" />
+					     			</xsl:when>
+					     			<xsl:otherwise>
+										<xsl:copy-of select="text()" />
+					     			</xsl:otherwise>
+				     			</xsl:choose>
 							</li>
 						</xsl:for-each>
 					</ul>
