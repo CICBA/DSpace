@@ -1006,3 +1006,30 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 #aspect_discovery_CommunitySearch_div_community-search  input.ds-button-field{
     width: 50px;
 }
+
+#filters-overview div{
+	width: 200px;
+	padding: 0.5%;
+	margin-right: 0.5%;
+	margin-top: 0.5%;
+	background-image: none;
+	background-color: #6d859c;
+	border-color: #1F3F5E;
+}
+
+#filters-overview div p{
+	overflow: hidden;
+  	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin-bottom: 0;
+}
+
+#filters-overview div span{
+	float:right;
+	padding: 1%;
+}
+
+#aspect_discovery_SimpleSearch_field_scope{
+	max-width:100%;
+}
+

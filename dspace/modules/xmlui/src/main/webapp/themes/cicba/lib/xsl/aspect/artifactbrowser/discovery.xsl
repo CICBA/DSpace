@@ -19,7 +19,8 @@
     xmlns:encoder="xalan://java.net.URLEncoder"
     xmlns:xmlui="xalan://ar.edu.unlp.sedici.dspace.xmlui.util.XSLTHelper"
     extension-element-prefixes="xmlui"
-    exclude-result-prefixes="xalan encoder i18n dri mets dim  xlink xsl">
+    exclude-result-prefixes="xalan encoder i18n dri mets dim  xlink xsl"
+    xmlns:stringescapeutils="org.apache.commons.lang3.StringEscapeUtils">
 
     <xsl:output indent="yes"/>
 
@@ -188,6 +189,43 @@
         </div>
 
 
+    </xsl:template>
+    
+    <!-- Display used filters -->
+    <xsl:template match="dri:div[@id='aspect.discovery.SimpleSearch.div.general-query']" priority="3">
+    	    <xsl:apply-templates/> 	   
+    	    <div class="hidden" id="filters-overview" ><hr/></div>
+    	     <xsl:call-template name="renderUsedFilters">
+    	     	 <xsl:with-param name="context" select="."></xsl:with-param>
+    	     </xsl:call-template>
+    </xsl:template> 
+    <xsl:template name="renderUsedFilters"> 
+    	<xsl:param name="context"/>
+        <script type="text/javascript">
+            <xsl:text>
+                if (!window.DSpace) {
+                    window.DSpace = {};
+                }
+                if (!window.DSpace.discovery) {
+                    window.DSpace.discovery = {};
+                }
+                if (!window.DSpace.discovery.filters) {
+                    window.DSpace.discovery.filters = [];
+                }
+              </xsl:text>
+                <xsl:for-each select="$context/../dri:div/dri:div/dri:table/dri:row[starts-with(@id,'aspect.discovery.SimpleSearch.row.used-filters-')]">
+                <xsl:text>
+	               
+	               window.DSpace.discovery.filters.push({
+	               type: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[starts-with(@n, 'filtertype')]/dri:value/@option)"/><xsl:text>',
+	               relational_operator: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[starts-with(@n, 'filter_relational_operator')]/dri:value/@option)"/><xsl:text>',
+	               query: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[@rend = 'discovery-filter-input']/dri:value)"/><xsl:text>',
+	            });
+	         </xsl:text>
+	         </xsl:for-each>
+            
+          
+        </script>
     </xsl:template>
 
     <xsl:template name="itemSummaryList">
