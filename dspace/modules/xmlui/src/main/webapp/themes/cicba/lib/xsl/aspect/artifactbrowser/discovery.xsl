@@ -213,13 +213,15 @@
                     window.DSpace.discovery.filters = [];
                 }
               </xsl:text>
-                <xsl:for-each select="$context/../dri:div/dri:div/dri:table/dri:row[starts-with(@id,'aspect.discovery.SimpleSearch.row.used-filters-')]">
-                <xsl:text>
-	               
+              <xsl:for-each select="$context/../dri:div/dri:div/dri:table/dri:row[starts-with(@id,'aspect.discovery.SimpleSearch.row.used-filters-')]">
+	               <xsl:variable name="type" select="dri:cell/dri:field[starts-with(@n, 'filtertype')]/dri:value/@option"/>
+	               <xsl:variable name="query" select="dri:cell/dri:field[@rend = 'discovery-filter-input']/dri:value"/>
+	               <xsl:variable name="value" select="//dri:options/dri:list/dri:list[@id=concat('aspect.discovery.SidebarFacetsTransformer.list.',$type)]/dri:item[@n=$query]"/>
+	               <xsl:text>
 	               window.DSpace.discovery.filters.push({
-	               type: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[starts-with(@n, 'filtertype')]/dri:value/@option)"/><xsl:text>',
+	               type: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript($type)"/><xsl:text>',
 	               relational_operator: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[starts-with(@n, 'filter_relational_operator')]/dri:value/@option)"/><xsl:text>',
-	               query: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[@rend = 'discovery-filter-input']/dri:value)"/><xsl:text>',
+	               query: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(xmlui:replaceAll($value,'(\([a-zA-Z]*.*[1-9]+\))',' '))"/><xsl:text>',
 	            });
 	         </xsl:text>
 	         </xsl:for-each>

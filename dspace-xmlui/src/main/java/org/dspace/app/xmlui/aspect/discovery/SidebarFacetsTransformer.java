@@ -242,10 +242,14 @@ public class SidebarFacetsTransformer extends AbstractDSpaceTransformer implemen
 
                             if (i < shownFacets - 1) {
                                 String displayedValue = value.getDisplayedValue();
+                                String authorityKey = value.getAuthorityKey();
                                 String filterQuery = value.getAsFilterQuery();
                                 String filterType = value.getFilterType();
                                 if (fqs.contains(getSearchService().toFilterQuery(context, field.getIndexFieldName(), value.getFilterType(), value.getAsFilterQuery()).getFilterQuery())) {
-                                    filterValsList.addItem(Math.random() + "", "selected").addContent(displayedValue + " (" + value.getCount() + ")");
+                                    if (authorityKey != null)
+                                		filterValsList.addItem(authorityKey + "", "selected").addContent(displayedValue + " (" + value.getCount() + ")");
+                                    else
+                                    	filterValsList.addItem(displayedValue + "", "selected").addContent(displayedValue + " (" + value.getCount() + ")");
                                 } else {
                                     String paramsQuery = retrieveParameters(request);
 
