@@ -361,18 +361,18 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
                     String discoverPath;
                     if (singleEntry[1] != null)
                     {
-                    	discoverPath=	contextPath  +
-		                         "/discover?" +
-		                         "filtertype="+ type + "&filter_relational_operator=authority" +
+                    	discoverPath= "discover?" + 
+                                 "filtertype="+ type + 
+                                 "&filter_relational_operator=authority" +
 		                         "&filter=" + singleEntry[1] ;
                     
                     }
 	                else 
 	                {	
-	                	discoverPath=	contextPath  +
-			                     "/discover?" + "filtertype="+type
-			                	 + "&filter_relational_operator=equals" +
-			                     "&filter=" +  encodeForURL(singleEntry[0]);
+	                	discoverPath= "discover?" + 
+	                			"filtertype="+type + 
+	                			"&filter_relational_operator=equals" + 
+	                			"&filter=" +  encodeForURL(singleEntry[0]);
 	                }
 	                cell.addXref(discoverPath , singleEntry[0]);
                     if (StringUtils.isNotEmpty(singleEntry[2]))
