@@ -766,14 +766,16 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
             params.scope.setResultsPerPage(RequestUtils.getIntParameter(request, BrowseParams.RESULTS_PER_PAGE));
             params.scope.setStartsWith(decodeFromURL(request.getParameter(BrowseParams.STARTS_WITH)));
             String filterValue = request.getParameter(BrowseParams.FILTER_VALUE[0]);
-            if (filterValue != null)
-            {	 params.scope.setFilterValue(filterValue);
-                
+            if (filterValue == null)
+            {	String authKey = request.getParameter(BrowseParams.FILTER_VALUE[1]);
+            	if (authKey!=null) {
+            		String fk = bi.getMetadata(0).replace(".", "_");
+                	filterValue = choicheAuthorityService.getLabel(fk, authKey, null);
+            	}
+                params.scope.setAuthorityValue(authKey);
             }
-            String authorityValue = request.getParameter(BrowseParams.FILTER_VALUE[1]);
-            if (authorityValue != null) {
-            	params.scope.setAuthorityValue(authorityValue);
-            }
+            
+            params.scope.setFilterValue(filterValue);
            
             params.scope.setJumpToValue(decodeFromURL(request.getParameter(BrowseParams.JUMPTO_VALUE)));
             params.scope.setJumpToValueLang(decodeFromURL(request.getParameter(BrowseParams.JUMPTO_VALUE_LANG)));
