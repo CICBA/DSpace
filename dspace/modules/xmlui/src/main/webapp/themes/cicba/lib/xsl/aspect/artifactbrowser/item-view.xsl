@@ -65,7 +65,7 @@
 						<xsl:choose>
 							<xsl:when test="not(cic:is-empty-authority(@authority))">
 								<xsl:call-template name="build-anchor">
-									<xsl:with-param name="a.href" select="concat('http://digital.cic.gba.gob.ar/browse?authority=', xmlui:escapeURI(@authority), '&amp;', 'type=', $local_browse_type)"/>
+									<xsl:with-param name="a.href" select="concat('browse?authority=', xmlui:escapeURI(@authority), '&amp;', 'type=', $local_browse_type)"/>
 									<xsl:with-param name="a.value" select="text()"/>
 								</xsl:call-template>
 							</xsl:when>
