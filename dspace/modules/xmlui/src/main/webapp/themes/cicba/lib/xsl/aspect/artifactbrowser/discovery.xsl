@@ -192,9 +192,24 @@
     </xsl:template>
     
     <!-- Display used filters -->
-    <xsl:template match="dri:div[@id='aspect.discovery.SimpleSearch.div.general-query']" priority="3">
-    	    <xsl:apply-templates/> 	   
-    	    <div class="hidden" id="filters-overview" ><hr/></div>
+   <xsl:template match="dri:list[@id='aspect.discovery.SimpleSearch.list.primary-search']//dri:item[dri:field[@id='aspect.discovery.SimpleSearch.field.query'] and not(dri:field[@id='aspect.discovery.SimpleSearch.field.scope'])]" priority="3">
+    	
+  	     <div>
+            <xsl:call-template name="standardAttributes">
+                <xsl:with-param name="class">
+                    <xsl:text>ds-form-item row</xsl:text>
+                </xsl:with-param>
+            </xsl:call-template>
+
+            <div class="ds-form-content">              
+                    <xsl:apply-templates select="dri:field[@id='aspect.discovery.SimpleSearch.field.query']"/>
+                    <xsl:apply-templates select="dri:field[@id='aspect.discovery.SimpleSearch.field.submit']"/>
+        	</div>
+        </div>
+        <xsl:if test="dri:item[@id='aspect.discovery.SimpleSearch.item.did-you-mean']">
+            <xsl:apply-templates select="dri:item[@id='aspect.discovery.SimpleSearch.item.did-you-mean']"/>
+        </xsl:if>   
+    	    <div id="filters-overview" ></div>
     	     <xsl:call-template name="renderUsedFilters">
     	     	 <xsl:with-param name="context" select="."></xsl:with-param>
     	     </xsl:call-template>
@@ -213,7 +228,7 @@
                     window.DSpace.discovery.filters = [];
                 }
               </xsl:text>
-              <xsl:for-each select="$context/../dri:div/dri:div/dri:table/dri:row[starts-with(@id,'aspect.discovery.SimpleSearch.row.used-filters-')]">
+              <xsl:for-each select="$context/../../../dri:div/dri:div/dri:table/dri:row[starts-with(@id,'aspect.discovery.SimpleSearch.row.used-filters-')]">
 	               <xsl:variable name="type" select="dri:cell/dri:field[starts-with(@n, 'filtertype')]/dri:value/@option"/>
 	               <xsl:variable name="query" select="dri:cell/dri:field[@rend = 'discovery-filter-input']/dri:value"/>
 	               <xsl:variable name="value" select="//dri:options/dri:list/dri:list[@id=concat('aspect.discovery.SidebarFacetsTransformer.list.',$type)]/dri:item[@n=$query]"/>
