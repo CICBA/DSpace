@@ -1007,7 +1007,7 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
     width: 50px;
 }
 
-#filters-overview div{
+#filters-overview div.btn{
 	width: 200px;
 	padding: 0.5%;
 	margin-right: 0.5%;
