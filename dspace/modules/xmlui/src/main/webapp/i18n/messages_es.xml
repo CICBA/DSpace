@@ -997,6 +997,8 @@
 <message key="xmlui.XMLWorkflow.default.CIC-ADMIN_review.editaction">Edición CIC-Digital</message>
 <message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.editaction">Edición CIC-Digital</message>
 <message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.changecollection">Selección de colección destino CIC-Digital</message>
+<message key="xmlui.XMLWorkflow.workflow.EditMetadataAction.delete_help">Esto removerá el item totalmente del repositorio sin darle al depositante la opción de modificación y resubida</message>
+<message key="xmlui.XMLWorkflow.workflow.DeleteItemAction.info3">¿Está seguro que desea eliminar el item?</message>
 	<!--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		             Administrative Aspect
