@@ -3,6 +3,8 @@
     <workflow-map>
         <name-map collection="default" workflow="default"/>
         <name-map collection="11746/2" workflow="autoarchive"/>
+	<!-- Autoarchivo Concursos CIC -->
+        <name-map collection="11746/7272" workflow="autoarchive"/>
     </workflow-map>
 
 	<workflow start="CIC-ADMIN_review" id="autoarchive">

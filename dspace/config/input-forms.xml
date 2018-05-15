@@ -16,6 +16,8 @@
  <form-map>
    <!-- Poner handle de la 'colección de autoarchivo' en el repositorio -->
    <name-map collection-handle="11746/2" form-name="autoarchive" />
+   <!-- Autoarchivo Concursos CIC -->
+   <name-map collection-handle="11746/7272" form-name="autoarchive" />
    <name-map collection-handle="default" form-name="traditional" />
  </form-map>
 
