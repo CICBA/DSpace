@@ -991,6 +991,11 @@
 	<message key="xmlui.Submission.workflow.RejectTaskStep.reason">Reason</message>
 	<message key="xmlui.Submission.workflow.RejectTaskStep.reason_required">The reason field is required</message>
 	<message key="xmlui.Submission.workflow.RejectTaskStep.submit_reject">Reject item</message>
+	
+		<!--  XMLWorflow messages -->
+	<message key="xmlui.XMLWorkflow.workflow.EditMetadataAction.delete_help">Delete item</message>
+	<message key="xmlui.XMLWorkflow.workflow.DeleteItemAction.info3">Are you sure do you want to delete the item?</message>
+	
 
 
 
