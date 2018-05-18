@@ -4,7 +4,7 @@
         <name-map collection="default" workflow="default"/>
         <name-map collection="11746/2" workflow="autoarchive"/>
 	<!-- Autoarchivo Concursos CIC -->
-        <name-map collection="11746/7272" workflow="autoarchive"/>
+        <name-map collection="11746/7270" workflow="CICINV18"/>
     </workflow-map>
 
 	<workflow start="CIC-ADMIN_review" id="autoarchive">
@@ -29,4 +29,11 @@
 			</actions>
 		</step>
 	</workflow>
+	
+	<workflow start="CIC-ADMIN_review" id="CICINV18">
+		<step id="CIC-ADMIN_review" userSelectionMethod="noUserSelectionAction">
+
+		</step>
+	</workflow>
+	
 </wf-config>
