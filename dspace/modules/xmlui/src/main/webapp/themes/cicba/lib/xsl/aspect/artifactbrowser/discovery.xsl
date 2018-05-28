@@ -236,8 +236,17 @@
 	               window.DSpace.discovery.filters.push({
 	               type: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript($type)"/><xsl:text>',
 	               relational_operator: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(dri:cell/dri:field[starts-with(@n, 'filter_relational_operator')]/dri:value/@option)"/><xsl:text>',
-	               query: '</xsl:text><xsl:value-of select="stringescapeutils:escapeEcmaScript(xmlui:replaceAll($value,'(\([a-zA-Z]*.*[1-9]+\))',' '))"/><xsl:text>',
-	            });
+	               query: '</xsl:text>
+	                       <xsl:choose>
+	                         <xsl:when test="$value">
+	                           <xsl:value-of select="stringescapeutils:escapeEcmaScript(xmlui:replaceAll($value,'(\([a-zA-Z]*.*[1-9]+\))',' '))"/>
+	                         </xsl:when>
+	                         <xsl:otherwise>
+	                           <xsl:value-of select="$query"/>
+	                         </xsl:otherwise>
+	                       </xsl:choose>
+	                       <xsl:text>',
+	               });
 	         </xsl:text>
 	         </xsl:for-each>
             

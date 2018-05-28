@@ -33,7 +33,10 @@ function create_filter_badgets (){
 		 closeButton.className="glyphicon glyphicon-remove";
 		 filter_div.append(closeButton);
 		 text=document.createElement("p");
-		 text.innerHTML=filter.type+": "+filter.query;
+		 if (filter.relational_operator.startsWith("not"))
+			 text.innerHTML=filter.type+" &#8800 "+filter.query;
+		 else
+			 text.innerHTML=filter.type+": "+filter.query;
 		 filter_div.append(text);
 		 filter_div.className="btn btn-info";
 		 filter_div.setAttribute("index", index);
