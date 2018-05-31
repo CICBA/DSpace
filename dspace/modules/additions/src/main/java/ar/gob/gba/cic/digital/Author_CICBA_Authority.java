@@ -3,23 +3,16 @@ package ar.gob.gba.cic.digital;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.WriterAppender;
 import org.dspace.content.authority.Choice;
-import org.dspace.content.authority.Choices;
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import ar.edu.unlp.sedici.dspace.authority.SPARQLAuthorityProvider;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
-//FIXME cambiar  los queries para que levanten autores
+
 public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 
 	protected static final Resource person = ResourceFactory.createResource(NS_FOAF + "Person");
@@ -180,30 +173,5 @@ public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 		}
 		return result;
 	}
-
-
-	public static void main(String[] args) {
-
-		log.addAppender(new WriterAppender(new SimpleLayout(), System.out));
-		log.setLevel(Level.TRACE);
-		SPARQLAuthorityProvider s = new Author_CICBA_Authority() {
-			
-			protected String getSparqlEndpoint() {
-				return "http://localhost/auth/sparql";
-			}
-		};
-		
-
-		Choices choice = s.getBestMatch("dcterms.creator.author", "Reval", null, "");
-		Choices cs = s.getMatches("dcterms.creator.author", "Reval", null, 0, 100, "");
-//		for (Choice c : cs.values) {
-//			System.out.println("\n AUTHORITY = " + c.authority + "\n LABEL = " + c.label + "\n VALUE = " + c.value +"\n" );
-//		}
-		System.out.println("\n AUTHORITY = " + choice.values[0].authority + "\n LABEL = " + choice.values[0].label + "\n VALUE = " + choice.values[0].value +"\n" );
-		String label = s.getLabel("dcterms.creator.author", "localhost/auth/node/313700", "");
-		System.out.println(label);
-		label.toString();
-	}
-
 
 }
