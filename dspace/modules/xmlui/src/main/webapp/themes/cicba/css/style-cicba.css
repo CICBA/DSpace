@@ -1029,8 +1029,19 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 	padding: 1%;
 }
 
-#aspect_discovery_SimpleSearch_field_scope{
-	max-width:100%;
+@media (max-width: 500px){
+	td[id="aspect_discovery_SimpleSearch_cell_"]{
+		display:block;
+		margin-bottom: 3%;
+		margin-top: 3%;
+	}
+	td[id^="aspect_discovery_SimpleSearch_cell_filter-controls_"]{
+		vertical-align: bottom;
+	}
+
+}
+input[id^="aspect_discovery_SimpleSearch_field_filter_"]{
+	min-width: 100px;
 }
 
 input[id^="aspect_discovery_SimpleSearch_field_filter_"]{
