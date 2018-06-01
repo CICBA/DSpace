@@ -1033,3 +1033,7 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 	max-width:100%;
 }
 
+input[id^="aspect_discovery_SimpleSearch_field_filter_"]{
+	min-width: 100px;
+}
+
