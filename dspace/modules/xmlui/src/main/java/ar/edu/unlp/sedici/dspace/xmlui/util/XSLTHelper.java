@@ -18,6 +18,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xpath.NodeSet;
 import org.w3c.dom.Document;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.dspace.services.factory.DSpaceServicesFactory;
 
 public class XSLTHelper {
@@ -165,5 +168,68 @@ public class XSLTHelper {
         return ns ;
 	}
 	
+	/**
+	 * Retorna el resumen de un item recortado para la vista reducida (pantallas pequeñas como celulares, etc)
+	 * Se acorta el resumen a los 300 caracteres o, si es que existe, en el primer punto entre el caracter 200 y el 300
+	 * Tiene en cuenta los casos en que el corte queda en el medio de dos tags y entonces el tag no queda cerrado
+	 *  (ej: Este substring quedo en medio <strong> de dos tags), entonces se encarga de cerrarlos
+	 */
+	public static String getShortAbstract(String text){
+		int textLength=text.length();
+		//Se achica el texto a 300 caracteres (si es que tiene mas)
+        if (textLength>300) {
+            text=text.substring(0,300);
+            //Si existe un punto entre el caracter 200 y el 300 se corta el texto allí
+            int pointIndex=text.substring(200,300).indexOf('.');
+            if (pointIndex >= 0) {
+                text=text.substring(0,200+pointIndex+1);
+            }
+        }
+
+        //Se cierran todos los tags que quedaron abiertos pero no cerrados
+        String endOfText="";
+        String substring=getUnclosedTagWithSubstring(text);
+        while (substring != ""){
+            Pattern p = Pattern.compile("(<[a-zA-Z]*>)$");
+            Matcher m=p.matcher(substring);
+            m.find();
+            String tag=m.group(0);
+			tag=tag.substring(0,1) + "/" + tag.substring(1, tag.length());
+			endOfText+=tag;
+			substring=getUnclosedTagWithSubstring(substring.replaceFirst("(<[a-zA-Z]*>)$",""));
+        }
+
+        //Si al texto lo cortamos en un punto o tiene menos de 300 caracteres lo dejamos así
+        //sino agregamos puntos suspensivos por si el corte se da en el medio de una palabra o una oracion
+        if (text.endsWith(".") || textLength <= 300) {
+            return text+=endOfText;
+        }
+        else {
+            return text+=endOfText+"...";
+        }
+    }
+
+	/**
+	 * Este método busca el último tag no cerrado de un texto y retorna el substring desde el comienzo hasta ese tag inclusive
+	 * ej: si el texto es "Este texto contiene <strong> tags <em> no cerrados"
+	 * retorna "Este texto contiene <strong> tags <em>"
+	 * Si en cambio el texto es "Este texto contiene <strong> tags cerrados </strong> bla bla"
+	 * retorna "" también retorna "" si el texto no tiene tags
+	 */
+	private static String getUnclosedTagWithSubstring(String text) {
+        if (text.length() == 0 ) {
+            return "";
+		}
+        else if (text.matches("^.*(<[a-zA-Z]*>)$")) {
+            return text;
+		}
+        else if (text.matches("^.*(</[a-zA-Z]*>)$")) {
+			return "";
+		}
+		else {
+			return getUnclosedTagWithSubstring(text.substring(0,text.length()-1));
+        }
+    }
+
 }
 

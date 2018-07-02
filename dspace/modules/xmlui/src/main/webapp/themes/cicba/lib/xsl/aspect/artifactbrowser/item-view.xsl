@@ -102,8 +102,7 @@
 					</xsl:call-template>
 			</xsl:when>
 			<xsl:when test="($disableOutputEscaping='True') and ($reduced='True')">
-				<xsl:value-of select="substring(text(),1,200)" disable-output-escaping="yes"/>
-				<xsl:value-of select="concat(substring-before(substring(text(),200,300),'.'), '.')" disable-output-escaping="yes"/>
+				<xsl:value-of select="xmlui:getShortAbstract(text())" disable-output-escaping="yes"/>
 			</xsl:when>
 			<xsl:when test="$disableOutputEscaping='True'">
 				<xsl:value-of select="text()" disable-output-escaping="yes"/>
