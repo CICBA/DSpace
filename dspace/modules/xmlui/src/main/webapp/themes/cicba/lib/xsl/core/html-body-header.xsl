@@ -12,6 +12,13 @@
 	<xsl:template name="languageSelection">
 		<xsl:variable name="currentLocale"
 			select="//dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='page'][@qualifier='currentLocale']" />
+
+		<xsl:variable name="supportedLocales" select="xmlui:getPropertyValuesAsString('webui.supported.locales')"/>
+		<!--This builds the regular expresion used to show the proper locale in static pages  -->
+		<xsl:variable name="staticPageLocalesRegExp" select="concat('(_',concat(xmlui:replaceAll($supportedLocales,'\,','|_'),')'))"/>
+		<!--This builds the regular expresion used to avoid repeated locale parameter into the query string  -->
+		<xsl:variable name="queryStringLocalesRegExp" select="concat('\blocale-attribute=(',concat(xmlui:replaceAll($supportedLocales,'\,','&amp;?|'),'&amp;?)'))"/>
+
 		<a class="dropdown-toggle text-uppercase" id="dropdownMenuLocale"
 			data-toggle="dropdown">
 			<xsl:value-of select="$currentLocale" />
@@ -21,65 +28,25 @@
 			<xsl:for-each
 				select="//dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='page'][@qualifier='supportedLocale']">
 				<xsl:variable name="locale" select="." />
-				<xsl:variable name="queryString" select="xmlui:replaceAll(/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='request'][@qualifier='queryString']/text(), '\blocale-attribute=(en&amp;?|es&amp;?)', '')"/>
+				<xsl:variable name="queryString" select="xmlui:replaceAll(/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='request'][@qualifier='queryString']/text(),$queryStringLocalesRegExp, '')"/>
 				<li role="presentation">
 					<xsl:if test="$locale = $currentLocale">
 						<xsl:attribute name="class">active</xsl:attribute>
 					</xsl:if>
-					<xsl:call-template name="build-anchor">
-						<xsl:with-param name="a.href">
-							<xsl:choose>
-								<xsl:when test="starts-with($request-uri, 'page/')">
-									<xsl:value-of select="xmlui:replaceAll($request-uri, '(_en|_es)', concat('_', $locale))" />							
-								</xsl:when>
-								
-								<!-- En el caso de admin/groups, en algunos casos al momento de cambiar el idioma se 
-								redirecciona a admin/group/(main | edit | delet ...) en lugar de admin/groups, y no se 
-								encuentra el recurso. para salvar este caso se parsea la uri recibida 
-								(mas informacion en el ticket 3815)-->
-								<xsl:when test="starts-with($request-uri, 'admin/')">
-									<xsl:variable name="section">
-										<xsl:choose>
-											<xsl:when test="starts-with(substring-before(substring-after($request-uri, 'admin/'), '/'), 'group')">
-												<xsl:value-of select="xmlui:replaceAll(substring-before(substring-after($request-uri, 'admin/'), '/'), 'group','groups')"/>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:value-of select="substring-before(substring-after($request-uri, 'admin/'), '/')"/>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:variable>
-									<!-- <xsl:choose>
-										<xsl:when test="starts-with(substring-before(substring-after($request-uri, 'admin/'), '/'), 'group')">
-											<xsl:variable name="section" select="xmlui:replaceAll(substring-before(substring-after($request-uri, 'admin/'), '/'), 'group','groups')"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:variable name="section" select="substring-before(substring-after($request-uri, 'admin/'), '/')"/>
-										</xsl:otherwise>
-									</xsl:choose> -->
-									<xsl:choose>
-										<xsl:when test="$section != ''">
-											<xsl:value-of select="concat('admin/', $section)"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:value-of select="$request-uri"/>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="$current-uri" />
-								</xsl:otherwise>
-							</xsl:choose>
-							<xsl:text>?locale-attribute=</xsl:text>
-							<xsl:value-of select="$locale" />
-							<xsl:if test="$queryString != '' ">
-								<xsl:value-of select="concat('&amp;', $queryString)"/>
-							</xsl:if>
-						</xsl:with-param>
-						<xsl:with-param name="a.value">
-							<xsl:value-of
+                    <a>
+                      <xsl:attribute name="href">
+                          <xsl:if test="starts-with($request-uri, 'page/')">
+                                  <xsl:value-of select="substring-after(xmlui:replaceAll($request-uri,$staticPageLocalesRegExp, concat('_', $locale)),'page/')" />
+                          </xsl:if>
+                          <xsl:text>?locale-attribute=</xsl:text>
+                          <xsl:value-of select="$locale" />
+                          <xsl:if test="$queryString != '' ">
+                          <xsl:value-of select="concat('&amp;', $queryString)"/>
+                          </xsl:if>
+                      </xsl:attribute>
+                      <xsl:value-of
 								select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='supportedLocale'][@qualifier=$locale]" />
-						</xsl:with-param>
-					</xsl:call-template>
+                    </a>
 				</li>
 			</xsl:for-each>
 

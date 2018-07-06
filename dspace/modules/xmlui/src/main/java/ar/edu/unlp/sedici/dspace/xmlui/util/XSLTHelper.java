@@ -137,6 +137,15 @@ public class XSLTHelper {
 
 	}
 	
+    /*
+     * Retorna un conjunto de property values desde el dspace.cfg dada una property key.
+     */
+    public static String getPropertyValuesAsString(String property){
+
+        String[] properties= DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty(property);
+        return String.join(",",properties);
+    }
+
 	/*
 	 * Retorna un conjunto de property keys desde el dspace.cfg cuyo prefijo coincida.
 	 */
