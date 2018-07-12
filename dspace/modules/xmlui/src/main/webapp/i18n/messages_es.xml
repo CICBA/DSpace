@@ -2496,9 +2496,9 @@ Cuando se usa QDC para los elementos de DSpace se recomienda el uso de crosswalk
     <message key="xmlui.aspect.versioning.VersionNoticeTransformer.notice.workflow_version_head">Nota</message>
     <message key="xmlui.aspect.versioning.VersionNoticeTransformer.notice.workflow_version_help">Una versión más reciente de este ítem está en el flujo de trabajo.</message>
 
-	<message key="xmlui.dri2xhtml.METS-1.0.locale.en">Ingles</message>
+	<message key="xmlui.dri2xhtml.METS-1.0.locale.en">Inglés</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.locale.es">Español</message>
-	<message key="xmlui.dri2xhtml.METS-1.0.locale.pt">Portuges</message>
+	<message key="xmlui.dri2xhtml.METS-1.0.locale.pt">Portugués</message>
 
     <!-- End Versioning -->     
 
