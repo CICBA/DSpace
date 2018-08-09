@@ -68,10 +68,10 @@ DSPACE=/var/dspace/install
 # (This sends an email to any users who have "subscribed" to a Collection, notifying them of newly added content.)
 0 2 * * *	dspace	$DSPACE/bin/dspace sub-daily
  
-# Run the media filter at 23:01 every monday and friday.
+# Run the media filter at 01:01 and 17:01 every day.
 # (This task ensures that thumbnails are generated for newly add images,
 # and also ensures full text search is available for newly added PDF/Word/PPT/HTML documents)
-#1 23 * * 1-6	dspace	$DSPACE/bin/dspace filter-media -m100 -q 
+1 1,17 * * *    dspace  $DSPACE/bin/dspace filter-media -m50 -q > /dev/null 
 
 # Run any Curation Tasks queued from the Admin UI at 04:00 every day
 # (Ensures that any curation task that an administrator "queued" from the Admin UI is executed
