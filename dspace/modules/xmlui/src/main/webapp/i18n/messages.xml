@@ -150,6 +150,7 @@
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.search_for">Search for</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_author">Author</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_type">Document type</message>
+	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_dateIssued">Issue date</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_title">Title</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_subject">Subject</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_abstract">Abstract</message>
@@ -158,6 +159,8 @@
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_identifier">Identifier</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_language">Language (ISO)</message>
 	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_keyword">Keyword</message>
+	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_has_content_in_original_bundle">Has Bitstream</message>
+	<message key="xmlui.ArtifactBrowser.AdvancedSearch.type_lugarDesarrollo">Development place</message>
 
    <!--  some common other possibilities for Advanced Search Fields -->
    <message key="xmlui.ArtifactBrowser.AdvancedSearch.type_contributor">Contributor</message>
@@ -273,6 +276,10 @@
 	<message key="xmlui.ArtifactBrowser.FeedbackSent.head">Feedback sent</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackSent.para1">Your comments have been received.</message>
 
+	<!-- org.dspace.app.xmlui.artifactbrowser.FrontPageSearch.java -->
+	<message key="xmlui.ArtifactBrowser.FrontPageSearch.head">Search in DSpace</message>
+	<message key="xmlui.ArtifactBrowser.FrontPageSearch.para1">Introduce the text to search in DSpace</message>
+
 	<!-- org.dspace.app.xmlui.artifactbrowser.ItemViewer.java -->
 	<message key="xmlui.ArtifactBrowser.ItemViewer.year">Year</message>
 	<message key="xmlui.ArtifactBrowser.ItemViewer.trail">View Item</message>
@@ -312,7 +319,11 @@
 	<message key="xmlui.ArtifactBrowser.SimpleSearch.search_scope">Search Scope</message>
 	<message key="xmlui.ArtifactBrowser.SimpleSearch.full_text_search">Full Text Search</message>
 	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.type">Document type</message>
+	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.author">Author</message>
+	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.subject">Subject</message>
+	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.dateIssued">Issue date</message>
 	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.keyword">Keyword</message>
+	<message key="xmlui.ArtifactBrowser.SimpleSearch.filter.lugarDesarrollo">Development place</message>
 
 	<!-- org.dspace.app.xmlui.artifactbrowser.RestrictedItem.java -->
 	<message key="xmlui.ArtifactBrowser.RestrictedItem.title">This resource is restricted</message>
@@ -760,6 +771,8 @@
 	<message key="xmlui.Submission.submit.SelectCollection.collection">Collection</message>
 	<message key="xmlui.Submission.submit.SelectCollection.collection_help">Select the collection you wish to submit an item to.</message>
 	<message key="xmlui.Submission.submit.SelectCollection.collection_default">Select a collection...</message>
+	<message key="cic.Submission.submit.SelectCollection.paragraph">Change item's current collection</message>
+	<message key="cic.Submission.submit.SelectCollection.collection_help">Choose the collection you want to send the item to</message>
 
 	<!-- org.dspace.app.xmlui.Submission.submit.SaveOrRemoveStep -->
 	<message key="xmlui.Submission.submit.SaveOrRemoveStep.head">Save or cancel your submission?</message>
@@ -993,8 +1006,13 @@
 	<message key="xmlui.Submission.workflow.RejectTaskStep.submit_reject">Reject item</message>
 
 
-
-
+	<!--  XMLWorflow messages -->
+	<message key="xmlui.XMLWorkflow.default.CIC-ADMIN_review.claimaction">CIC-Digital review</message>
+	<message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.claimaction">CIC-Digital review</message>
+	<message key="xmlui.XMLWorkflow.default.CIC-ADMIN_review.rejectrole">CIC-Digital review</message>
+	<message key="xmlui.XMLWorkflow.default.CIC-ADMIN_review.editaction">CIC-Digital edition</message>
+	<message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.editaction">CIC-Digital edition</message>
+	<message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.changecollection">CIC-Digital selection of collection</message>
 	<!--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		             Administrative Aspect
@@ -1071,6 +1089,7 @@
     <message key="xmlui.administrative.Navigation.administrative_batch_import">Batch Import (ZIP)</message>
         <message key="xmlui.administrative.Navigation.administrative_import_metadata">Import Metadata</message>
         <message key="xmlui.administrative.Navigation.administrative_curation">Curation Tasks</message>
+    <message key="xmlui.administrative.Navigation.context_search_export_metadata">Export to CSV</message>
 
     <!-- my account items -->
 	<message key="xmlui.administrative.Navigation.account_export">My Exports</message>
@@ -2308,6 +2327,8 @@
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_license">Licence</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_hasPart">Includes</message>
 	
+	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_rights_embargoPeriod.msg">This document can not be accessed due to its author has required an embargo until date:</message>
+
 	<!-- cic metadata -->
 	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_version">Vesion</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_thesis_degree">Degree obtained</message>
@@ -2602,6 +2623,10 @@
     <message key="xmlui.aspect.sherpa.submission.blue">blue</message>
     <message key="xmlui.aspect.sherpa.submission.white">white</message>
     <message key="xmlui.aspect.sherpa.submission.yellow">yellow</message>
+
+    <message key="xmlui.dri2xhtml.METS-1.0.locale.en">English</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.locale.es">Spanish</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.locale.pt">Portuguese</message>
     <!-- End Versioning -->
 
 
