@@ -2572,9 +2572,9 @@
     <message key="xmlui.cicdigital.discoveryList.no-value.dcterms-creators">Não há autores designados</message>
     <message key="xmlui.cicdigital.discoveryList.no-value.dcterms-type-type">Sem tipo designado</message>
     <message key="xmlui.cicdigital.discoveryList.no-value.dcterms.abstract">Nenhum resumo designado</message>
-    <message key="xmlui.cicdigital.staticPage.what-is-cic-digital.uri">/página / que-es-cic-digital_es</message>
-    <message key="xmlui.cicdigital.staticPage.reposiotry-policies.uri">/ página / repositório-política</message>
-    <message key="xmlui.cicdigital.staticPage.how-to-contribute-material.uri">/ página / como-contribuir-material_en</message>
+    <message key="xmlui.cicdigital.staticPage.what-is-cic-digital.uri">/page/que-es-cic-digital_pt_BR</message>
+    <message key="xmlui.cicdigital.staticPage.reposiotry-policies.uri">/page/politicas-del-repositorio_pt_BR</message>
+    <message key="xmlui.cicdigital.staticPage.how-to-contribute-material.uri">/page/como-aportar-material_pt_BR</message>
     <message key="xmlui.ArtifactBrowser.AdvancedSearch.type_type">Tipo de documento</message>
     <message key="xmlui.ArtifactBrowser.AdvancedSearch.type_has_content_in_original_bundle">Tem Bitstream</message>
     <message key="xmlui.ArtifactBrowser.AdvancedSearch.type_lugarDesarrollo">Lugar de desenvolvimento</message>
