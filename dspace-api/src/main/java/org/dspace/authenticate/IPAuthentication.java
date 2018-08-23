@@ -19,13 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.ListUtils;
 import org.apache.log4j.Logger;
-import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.core.LogManager;
+import org.dspace.core.factory.CoreServiceFactory;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.eperson.factory.EPersonServiceFactory;
 import org.dspace.eperson.service.GroupService;
+import org.dspace.service.ClientInfoService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 
 /**
@@ -61,6 +62,7 @@ public class IPAuthentication implements AuthenticationMethod
     protected List<IPMatcher> ipNegativeMatchers;
 
     protected GroupService groupService;
+    protected ClientInfoService clientInfoService;
 
     
     /**
@@ -84,6 +86,7 @@ public class IPAuthentication implements AuthenticationMethod
         ipMatcherGroupIDs = new HashMap<>();
         ipMatcherGroupNames = new HashMap<>();
         groupService = EPersonServiceFactory.getInstance().getGroupService();
+        clientInfoService = CoreServiceFactory.getInstance().getClientInfoService();
 
         List<String> propNames = DSpaceServicesFactory.getInstance().getConfigurationService().getPropertyKeys("authentication-ip");
 
@@ -181,21 +184,7 @@ public class IPAuthentication implements AuthenticationMethod
         List<Group> groups = new ArrayList<Group>();
 
         // Get the user's IP address
-        String addr = request.getRemoteAddr();
-        if (useProxies == null) {
-            useProxies = ConfigurationManager.getBooleanProperty("useProxies", false);
-        }
-        if (useProxies && request.getHeader("X-Forwarded-For") != null)
-        {
-            /* This header is a comma delimited list */
-            for(String xfip : request.getHeader("X-Forwarded-For").split(","))
-            {
-                if(!request.getHeader("X-Forwarded-For").contains(addr))
-                {
-                    addr = xfip.trim();
-                }
-            }
-        }
+        String addr = clientInfoService.getClientIp(request);
 
         for (IPMatcher ipm : ipMatchers)
         {

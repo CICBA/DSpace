@@ -17,12 +17,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.dspace.content.factory.ContentServiceFactory;
-import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Constants;
 import org.dspace.services.factory.DSpaceServicesFactory;
+import org.dspace.service.ClientInfoService;
+import org.dspace.services.ConfigurationService;
 import org.dspace.services.model.Event;
 import org.dspace.usage.AbstractUsageEventListener;
 import org.dspace.usage.UsageEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -46,12 +48,28 @@ public class GoogleRecorderEventListener extends AbstractUsageEventListener {
     private CloseableHttpClient httpclient;
     private String GoogleURL = "https://www.google-analytics.com/collect";
     private static Logger log = Logger.getLogger(GoogleRecorderEventListener.class);
-    protected ContentServiceFactory contentServiceFactory = ContentServiceFactory.getInstance();
-
+    protected ContentServiceFactory contentServiceFactory;
+    protected ConfigurationService configurationService;
+    protected ClientInfoService clientInfoService;
 
     public GoogleRecorderEventListener() {
         // httpclient is threadsafe so we only need one.
         httpclient = HttpClients.createDefault();
+    }
+
+    @Autowired
+    public void setContentServiceFactory(ContentServiceFactory contentServiceFactory) {
+        this.contentServiceFactory = contentServiceFactory;
+    }
+
+    @Autowired
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
+
+    @Autowired
+    public void setClientInfoService(ClientInfoService clientInfoService) {
+        this.clientInfoService = clientInfoService;
     }
 
     @Override
@@ -172,21 +190,7 @@ public class GoogleRecorderEventListener extends AbstractUsageEventListener {
     }
 
     private String getIPAddress(HttpServletRequest request) {
-        String clientIP = request.getRemoteAddr();
-        if (ConfigurationManager.getBooleanProperty("useProxies", false) && request.getHeader("X-Forwarded-For") != null) {
-            /* This header is a comma delimited list */
-            for (String xfip : request.getHeader("X-Forwarded-For").split(",")) {
-                /* proxy itself will sometime populate this header with the same value in
-                    remote address. ordering in spec is vague, we'll just take the last
-                    not equal to the proxy
-                */
-                if (!request.getHeader("X-Forwarded-For").contains(clientIP)) {
-                    clientIP = xfip.trim();
-                }
-            }
-        }
-
-        return clientIP;
+        return clientInfoService.getClientIp(request);
     }
 
 }

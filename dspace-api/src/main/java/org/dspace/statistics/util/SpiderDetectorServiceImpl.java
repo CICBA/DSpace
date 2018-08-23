@@ -9,8 +9,8 @@ package org.dspace.statistics.util;
 
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.lang.StringUtils;
+import org.dspace.service.ClientInfoService;
 import org.dspace.services.ConfigurationService;
-import org.dspace.services.factory.DSpaceServicesFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,6 @@ public class SpiderDetectorServiceImpl implements SpiderDetectorService {
 
     private static final Logger log = LoggerFactory.getLogger(SpiderDetectorServiceImpl.class);
 
-    private Boolean useProxies;
-
     private Boolean useCaseInsensitiveMatching;
 
     private final List<Pattern> agents
@@ -48,6 +46,7 @@ public class SpiderDetectorServiceImpl implements SpiderDetectorService {
             = Collections.synchronizedList(new ArrayList<Pattern>());
 
     private ConfigurationService configurationService;
+    private ClientInfoService clientInfoService;
 
     /**
      * Sparse HashTable structure to hold IP address ranges.
@@ -55,8 +54,9 @@ public class SpiderDetectorServiceImpl implements SpiderDetectorService {
     private IPTable table = null;
 
     @Autowired(required = true)
-    public SpiderDetectorServiceImpl(ConfigurationService configurationService) {
+    public SpiderDetectorServiceImpl(ConfigurationService configurationService, ClientInfoService clientInfoService) {
         this.configurationService = configurationService;
+        this.clientInfoService = clientInfoService;
     }
 
     public IPTable getTable() {
@@ -102,7 +102,7 @@ public class SpiderDetectorServiceImpl implements SpiderDetectorService {
         }
 
         // No.  See if any IP addresses match
-        if (isUseProxies() && proxyIPs != null) {
+        if (clientInfoService.isUseProxiesEnabled() && proxyIPs != null) {
             /* This header is a comma delimited list */
             for (String xfip : proxyIPs.split(",")) {
                 if (isSpider(xfip))
@@ -316,14 +316,6 @@ public class SpiderDetectorServiceImpl implements SpiderDetectorService {
         }
 
         return useCaseInsensitiveMatching;
-    }
-
-    private boolean isUseProxies() {
-        if(useProxies == null) {
-            useProxies = configurationService.getBooleanProperty("useProxies");
-        }
-
-        return useProxies;
     }
 
 }
