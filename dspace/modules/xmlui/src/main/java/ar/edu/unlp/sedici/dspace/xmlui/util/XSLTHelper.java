@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -143,7 +144,7 @@ public class XSLTHelper {
     public static String getPropertyValuesAsString(String property){
 
         String[] properties= DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty(property);
-        return String.join(",",properties);
+        return StringUtils.join(properties,",");
     }
 
 	/*
