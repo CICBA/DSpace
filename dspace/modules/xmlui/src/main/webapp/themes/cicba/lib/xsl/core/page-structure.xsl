@@ -644,6 +644,19 @@
          	</script>
 		 </xsl:if> 
 		 
+         <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.xmlworkflow.admin.WorkflowOverviewTransformer.div.xmlworkflowoverview']">
+            <script type="text/javascript">
+                <xsl:attribute name="src">
+                    <xsl:call-template name="print-theme-path">
+                        <xsl:with-param name="path">js/confirm_workflow_delete.js</xsl:with-param>
+                    </xsl:call-template>
+                </xsl:attribute>&#160;
+            </script>
+            <script type="text/javascript">
+                confirm_workflow_delete("<i18n:text>xmlui.XMLWorkflow.WorkflowOverviewTransformer.confirm_delete</i18n:text>");
+            </script>
+         </xsl:if>
+
 	</xsl:template>
 
 

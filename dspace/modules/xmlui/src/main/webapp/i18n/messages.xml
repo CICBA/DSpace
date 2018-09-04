@@ -1013,6 +1013,10 @@
 	<message key="xmlui.XMLWorkflow.default.CIC-ADMIN_review.editaction">CIC-Digital edition</message>
 	<message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.editaction">CIC-Digital edition</message>
 	<message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.changecollection">CIC-Digital selection of collection</message>
+
+	<!-- XMLWorkflow Overview messages -->
+	<message key="xmlui.XMLWorkflow.WorkflowOverviewTransformer.confirm_delete">Are you sure do you want to delete the item/s? (They will be deleted permanently)</message>
+
 	<!--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		             Administrative Aspect
