@@ -63,10 +63,10 @@ public class DeleteWorkflowItemsAction extends AbstractAction {
             for (int workflowIdentifier : workflowIdentifiers) {
                 XmlWorkflowItem workflowItem = xmlWorkflowItemService.find(context, workflowIdentifier);
                 if (workflowItem != null) {
-					//Remove references from 'cwf_in_progress_user'
+                    //Remove references from 'cwf_in_progress_user'
                     workflowRequirementsService.clearInProgressUsers(context, workflowItem);
-                	//Delete workflow item 
-                	xmlWorkflowItemService.delete(context, workflowItem);
+                    //Delete workflow item 
+                    xmlWorkflowItemService.delete(context, workflowItem);
                 }
             }
         }
