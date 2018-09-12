@@ -52,12 +52,12 @@ public class Institution_CICBA_Authority extends SimpleSPARQLAuthorityProvider {
 	protected Choice extractChoice(QuerySolution solution) {
 		String key = solution.getResource("concept").getURI();
 		String label = solution.getLiteral("label").getString();
-		
+		String value = label;
 		if (solution.contains("initials") && !"".equals(solution.getLiteral("initials").getString())) {
 			String initials = solution.getLiteral("initials").getString();
 			label = label + " (" + initials + ")";
 		}
 		
-		return new Choice(key, label, label);
+		return new Choice(key, value, label);
 	}
 }
