@@ -32,7 +32,7 @@ DATEMTH=date +%m
 0 20 1 * 1,2,3,4,5      dspace  sh $DSPACE_BACKUP_DIR/do_pgdump.sh -q
 
 #rotación de backups de postgres (todos los dias a las 05:00hs). Se eliminan aquellos mas antiguos a 30 dias de creación pero se conservan los de primero de cada mes 
-0 5 * * 1,2,3,4,5       dspace  find $DSPACE_BACKUP_DIR/postgres -maxdepth 1 -name "dspace_cic*.*gz" -mtime +30 -not -name "dspace_cic-20??-??-01*.gz" -exec rm {} \; > /dev/null
+0 5 * * 1,2,3,4,5       dspace  find $DSPACE_BACKUP_DIR/postgres -maxdepth 1 -name "dspace_cic-20??-??-??*.gz" -mtime +30 -not -name "dspace_cic-20??-??-01*.gz" -exec rm {} \; > /dev/null
 
 #backup de la base de datos mysql local con las autoridades de CIC-DIGITAL (de lunes a viernes a las 1230)
 30 12 * * 1,2,3,4,5	root	mysqldump --add-drop-table --routines --events --add-drop-table --all-databases --force | gzip -c > $DSPACE_BACKUP_DIR/mysql/all-databases.sql.gz
@@ -50,7 +50,7 @@ DATEMTH=date +%m
 50 4 * * 1,2,3,4,5	root	drush -r /var/www/auth archive-dump --destination=$DSPACE_BACKUP_DIR/auth/auth.htdocs.$($DATESTR).tar.gz -q > /dev/null
 
 #rotación de backups de drupal (todos los dias a las 05:00hs). Se eliminan aquellos mas antiguos a 30 dias de creación pero se conservan los de primero de cada mes 
-0 5 * * 1,2,3,4,5       root  find $DSPACE_BACKUP_DIR/auth -maxdepth 1 -name "auth.htdocs.*.tar.gz" -mtime +30 -not -name "auth.htdocs.20??-??-01*.tar.gz" -exec rm {} \; > /dev/null
+0 5 * * 1,2,3,4,5       root  find $DSPACE_BACKUP_DIR/auth -maxdepth 1 -name "auth.htdocs.20??-??-??*.tar.gz" -mtime +30 -not -name "auth.htdocs.20??-??-01*.tar.gz" -exec rm {} \; > /dev/null
 
 ##################################################################################
 ##  SOLR
