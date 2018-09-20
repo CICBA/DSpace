@@ -641,6 +641,10 @@
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>
 					<xsl:call-template name="render-metadata">
+					    <xsl:with-param name="field" select="cic.institucionOrigen"/>
+					    <xsl:with-param name="container"    select="'li'"/>
+					</xsl:call-template>
+					<xsl:call-template name="render-metadata">
 						<xsl:with-param name="field" select="'dcterms.publisher'" />
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>

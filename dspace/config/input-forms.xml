@@ -198,6 +198,16 @@
          <hint>Institución, departamento y/o unidad en la cual se desarrolló el trabajo. En el caso de informes de investigación, corresponde al punto 4.</hint>
          <required>Debe indicar el lugar o lugares donde se desarrolló el trabajo.</required>
        </field>
+
+       <field>
+         <dc-schema>cic</dc-schema>
+         <dc-element>institucionOrigen</dc-element>
+         <repeatable>true</repeatable>
+         <label>Centro CIC</label>
+         <input-type>onebox</input-type>
+         <hint>Centro CIC al que pertenece la obra</hint>
+         <required>Debe indicar el centro CIC al que pertenece la obra.</required>
+       </field>
      
      	<field>
          <dc-schema>dcterms</dc-schema>
@@ -554,12 +564,12 @@
      
      	<field>
          <dc-schema>cic</dc-schema>
-         <dc-element>lugarDesarrollo</dc-element>
+         <dc-element>institucionOrigen</dc-element>
          <repeatable>true</repeatable>
-         <label>Lugar de desarrollo</label>
+         <label>Centro CIC</label>
          <input-type>onebox</input-type>
-         <hint>Institución, departamento y/o unidad en la cual se desarrolló el trabajo. En el caso de informes de investigación, corresponde al punto 4.</hint>
-         <required>Debe indicar el lugar o lugares donde se desarrolló el trabajo.</required>
+         <hint>Centro CIC al que pertenece la obra</hint>
+         <required>Debe indicar el centro CIC al que pertenece la obra.</required>
        </field>
      
      	<field>
