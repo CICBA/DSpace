@@ -110,7 +110,7 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
     /** The options for results per page */
     private static final int[] RESULTS_PER_PAGE_PROGRESSION = {5,10,20,40,60,80,100};
     private int currentOffset = 0;
-
+    private String currentOrder;
     /** Cached validity object */
     private SourceValidity validity;
 
@@ -279,6 +279,7 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
         }
 
         BrowseInfo info = getBrowseInfo();
+        currentOrder = params.scope.getOrder();
         if(info == null)
         {
             HttpServletResponse response = (HttpServletResponse)objectModel.get(HttpEnvironment.HTTP_RESPONSE_OBJECT);
@@ -430,7 +431,9 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
         // Add all the query parameters as hidden fields on the form
         for (Map.Entry<String, String> param : queryParamsPOST.entrySet())
         {
-            jump.addHidden(param.getKey()).setValue(param.getValue());
+            //Not necessary to hide the start-with param because it's added later
+            if (param.getKey() != BrowseParams.STARTS_WITH)
+                jump.addHidden(param.getKey()).setValue(param.getValue());
         }
 
         // If this is a date based browse, render the date navigation
@@ -531,7 +534,7 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
 
         queryParams.putAll(params.getCommonParameters());
 
-        Division controls = div.addInteractiveDivision("browse-controls", BROWSE_URL_BASE,
+        Division controls = div.addInteractiveDivision("browse-controls", BROWSE_URL_BASE+(StringUtils.contains(BROWSE_URL_BASE,"?")?"&resetOffset=true":"?resetOffset=true"),
                 Division.METHOD_POST, "browse controls");
 
         // Add all the query parameters as hidden fields on the form
@@ -868,7 +871,13 @@ public class ConfigurableBrowse extends AbstractDSpaceTransformer implements
         } catch (ResourceNotFoundException e) {
             return null;
         }
-
+        String paramsOrder = params.scope.getOrder();
+        boolean orderingUpdated = !StringUtils.equals(currentOrder, paramsOrder);
+        if (orderingUpdated) {
+            if (ObjectModelHelper.getRequest(objectModel).getParameters().containsKey("resetOffset")) {
+                params.scope.setOffset(0);
+            }
+        }
         try
         {
             // Create a new browse engine, and perform the browse
@@ -1077,7 +1086,9 @@ class BrowseParams
             paramMap.put(scope.getAuthorityValue() != null?
                     BrowseParams.FILTER_VALUE[1]:BrowseParams.FILTER_VALUE[0], scope.getFilterValue());
         }
-
+        if(StringUtils.isNotBlank(scope.getStartsWith())){
+            paramMap.put(STARTS_WITH,scope.getStartsWith());
+        }
         if (scope.getFilterValueLang() != null)
         {
             paramMap.put(BrowseParams.FILTER_VALUE_LANG, scope.getFilterValueLang());

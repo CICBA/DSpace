@@ -323,7 +323,7 @@ public class SidebarFacetsTransformer extends AbstractDSpaceTransformer implemen
         facet.addItem().addXref(
                 contextPath +
                         (dso == null ? "" : "/handle/" + dso.getHandle()) +
-                        "/search-filter?" + parameters + BrowseFacet.FACET_FIELD + "=" + field.getIndexFieldName()+"&"+BrowseFacet.ORDER+"="+field.getSortOrderFilterPage(),
+                        "/search-filter?" + parameters + BrowseFacet.FACET_FIELD + "=" + field.getIndexFieldName()+"&filterorder="+field.getSortOrderFilterPage(),
                 T_VIEW_MORE
 
         );
