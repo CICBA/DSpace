@@ -14,12 +14,10 @@ public class Institution_CICBA_Authority extends SimpleSPARQLAuthorityProvider {
 
 		pqs.setNsPrefix("foaf", NS_FOAF);
 		pqs.setNsPrefix("dc", NS_DC);
-		pqs.setNsPrefix("sioc", NS_SIOC);
 
-		pqs.setCommandText("SELECT ?concept ?label ?initials\n");
+		pqs.setCommandText("SELECT ?concept ?label \n");
 		pqs.append("WHERE {\n");
 		pqs.append("?concept a foaf:Organization ; dc:title ?label .\n");
-		pqs.append("OPTIONAL { ?concept sioc:id ?initials} \n");
 		pqs.append("FILTER(REGEX(?concept, ?key, \"i\"))\n");
 		pqs.append("}\n");
 
@@ -54,12 +52,12 @@ public class Institution_CICBA_Authority extends SimpleSPARQLAuthorityProvider {
 	protected Choice extractChoice(QuerySolution solution) {
 		String key = solution.getResource("concept").getURI();
 		String label = solution.getLiteral("label").getString();
-		
+		String value = label;
 		if (solution.contains("initials") && !"".equals(solution.getLiteral("initials").getString())) {
 			String initials = solution.getLiteral("initials").getString();
 			label = label + " (" + initials + ")";
 		}
 		
-		return new Choice(key, label, label);
+		return new Choice(key, value, label);
 	}
 }

@@ -51,23 +51,14 @@ public class Author_CICBA_Authority extends AdvancedSPARQLAuthorityProvider {
 		ParameterizedSparqlString pqs = new ParameterizedSparqlString();
 
 		pqs.setNsPrefix("foaf", NS_FOAF);
-		pqs.setNsPrefix("dc", NS_DC);
-		pqs.setNsPrefix("cerif", NS_CERIF);
 		pqs.setNsPrefix("rdf", NS_RDF);
-		pqs.setNsPrefix("sioc", NS_SIOC);
 
-		pqs.setCommandText("CONSTRUCT { ?person a foaf:Person. ?person foaf:givenName ?name . ?person foaf:mbox ?mail . ?person foaf:familyName ?surname. ?person cerif:linksToOrganisationUnit ?link . ?link cerif:startDate ?inicio. ?link cerif:endDate ?fin . ?link foaf:Organization ?org . ?org dc:title ?affiliation. ?org sioc:id ?id. }\n");
+		pqs.setCommandText("CONSTRUCT { ?person a foaf:Person. ?person foaf:givenName ?name . ?person foaf:familyName ?surname. }\n");
 		pqs.append("WHERE {\n");
 		pqs.append("?person a foaf:Person ; foaf:givenName ?name ; foaf:familyName ?surname .\n");
-		pqs.append("	OPTIONAL {\n");
-		pqs.append("	?person foaf:mbox ?mail . \n");
-		pqs.append("	} . \n");
-		pqs.append("	OPTIONAL {\n");
-		pqs.append("	?person cerif:linksToOrganisationUnit ?link . ?link cerif:startDate ?inicio; cerif:endDate ?fin; foaf:Organization ?org . ?org dc:title ?affiliation; sioc:id ?id\n");
-		pqs.append("	}\n");
 		pqs.append("FILTER(REGEX(?person, ?key, \"i\"))\n");
 		pqs.append("}\n");
-		pqs.append("ORDER BY ?surname ?link\n");
+		pqs.append("ORDER BY ?surname \n");
 
 		pqs.setLiteral("key", key);
 		return pqs;
