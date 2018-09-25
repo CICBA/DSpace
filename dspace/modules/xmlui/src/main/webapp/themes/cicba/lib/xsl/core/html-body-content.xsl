@@ -158,6 +158,7 @@
 				<p>
 					<i18n:text>xmlui.cicdigital.home.subir-material-descripcion</i18n:text>
 				</p>
+				<h4><a href="xmlui.cicdigital.staticPage.how-to-contribute-material.uri" i18n:attr="href"><i18n:text>xmlui.cicdigital.home.mas-informacion</i18n:text></a></h4>
 			</div>
 		</div>
 			
