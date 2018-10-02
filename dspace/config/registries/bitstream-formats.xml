@@ -256,7 +256,7 @@
   </bitstream-type>
 
   <bitstream-type>
-    <mimetype>text/richtext</mimetype>
+    <mimetype>application/rtf</mimetype>
     <short_description>RTF</short_description>
     <description>Rich Text Format</description>
     <support_level>1</support_level>
