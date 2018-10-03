@@ -208,4 +208,10 @@
 		<scope_note>Nombre del programa de radio</scope_note>
 	</dc-type>
 
+	<dc-type>
+		<schema>cic</schema>
+		<element>institucionOrigen</element>
+		<scope_note>Centro CIC al que pertenece la obra</scope_note>
+	</dc-type>
+
 </dspace-dc-types>
