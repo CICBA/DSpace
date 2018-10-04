@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.dspace.content.authority.Choice;
 import org.dspace.content.authority.ChoiceAuthority;
 import org.dspace.content.authority.Choices;
+import org.dspace.core.ConfigurationManager;
 import org.dspace.content.Collection;
 
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
@@ -18,6 +19,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	protected static Logger log = Logger
 			.getLogger(SPARQLAuthorityProvider.class);
 
+	protected static final String NS_CIC = "http://www.cic.gba.gov.ar/ns#";
 	protected static final String NS_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
 	protected static final String NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	protected static final String NS_SKOS = "http://www.w3.org/2004/02/skos/core#";
@@ -36,7 +38,14 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 		this.globalParameters = globalParameters;
 	}
 	
-	protected abstract String getSparqlEndpoint();
+	protected String getSparqlEndpoint() {
+		String endpoint = ConfigurationManager.getProperty("sparql-authorities", "endpoint.url");
+		if (endpoint != null) {
+			return endpoint;
+		} else {
+			throw new NullPointerException("Missing endpoint configuration.");
+		}
+	}
 
 	@Override
 	public Choices getMatches(String field, String text, Collection collection,
@@ -46,8 +55,8 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 		else 
 			text = text.replace("\"", "");
 
-		ParameterizedSparqlString query = this.getSparqlSearchByTextQuery(
-				field, text, locale);
+		ParameterizedSparqlString query = this.getSparqlSearch(
+				field, text, locale,false);
 		Choice[] choices = this.evalSparql(query, start, limit);
 		log.trace(choices.length + "matches found for text " + text);
 		return new Choices(choices, start, limit, Choices.CF_ACCEPTED, false);
@@ -63,8 +72,8 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	@Override
 	public String getLabel(String field, String key, String locale) {
 
-		ParameterizedSparqlString query = this.getSparqlSearchByIdQuery(field,
-				key, locale);
+		ParameterizedSparqlString query = this.getSparqlSearch(field,
+				key, locale,true);
 		Choice[] choices = this.evalSparql(query, 0,0);
 		if (choices.length == 0)
 			return null;
@@ -72,11 +81,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 			return choices[0].label;
 	}
 
-	protected abstract ParameterizedSparqlString getSparqlSearchByIdQuery(
-			String field, String key, String locale);
-
-	protected abstract ParameterizedSparqlString getSparqlSearchByTextQuery(
-			String field, String text, String locale);
+	protected abstract ParameterizedSparqlString getSparqlSearch(String field, String filter, String locale,boolean idSearch);
 
 	protected abstract Choice[] extractChoicesfromQuery(QueryEngineHTTP httpQuery);
 
