@@ -983,6 +983,16 @@ div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-vie
 	margin-bottom:10px;
 }
 
+div#aspect_artifactbrowser_CommunityViewer_div_community-view > div.detail-view > div.ds-logo-wrapper > img,
+div#aspect_artifactbrowser_CollectionViewer_div_collection-view > div.detail-view > div.ds-logo-wrapper > img,
+form#aspect_administrative_community_EditCommunityMetadataForm_div_community-metadata-edit fieldset#aspect_administrative_community_EditCommunityMetadataForm_list_metadataList div.ds-form-content > img,
+form#aspect_administrative_collection_EditCollectionMetadataForm_div_collection-metadata-edit fieldset#aspect_administrative_collection_EditCollectionMetadataForm_list_metadataList div.ds-form-content > img{
+    max-width: 100%;
+    max-height: 50em;
+}
+
+
+
 
 .inline-element {
 	display:inline;
