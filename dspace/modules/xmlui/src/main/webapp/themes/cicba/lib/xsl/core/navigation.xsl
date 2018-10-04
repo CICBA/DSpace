@@ -11,8 +11,7 @@
 	version="1.0" xmlns:dim="http://www.dspace.org/xmlns/dspace/dim"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mods="http://www.loc.gov/mods/v3"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/1999/xhtml"
-	exclude-result-prefixes="i18n dri mets xlink xsl dim xhtml mods dc"
-	 xmlns:xmlui="xalan://ar.edu.unlp.sedici.dspace.xmlui.util.XSLTHelper">
+	exclude-result-prefixes="i18n dri mets xlink xsl dim xhtml mods dc">
 	<xsl:output indent="yes" />
 
 	<xsl:template name="buildPanelFromList">
@@ -67,24 +66,10 @@
 										<xsl:attribute name="href"><xsl:value-of
 											select="@target" /></xsl:attribute>
 										<!-- <xsl:copy-of select="text()" /> -->
-										<xsl:choose>
-					     					<xsl:when test="../../@n='author' and not(i18n:text)">
-					     						<xsl:copy-of select="xmlui:replaceAll(node(),'(\([a-zA-Z]+.*[^1-9]\))',' ')" />
-					     					</xsl:when>
-					     					<xsl:otherwise>
-												<xsl:copy-of select="node()" />
-					     					</xsl:otherwise>
-				     					</xsl:choose>
+										<xsl:copy-of select="node()" />
 									</a>
 								</xsl:for-each>
-								<xsl:choose>
-					     			<xsl:when test="../@n='author' and not(i18n:text)">
-					     				<xsl:copy-of select="xmlui:replaceAll(text(),'(\([a-zA-Z]+.*[^1-9]\))',' ')" />
-					     			</xsl:when>
-					     			<xsl:otherwise>
-										<xsl:copy-of select="text()" />
-					     			</xsl:otherwise>
-				     			</xsl:choose>
+								<xsl:value-of select="text()" />
 							</li>
 						</xsl:for-each>
 					</ul>

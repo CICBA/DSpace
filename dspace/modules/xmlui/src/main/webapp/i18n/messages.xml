@@ -2340,6 +2340,7 @@
 	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_isPeerReviewed">Peer reviewed</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_isFulltext">Fulltext</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_lugarDesarrollo">Origin info</message>
+	<message key="xmlui.dri2xhtml.METS-1.0.item-cic_institucionOrigen">CIC Center</message>
 
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dc_date_available">Date of availability</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dc_date_accessioned">Date of accession</message>
@@ -2525,6 +2526,8 @@
 <message key="xmlui.ChoiceLookupTransformer.field.cic_thesis_grantor.title">Look up Grantor Institution</message>
 <message key="xmlui.ChoiceLookupTransformer.field.cic_lugarDesarrollo.help">Development place</message>
 <message key="xmlui.ChoiceLookupTransformer.field.cic_lugarDesarrollo.title">Look up Development Place</message>
+<message key="xmlui.ChoiceLookupTransformer.field.cic_institucionOrigen.help">CIC Center</message>
+<message key="xmlui.ChoiceLookupTransformer.field.cic_institucionOrigen.title">Look up CIC Center</message>
 <message key="xmlui.ChoiceLookupTransformer.field.dcterms_isPartOf_series.help">Journal or Event</message>
 <message key="xmlui.ChoiceLookupTransformer.field.dcterms_isPartOf_series.title">Look up Journal or Event</message>
 <message key="xmlui.ChoiceLookupTransformer.field.dcterms_language.help">Language</message>

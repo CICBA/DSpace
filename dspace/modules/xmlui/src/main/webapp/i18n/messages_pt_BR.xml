@@ -2729,6 +2729,7 @@
     <message key="xmlui.dri2xhtml.METS-1.0.item-cic_isPeerReviewed">Revisado por pares</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-cic_isFulltext">Texto completo</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-cic_lugarDesarrollo">Lugar de desenvolvimento</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-cic_institucionOrigen">Centro CIC</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_subject_materia.help">Nome do Assunto</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_subject_materia.title">Procurar Assunto</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_subject.help">Palavra Chave</message>
@@ -2747,6 +2748,8 @@
     <message key="xmlui.ChoiceLookupTransformer.field.cic_thesis_grantor.title">Procurar Instituição Outorgante</message>
     <message key="xmlui.ChoiceLookupTransformer.field.cic_lugarDesarrollo.help">Lugar de Desenvolvimento</message>
     <message key="xmlui.ChoiceLookupTransformer.field.cic_lugarDesarrollo.title">Procurar lugar de Desenvolvimento</message>
+    <message key="xmlui.ChoiceLookupTransformer.field.cic_institucionOrigen.help">Centro CIC</message>
+    <message key="xmlui.ChoiceLookupTransformer.field.cic_institucionOrigen.title">Procurar Centro CIC</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_isPartOf_series.help">Revista ou Evento</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_isPartOf_series.title">Procurar Revista ou Evento</message>
     <message key="xmlui.ChoiceLookupTransformer.field.dcterms_language.help">Idioma</message>
