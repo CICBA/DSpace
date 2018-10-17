@@ -657,6 +657,19 @@
             </script>
          </xsl:if>
 
+         <xsl:if test="(/dri:document/dri:body/dri:div[@id='aspect.administrative.item.EditBitstreamForm.div.edit-bitstream']) or (/dri:document/dri:body/dri:div[@id='aspect.administrative.item.AddBitstreamForm.div.add-bitstream'])">
+            <script type="text/javascript">
+                <xsl:attribute name="src">
+                    <xsl:call-template name="print-theme-path">
+                        <xsl:with-param name="path">js/embargo_enable_disable.js</xsl:with-param>
+                    </xsl:call-template>
+                </xsl:attribute>&#160;
+            </script>
+            <script type="text/javascript">
+                embargo_toggle();
+            </script>
+         </xsl:if>
+
 	</xsl:template>
 
 

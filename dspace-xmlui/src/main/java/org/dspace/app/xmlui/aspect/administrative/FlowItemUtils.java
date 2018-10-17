@@ -10,17 +10,22 @@ package org.dspace.app.xmlui.aspect.administrative;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.servlet.multipart.Part;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.dspace.app.util.Util;
 import org.dspace.app.xmlui.utils.UIException;
 import org.dspace.app.xmlui.wing.Message;
 import org.dspace.authorize.AuthorizeException;
+import org.dspace.authorize.ResourcePolicy;
+import org.dspace.authorize.ResourcePolicyServiceImpl;
 import org.dspace.authorize.factory.AuthorizeServiceFactory;
 import org.dspace.authorize.service.AuthorizeService;
+import org.dspace.authorize.service.ResourcePolicyService;
 import org.dspace.content.*;
 import org.dspace.content.Collection;
 import org.dspace.content.authority.Choices;
@@ -30,6 +35,9 @@ import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.core.Constants;
 import org.dspace.core.Context;
 import org.dspace.curate.Curator;
+import org.dspace.eperson.Group;
+import org.dspace.eperson.factory.EPersonServiceFactory;
+import org.dspace.eperson.service.GroupService;
 import org.dspace.handle.factory.HandleServiceFactory;
 import org.dspace.handle.service.HandleService;
 
@@ -591,8 +599,24 @@ public class FlowItemUtils
 			bitstreamService.update(context, bitstream);
 			itemService.update(context, item);
 
+			//Add default policies
             processAccessFields(context, request, item.getOwningCollection(), bitstream);
 			
+            //Set open access properties
+            //Set the bitstream as private if necessary
+            String setPublicBitstream = request.getParameter("publicBitstream");
+
+            GroupService groupService = EPersonServiceFactory.getInstance().getGroupService();
+            Group anonymous=groupService.findByName(context, Group.ANONYMOUS);
+
+            if(setPublicBitstream==null) {
+                //The user has set the bitstream as private, so remove anonymous policies
+                authorizeService.removeGroupPolicies(context,bitstream, anonymous);
+            }
+            //As the item is public set an embargo on anonymous if it wasn't applied before
+            else if (!authorizeService.getAuthorizedGroups(context, item.getOwningCollection(), Constants.DEFAULT_ITEM_READ).contains(anonymous))
+                //Means that if an embargo exists it was not applied on anonymous
+               addBitstreamEmbargo(context, request, anonymous, bitstream);
 
 			result.setContinue(true);
 	        result.setOutcome(true);
@@ -638,16 +662,20 @@ public class FlowItemUtils
 	 * @return A flow result object.
      * @throws java.sql.SQLException passed through.
      * @throws org.dspace.authorize.AuthorizeException passed through.
+	 * @throws IOException
 	 */
 	public static FlowResult processEditBitstream(Context context, UUID itemID, UUID bitstreamID, String bitstreamName,
             String primary, String description, int formatID, String userFormat, Request request)
-            throws SQLException, AuthorizeException
+            throws SQLException, AuthorizeException, IOException
 	{
 		FlowResult result = new FlowResult();
 		result.setContinue(false);
 		
 		Bitstream bitstream = bitstreamService.find(context, bitstreamID);
 		BitstreamFormat currentFormat = bitstream.getFormat(context);
+
+		Item item = itemService.find(context, itemID);
+
 
 		//Step 1:
 		// Update the bitstream's description and name
@@ -660,13 +688,35 @@ public class FlowItemUtils
         {
             bitstream.setName(context, bitstreamName);
         }
-		
+
 		//Step 2:
-		// Check if the primary bitstream status has changed
+		// Update Bundle if necessary
+		// And check if the primary bitstream status has changed
+		String bundleName = request.getParameter("bundle");
 		List<Bundle> bundles = bitstream.getBundles();
 		if (bundles != null && bundles.size() > 0)
 		{
 			Bundle bundle = bundles.get(0);
+			if (!bundle.getName().equals(bundleName)){
+				//The user has set a different bundle
+				bundle.removeBitstream(bitstream);
+				if (bundle.getBitstreams().isEmpty())
+					itemService.removeBundle(context, item, bundle);
+				bitstream.getBundles().clear();
+				List<Bundle> itemBundles = itemService.getBundles(item, bundleName);
+				if (itemBundles.size() < 1){
+					bundle = bundleService.create(context, item, bundleName);
+					itemService.addBundle(context, item, bundle);
+					itemService.update(context, item);
+
+				}
+				else {
+					 bundle=itemBundles.get(0);
+				}
+				bundleService.addBitstream(context, bundle, bitstream);
+				bundleService.update(context, bundle);
+
+			}
 			if (bundle.getPrimaryBitstream() != null && bundle.getPrimaryBitstream().toString().equals(String.valueOf(bitstreamID)))
 			{
 				// currently the bitstream is primary
@@ -710,6 +760,34 @@ public class FlowItemUtils
 			}
 		}
 		
+
+		//Step2
+		//Set the bitstream as private if necessary
+		String setPublicBitstream = request.getParameter("publicBitstream");
+
+		GroupService groupService = EPersonServiceFactory.getInstance().getGroupService();
+		Group anonymous=groupService.findByName(context, Group.ANONYMOUS);
+
+		//Check if the bistream is currently private
+		ResourcePolicy policy=authorizeService.findByTypeGroupAction(context, bitstream, anonymous, Constants.READ);
+		boolean isPrivate= policy==null;
+
+		if (isPrivate && setPublicBitstream!=null) {
+			//The bitstream was private and the user has set the bitstream as not private
+			isPrivate=!isPrivate;
+			authorizeService.addPolicy(context, bitstream,Constants.READ ,anonymous);
+		}
+		else if(!isPrivate && setPublicBitstream==null) {
+			//The bitstream wasn't private and the user has set the bitstream as private
+			isPrivate=!isPrivate;
+			authorizeService.removeGroupPolicies(context,bitstream, anonymous);
+		}
+
+		//Step 2
+		//Add embargo only if the bitstream is public
+		if (!isPrivate)
+			addBitstreamEmbargo(context, request, anonymous, bitstream);
+
 		//Step 3:
 		// Save our changes
 		bitstreamService.update(context, bitstream);
@@ -720,7 +798,23 @@ public class FlowItemUtils
 
 		return result;
 	}
-	
+
+	private static void addBitstreamEmbargo(Context context,HttpServletRequest request,Group group,Bitstream bitstream) throws SQLException, AuthorizeException {
+		Date startDate = null;
+        try {
+			startDate = DateUtils.parseDate(request.getParameter("embargo_until_date"), new String[]{"yyyy-MM-dd", "yyyy-MM", "yyyy"});
+            String reason = request.getParameter("reason");
+            // add embargo just for anonymous
+            ResourcePolicy rp = authorizeService.createOrModifyPolicy(null, context, null, group, null, startDate, Constants.READ, reason, bitstream);
+            if (rp != null) {
+                ResourcePolicyService resourcePolicyService = AuthorizeServiceFactory.getInstance().getResourcePolicyService();
+                resourcePolicyService.update(context, rp);
+            }
+        } catch (ParseException e) {
+		//Do nothing, embargo was null
+        }
+	}
+
 	/**
 	 * Delete the given bitstreams from the bundle and item. If there are no more bitstreams 
 	 * left in a bundle then also remove it.
@@ -774,6 +868,7 @@ public class FlowItemUtils
 		
 		return result;
 	}
+
 
     public static FlowResult processReorderBitstream(Context context, UUID itemID, Request request) throws SQLException, AuthorizeException {
         String submitButton = Util.getSubmitButton(request, "submit_update_order");

@@ -11,26 +11,37 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.apache.commons.jxpath.ri.compiler.Constant;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.dspace.app.xmlui.aspect.submission.submit.AccessStepUtil;
 import org.dspace.app.xmlui.cocoon.AbstractDSpaceTransformer;
 import org.dspace.app.xmlui.utils.UIException;
 import org.dspace.app.xmlui.wing.Message;
 import org.dspace.app.xmlui.wing.WingException;
 import org.dspace.app.xmlui.wing.element.Body;
+import org.dspace.app.xmlui.wing.element.CheckBox;
 import org.dspace.app.xmlui.wing.element.Division;
 import org.dspace.app.xmlui.wing.element.List;
 import org.dspace.app.xmlui.wing.element.PageMeta;
 import org.dspace.app.xmlui.wing.element.Select;
 import org.dspace.app.xmlui.wing.element.Text;
 import org.dspace.authorize.AuthorizeException;
+import org.dspace.authorize.ResourcePolicy;
 import org.dspace.authorize.factory.AuthorizeServiceFactory;
 import org.dspace.authorize.service.AuthorizeService;
 import org.dspace.content.Bitstream;
 import org.dspace.content.BitstreamFormat;
 import org.dspace.content.Bundle;
+import org.dspace.content.Item;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.BitstreamFormatService;
 import org.dspace.content.service.BitstreamService;
+import org.dspace.content.service.ItemService;
+import org.dspace.core.Constants;
+import org.dspace.eperson.Group;
+import org.dspace.eperson.factory.EPersonServiceFactory;
+import org.dspace.eperson.service.GroupService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 import org.xml.sax.SAXException;
 
@@ -67,12 +78,23 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 	private static final Message T_user_help = message("xmlui.administrative.item.EditBitstreamForm.user_help");
     private static final Message T_filename_label = message("xmlui.administrative.item.EditBitstreamForm.name_label");
     private static final Message T_filename_help = message("xmlui.administrative.item.EditBitstreamForm.name_help");
+    private static final Message T_open_access_label = message("xmlui.administrative.item.EditBitstreamForm.open_access_label");
+    private static final Message T_open_access_help = message("xmlui.administrative.item.EditBitstreamForm.open_access_help");
+    private static final Message T_open_access_checkBox_help = message("xmlui.administrative.item.EditBitstreamForm.open_access_checkBox_help");
+    private static final Message T_open_access_title = message("xmlui.administrative.item.EditBitstreamForm.open_access_title");
+    private static final Message T_open_access_embargo_disabled = message("xmlui.administrative.item.EditBitstreamForm.open_access_embargo_disabled");
+
+
 
     private boolean isAdvancedFormEnabled=true;
 
 	protected AuthorizeService authorizeService = AuthorizeServiceFactory.getInstance().getAuthorizeService();
 	protected BitstreamService bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
 	protected BitstreamFormatService bitstreamFormatService = ContentServiceFactory.getInstance().getBitstreamFormatService();
+
+	private static final String[] DEFAULT_BUNDLE_LIST = new String[]{"ORIGINAL", "METADATA", "THUMBNAIL", "LICENSE", "CC-LICENSE"};
+	private static final Message T_bundle_label = message("xmlui.administrative.item.AddBitstreamForm.bundle_label");
+	protected ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 
     @Override
 	public void addPageMeta(PageMeta pageMeta) throws WingException
@@ -94,7 +116,8 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 
 		// Get our parameters
 		UUID bitstreamID = UUID.fromString(parameters.getParameter("bitstreamID", null));
-
+        UUID itemID = UUID.fromString(parameters.getParameter("itemID", null));
+        org.dspace.content.Item item = itemService.find(context, itemID);
 		// Get the bitstream and all the various formats
                 // Administrator is allowed to see internal formats too.
 		Bitstream bitstream = bitstreamService.find(context, bitstreamID);
@@ -113,6 +136,8 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 			}
 		}
 
+		boolean isPrivateBitstream = this.isPrivateBitstream(bitstream);
+
 		// File name & url
 		String fileUrl = contextPath + "/bitstream/id/" +bitstream.getID() + "/" + bitstream.getName();
 		String fileName = bitstream.getName();
@@ -129,6 +154,29 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
         edit.addLabel(T_file_label);
         edit.addItem(null,"break-all").addXref(fileUrl, fileName);
 
+        int bundleCount = 0; // record how many bundles we are able to upload too.
+        Select select = edit.addItem().addSelect("bundle");
+        select.setLabel(T_bundle_label);
+
+        // Get the list of bundles to allow the user to upload too. Either use the default
+        // or one supplied from the dspace.cfg.
+        String[] bundlesNames = DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty("xmlui.bundle.upload");
+        if (ArrayUtils.isEmpty(bundlesNames))
+        {
+            bundlesNames = DEFAULT_BUNDLE_LIST;
+        }
+        for (String part : bundlesNames)
+        {
+            if (part.equals(bitstream.getBundles().get(0).getName())){
+                select.addOption(true,part, message("xmlui.administrative.item.AddBitstreamForm.bundle." + part));
+                bundleCount++;
+            }
+            else if (addBundleOption(item, select, part.trim()))
+            {
+                bundleCount++;
+            }
+        }
+
         Text bitstreamName = edit.addItem().addText("bitstreamName");
         bitstreamName.setLabel(T_filename_label);
         bitstreamName.setHelp(T_filename_help);
@@ -144,18 +192,10 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		description.setHelp(T_description_help);
 		description.setValue(bitstream.getDescription());
 
-        // EMBARGO FIELD
-        // if AdvancedAccessPolicy=false: add Embargo Fields.
-        if(!isAdvancedFormEnabled){
-            AccessStepUtil asu = new AccessStepUtil(context);
-            // if the item is embargoed default value will be displayed.
-            asu.addEmbargoDateDisplayOnly(bitstream, edit);
-        }
-
-		edit.addItem(T_para1);
 
 		// System supported formats
 		Select format = edit.addItem().addSelect("formatID");
+		format.setHelp(T_para1);
 		format.setLabel(T_format_label);
 
                 // load the options menu, skipping the "Unknown" format since "Not on list" takes its place
@@ -203,6 +243,24 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		userFormat.setValue(bitstream.getUserFormatDescription());
 
 
+		//Open access fields
+		List openAccessSection= edit.addList("openAccessSection",List.TYPE_FORM);
+		openAccessSection.setHead(T_open_access_title);
+		CheckBox privateBitstream = openAccessSection.addItem().addCheckBox("publicBitstream");
+		privateBitstream.setLabel(T_open_access_label);
+		privateBitstream.setHelp(T_open_access_help);
+		privateBitstream.addOption(!isPrivateBitstream, "public-bitstream").addContent(T_open_access_checkBox_help);
+		openAccessSection.addItem("embargo-disabled",null).addContent(T_open_access_embargo_disabled);
+		// EMBARGO FIELD
+		// if AdvancedAccessPolicy=false: add Embargo Fields.
+		if(!isAdvancedFormEnabled){
+			AccessStepUtil asu = new AccessStepUtil(context);
+			// if the item is embargoed default value will be displayed.
+			//asu.addEmbargoDateDisplayOnly(bitstream, edit);
+			asu.addEmbargoDateSimpleForm(bitstream, openAccessSection, -1);
+			asu.addReason(bitstream.getDetails(), openAccessSection, -1);
+
+		}
 
 
 		// ITEM: form actions
@@ -213,4 +271,43 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		div.addHidden("administrative-continue").setValue(knot.getId()); 
 
 	}
+
+	private boolean isPrivateBitstream(Bitstream bitstream) throws SQLException {
+		GroupService groupService = EPersonServiceFactory.getInstance().getGroupService();
+		Group anonymous=groupService.findByName(context, Group.ANONYMOUS);
+		ResourcePolicy policy=authorizeService.findByTypeGroupAction(context, bitstream, anonymous, Constants.READ);
+		return policy==null;
+	}
+
+	public boolean addBundleOption(org.dspace.content.Item item, Select select, String bundleName) throws SQLException, WingException
+	{
+
+            java.util.List<Bundle> bundles = itemService.getBundles(item, bundleName);
+            if (bundles == null || bundles.size() == 0)
+            {
+                // No bundle, so the user has to be authorized to add to item.
+                if(!authorizeService.authorizeActionBoolean(context, item, Constants.ADD))
+                {
+                    return false;
+                }
+            } else
+            {
+                // At least one bundle exists, does the user have privileges to upload to it?
+                Bundle bundle = bundles.get(0);
+                if (!authorizeService.authorizeActionBoolean(context, bundle, Constants.ADD))
+                {
+                    return false; // you can't upload to this bundle.
+                }
+
+                // You also need the write privlege on the bundle.
+                if (!authorizeService.authorizeActionBoolean(context, bundle, Constants.WRITE))
+                {
+                    return false;  // you can't upload
+                }
+            }
+
+            // It's okay to upload.
+            select.addOption(bundleName, message("xmlui.administrative.item.AddBitstreamForm.bundle." + bundleName));
+            return true;
+        }
 }
