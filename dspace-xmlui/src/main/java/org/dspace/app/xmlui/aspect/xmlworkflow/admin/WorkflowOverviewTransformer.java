@@ -130,7 +130,9 @@ public class WorkflowOverviewTransformer extends AbstractDSpaceTransformer {
         int page = getParameterPage();
         try {
             Request request = ObjectModelHelper.getRequest(objectModel);
-            UUID collectionIdFilter = Util.getUUIDParameter(request, "filter_collection");
+            UUID collectionIdFilter=null;
+            if (request.getParameter("filter_collection")!=null && !request.getParameter("filter_collection").equals("-1"))
+                collectionIdFilter = Util.getUUIDParameter(request, "filter_collection");
 
             Collection collection = collectionService.find(context, collectionIdFilter);
             int offset = (page - 1) * pageSize;
@@ -291,7 +293,9 @@ public class WorkflowOverviewTransformer extends AbstractDSpaceTransformer {
         Cell filterCell = controlsRow.addCell();
 
         // Create a drop down of the different sort columns available
-        UUID selectedCollectionId = Util.getUUIDParameter(request, "filter_collection");
+        UUID selectedCollectionId=null;
+        if (request.getParameter("filter_collection")!=null && !request.getParameter("filter_collection").equals("-1"))
+            selectedCollectionId = Util.getUUIDParameter(request, "filter_collection");
         filterCell.addContent("Collection filter:");
         Select sortSelect = filterCell.addSelect("filter_collection");
         sortSelect.addOption(null== selectedCollectionId,-1, "None");
