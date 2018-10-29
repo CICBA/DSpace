@@ -125,7 +125,7 @@ public class CSVExportDiscoveryNavigation  extends AbstractDSpaceTransformer imp
         {
         	for(int i = 0; i < fqs.length; i++) {
             	if(i < fqs.length - 1)
-            		filters += fqs[i] + ",";
+            		filters += fqs[i] + ";";
             	else
             		filters += fqs[i];
             }
