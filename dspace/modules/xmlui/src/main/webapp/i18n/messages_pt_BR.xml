@@ -242,6 +242,8 @@
     <message key="xmlui.ArtifactBrowser.FeedbackForm.email_help">Este endereço será utilizado para acompanhamento dos seus comentários.</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.comments">Comentários</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.submit">Enviar comentários</message>
+    <message key="xmlui.ArtifactBrowser.FeedbackForm.captcha_help">Digite o resultado da soma</message>
+	<message key="xmlui.ArtifactBrowser.FeedbackForm.captcha_error">Resultado incorreto, tente novamente</message>
 
     <!-- org.dspace.app.xmlui.artifactbrowser.FeedbackSent.java -->
     <message key="xmlui.ArtifactBrowser.FeedbackSent.title">Dê a sua opinião</message>
