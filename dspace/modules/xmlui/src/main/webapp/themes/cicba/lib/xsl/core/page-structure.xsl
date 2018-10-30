@@ -658,11 +658,10 @@
          </xsl:if>
 
          <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.artifactbrowser.FeedbackForm.div.feedback-form']">
-            <script src='https://www.google.com/recaptcha/api.js'>&#160;</script>
             <script type="text/javascript">
                 <xsl:attribute name="src">
                     <xsl:call-template name="print-theme-path">
-                        <xsl:with-param name="path">js/add_user_feedback_captcha.js</xsl:with-param>
+                        <xsl:with-param name="path">js/cicba_user_captcha.js</xsl:with-param>
                     </xsl:call-template>
                 </xsl:attribute>&#160;
             </script>
