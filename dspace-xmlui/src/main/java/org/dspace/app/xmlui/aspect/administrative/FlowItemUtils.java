@@ -772,12 +772,12 @@ public class FlowItemUtils
 
 		if (isPrivate && setPublicBitstream!=null) {
 			//The bitstream was private and the user has set the bitstream as not private
-			isPrivate=!isPrivate;
+			isPrivate=false;
 			authorizeService.addPolicy(context, bitstream,Constants.READ ,anonymous);
 		}
 		else if(!isPrivate && setPublicBitstream==null) {
 			//The bitstream wasn't private and the user has set the bitstream as private
-			isPrivate=!isPrivate;
+			isPrivate=true;
 			authorizeService.removeGroupPolicies(context,bitstream, anonymous);
 		}
 
@@ -798,19 +798,22 @@ public class FlowItemUtils
 	}
 
 	private static void addBitstreamEmbargo(Context context,HttpServletRequest request,Group group,Bitstream bitstream) throws SQLException, AuthorizeException {
-		Date startDate = null;
-        try {
-			startDate = DateUtils.parseDate(request.getParameter("embargo_until_date"), new String[]{"yyyy-MM-dd", "yyyy-MM", "yyyy"});
-            String reason = request.getParameter("reason");
-            // add embargo just for anonymous
-            ResourcePolicy rp = authorizeService.createOrModifyPolicy(null, context, null, group, null, startDate, Constants.READ, reason, bitstream);
-            if (rp != null) {
-                ResourcePolicyService resourcePolicyService = AuthorizeServiceFactory.getInstance().getResourcePolicyService();
-                resourcePolicyService.update(context, rp);
-            }
-        } catch (ParseException e) {
-		//Do nothing, embargo was null
-        }
+          Date startDate = null;
+          ResourcePolicy rp = null;
+          try {
+              startDate = DateUtils.parseDate(request.getParameter("embargo_until_date"), new String[]{"yyyy-MM-dd", "yyyy-MM", "yyyy"});
+              String reason = request.getParameter("reason");
+              // add embargo just for anonymous
+              rp = authorizeService.createOrModifyPolicy(null, context, null, group, null, startDate, Constants.READ, reason, bitstream);
+          } catch (ParseException e) {
+              //Start date may be empty which means that the embargo was removed
+              if (request.getParameter("embargo_until_date").equals(""))
+                  rp = authorizeService.createOrModifyPolicy(null, context, null, group, null, null, Constants.READ, null, bitstream);
+          }
+          if (rp != null) {
+              ResourcePolicyService resourcePolicyService = AuthorizeServiceFactory.getInstance().getResourcePolicyService();
+              resourcePolicyService.update(context, rp);
+          }
 	}
 
 	/**

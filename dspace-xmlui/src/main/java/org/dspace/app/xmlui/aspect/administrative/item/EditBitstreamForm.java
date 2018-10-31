@@ -89,7 +89,7 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 	protected BitstreamService bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
 	protected BitstreamFormatService bitstreamFormatService = ContentServiceFactory.getInstance().getBitstreamFormatService();
 
-	private static final String[] DEFAULT_BUNDLE_LIST = new String[]{"ORIGINAL", "METADATA", "THUMBNAIL", "LICENSE", "CC-LICENSE"};
+	private static final String[] DEFAULT_BUNDLE_LIST = new String[]{"ORIGINAL"};
 	private static final Message T_bundle_label = message("xmlui.administrative.item.AddBitstreamForm.bundle_label");
 	protected ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 
@@ -151,7 +151,6 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
         edit.addLabel(T_file_label);
         edit.addItem(null,"break-all").addXref(fileUrl, fileName);
 
-        int bundleCount = 0; // record how many bundles we are able to upload too.
         Select select = edit.addItem().addSelect("bundle");
         select.setLabel(T_bundle_label);
 
@@ -164,14 +163,10 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
         }
         for (String part : bundlesNames)
         {
-            if (part.equals(bitstream.getBundles().get(0).getName())){
+            if (part.equals(bitstream.getBundles().get(0).getName()))
                 select.addOption(true,part, message("xmlui.administrative.item.AddBitstreamForm.bundle." + part));
-                bundleCount++;
-            }
-            else if (addBundleOption(item, select, part.trim()))
-            {
-                bundleCount++;
-            }
+            else
+                addBundleOption(item, select, part.trim());
         }
 
         Text bitstreamName = edit.addItem().addText("bitstreamName");
