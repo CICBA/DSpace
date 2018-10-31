@@ -89,7 +89,8 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 	protected BitstreamService bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
 	protected BitstreamFormatService bitstreamFormatService = ContentServiceFactory.getInstance().getBitstreamFormatService();
 
-	private static final String[] DEFAULT_BUNDLE_LIST = new String[]{"ORIGINAL"};
+	private static final String[] EDITABLE_BUNDLE_LIST = new String[]{"ORIGINAL"};
+
 	private static final Message T_bundle_label = message("xmlui.administrative.item.AddBitstreamForm.bundle_label");
 	protected ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 
@@ -156,33 +157,46 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 
         // Get the list of bundles to allow the user to upload too. Either use the default
         // or one supplied from the dspace.cfg.
-        String[] bundlesNames = DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty("xmlui.bundle.upload");
+        String[] bundlesNames = DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty("xmlui.bundle.editable");
         if (ArrayUtils.isEmpty(bundlesNames))
         {
-            bundlesNames = DEFAULT_BUNDLE_LIST;
+            bundlesNames = EDITABLE_BUNDLE_LIST;
         }
+
+        Boolean isEditableBitstream= false;
         for (String part : bundlesNames)
         {
-            if (part.equals(bitstream.getBundles().get(0).getName()))
+            if (part.equals(bitstream.getBundles().get(0).getName())) {
                 select.addOption(true,part, message("xmlui.administrative.item.AddBitstreamForm.bundle." + part));
+                isEditableBitstream=true;
+            }
             else
                 addBundleOption(item, select, part.trim());
+        }
+        //If bistream is not editable its bundle wont be in EDITABLE_BUNDLE_LIST
+        if (!isEditableBitstream) {
+            String bundleName=bitstream.getBundles().get(0).getName();
+            select.addOption(true,bundleName,message("xmlui.administrative.item.AddBitstreamForm.bundle." + bundleName));
+            select.setDisabled();
         }
 
         Text bitstreamName = edit.addItem().addText("bitstreamName");
         bitstreamName.setLabel(T_filename_label);
         bitstreamName.setHelp(T_filename_help);
         bitstreamName.setValue(fileName);
+        bitstreamName.setDisabled(!isEditableBitstream);
 		
 		Select primarySelect = edit.addItem().addSelect("primary");
 		primarySelect.setLabel(T_primary_label);
 		primarySelect.addOption(primaryBitstream,"yes",T_primary_option_yes);
 		primarySelect.addOption(!primaryBitstream,"no",T_primary_option_no);
+		primarySelect.setDisabled(!isEditableBitstream);
 		
 		Text description = edit.addItem().addText("description");
 		description.setLabel(T_description_label);
 		description.setHelp(T_description_help);
 		description.setValue(bitstream.getDescription());
+		description.setDisabled(!isEditableBitstream);
 
 
 		// System supported formats
@@ -225,6 +239,7 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		{
 			format.setOptionSelected(-1);
 		}
+		format.setDisabled(!isEditableBitstream);
 
 		edit.addItem(T_para2);
 
@@ -233,6 +248,7 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		userFormat.setLabel(T_user_label);
 		userFormat.setHelp(T_user_help);
 		userFormat.setValue(bitstream.getUserFormatDescription());
+		userFormat.setDisabled(!isEditableBitstream);
 
 
 		//Open access fields
@@ -242,23 +258,28 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 		privateBitstream.setLabel(T_open_access_label);
 		privateBitstream.setHelp(T_open_access_help);
 		privateBitstream.addOption(!isPrivateBitstream, "public-bitstream").addContent(T_open_access_checkBox_help);
+		privateBitstream.setDisabled(!isEditableBitstream);
 		openAccessSection.addItem("embargo-disabled",null).addContent(T_open_access_embargo_disabled);
 		// EMBARGO FIELD
 		// if AdvancedAccessPolicy=false: add Embargo Fields.
 		if(!isAdvancedFormEnabled){
 			AccessStepUtil asu = new AccessStepUtil(context);
 			// if the item is embargoed default value will be displayed.
-			//asu.addEmbargoDateDisplayOnly(bitstream, edit);
-			asu.addEmbargoDateSimpleForm(bitstream, openAccessSection, -1);
-			asu.addReason(bitstream.getDetails(), openAccessSection, -1);
+			if (isEditableBitstream) {
+			    asu.addEmbargoDateSimpleForm(bitstream, openAccessSection, -1);
+			    asu.addReason(bitstream.getDetails(), openAccessSection, -1);
+			}
+			else
+			    asu.addEmbargoDateDisplayOnly(bitstream, openAccessSection);
 
 		}
 
-
-		// ITEM: form actions
-		org.dspace.app.xmlui.wing.element.Item actions = edit.addItem();
-		actions.addButton("submit_save").setValue(T_submit_save);
-		actions.addButton("submit_cancel").setValue(T_submit_cancel);
+		if (isEditableBitstream) {
+		    // ITEM: form actions
+		    org.dspace.app.xmlui.wing.element.Item actions = edit.addItem();
+		    actions.addButton("submit_save").setValue(T_submit_save);
+		    actions.addButton("submit_cancel").setValue(T_submit_cancel);
+		}
 
 		div.addHidden("administrative-continue").setValue(knot.getId()); 
 
