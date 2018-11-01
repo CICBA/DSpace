@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.servlet.multipart.Part;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.dspace.app.util.Util;
 import org.dspace.app.xmlui.utils.UIException;
@@ -63,6 +64,7 @@ public class FlowItemUtils
 	private static final Message T_bitstream_added = new Message("default","The new bitstream was successfully uploaded.");
 	private static final Message T_bitstream_failed = new Message("default","Error while uploading file.");
 	private static final Message T_bitstream_updated = new Message("default","The bitstream has been updated.");
+	private static final Message T_bitstream_not_updated = new Message("default","The bitstream has not been updated.");
 	private static final Message T_bitstream_delete = new Message("default","The selected bitstreams have been deleted.");
 	private static final Message T_bitstream_order = new Message("default","The bitstream order has been successfully altered.");
 
@@ -78,6 +80,7 @@ public class FlowItemUtils
 
 	protected static final HandleService handleService = HandleServiceFactory.getInstance().getHandleService();
 
+	private static final String[] EDITABLE_BUNDLE_LIST = new String[]{"ORIGINAL"};
 	
 	/**
 	 * Resolve the given identifier to an item. The identifier may be either an
@@ -674,6 +677,19 @@ public class FlowItemUtils
 
 		Item item = itemService.find(context, itemID);
 
+		String[] bundlesNames = DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty("xmlui.bundle.editable");
+		if (ArrayUtils.isEmpty(bundlesNames))
+		{
+			bundlesNames = EDITABLE_BUNDLE_LIST;
+		}
+
+		//Check if bitstream is editable
+		if (!isEditableBitstream(bitstream)){
+			result.setContinue(true);
+			result.setOutcome(false);
+			result.setMessage(T_bitstream_not_updated);
+			return result;
+		}
 
 		//Step 1:
 		// Update the bitstream's description and name
@@ -695,7 +711,7 @@ public class FlowItemUtils
 		if (bundles != null && bundles.size() > 0)
 		{
 			Bundle bundle = bundles.get(0);
-			if (!bundle.getName().equals(bundleName)){
+			if (!bundle.getName().equals(bundleName) && isEditableBundle(bundleName)){
 				//The user has set a different bundle
 				bundle.removeBitstream(bitstream);
 				if (bundle.getBitstreams().isEmpty())
@@ -795,6 +811,22 @@ public class FlowItemUtils
         result.setMessage(T_bitstream_updated);
 
 		return result;
+	}
+
+	private static boolean isEditableBundle(String bundleName) {
+		for (int i=0; i<EDITABLE_BUNDLE_LIST.length;i++) {
+			if (bundleName.equals(EDITABLE_BUNDLE_LIST[i]))
+					return true;
+		}
+		return false;
+	}
+
+	private static Boolean isEditableBitstream(Bitstream bitstream) throws SQLException {
+		if (bitstream.getBundles() != null && bitstream.getBundles().size()>0) {
+			String currentBundle=bitstream.getBundles().get(0).getName();
+			return isEditableBundle(currentBundle);
+		}
+		return false;
 	}
 
 	private static void addBitstreamEmbargo(Context context,HttpServletRequest request,Group group,Bitstream bitstream) throws SQLException, AuthorizeException {

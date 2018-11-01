@@ -56,6 +56,7 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 	private static final Message T_dspace_home = message("xmlui.general.dspace_home");
 	private static final Message T_submit_save = message("xmlui.general.save");
 	private static final Message T_submit_cancel = message("xmlui.general.cancel");
+	private static final Message T_submit_back = message("xmlui.general.return");
 	private static final Message T_item_trail = message("xmlui.administrative.item.general.item_trail");
 	
 	private static final Message T_title = message("xmlui.administrative.item.EditBitstreamForm.title");
@@ -274,12 +275,14 @@ public class EditBitstreamForm extends AbstractDSpaceTransformer
 
 		}
 
+		// ITEM: form actions
+		org.dspace.app.xmlui.wing.element.Item actions = edit.addItem();
 		if (isEditableBitstream) {
-		    // ITEM: form actions
-		    org.dspace.app.xmlui.wing.element.Item actions = edit.addItem();
 		    actions.addButton("submit_save").setValue(T_submit_save);
 		    actions.addButton("submit_cancel").setValue(T_submit_cancel);
 		}
+		else
+		    actions.addButton("submit_cancel").setValue(T_submit_back);
 
 		div.addHidden("administrative-continue").setValue(knot.getId()); 
 
