@@ -294,7 +294,7 @@ public class WorkflowOverviewTransformer extends AbstractDSpaceTransformer {
         UUID selectedCollectionId = Util.getUUIDParameter(request, "filter_collection");
         filterCell.addContent("Collection filter:");
         Select sortSelect = filterCell.addSelect("filter_collection");
-        sortSelect.addOption(null== selectedCollectionId,-1, "None");
+        sortSelect.addOption(null== selectedCollectionId,"", "None");
         List<Collection> collections = collectionService.findAll(context);
         for (Collection collection : collections) {
             sortSelect.addOption(collection.getID().equals(selectedCollectionId), collection.getID().toString(), collection.getName());
