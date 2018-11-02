@@ -81,6 +81,11 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 			return choices[0].label;
 	}
 
+    /**
+     * Este metodos construye la query sparql que posteriormente será ejecutada en drupal
+     *
+     *  @param idSearch Determina el tipo de query, si se hará la busqueda por id (key) de autoridad o por texto
+     */
 	protected abstract ParameterizedSparqlString getSparqlSearch(String field, String filter, String locale,boolean idSearch);
 
 	protected abstract Choice[] extractChoicesfromQuery(QueryEngineHTTP httpQuery);

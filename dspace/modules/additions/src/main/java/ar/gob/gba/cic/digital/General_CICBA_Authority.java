@@ -40,7 +40,7 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 		pqs.setNsPrefix("cic", NS_CIC);
 		pqs.setNsPrefix("skos", NS_SKOS);
 
-		pqs.setCommandText("SELECT "+ this.getSelectQueryFields() + "\n");
+		pqs.setCommandText("SELECT "+ this.getSelectQueryFields(idSearch) + "\n");
 		pqs.append("WHERE {\n");
 		pqs.append("?concept a "+ typeProperty + " .\n");
 		pqs.append("?concept "+ labelProperty +" ?label .\n");
@@ -76,7 +76,7 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 		return pqs;
 	}
 
-	protected String getSelectQueryFields(){
+	protected String getSelectQueryFields(boolean idSearch){
 		return "?concept ?label";
 	}
 

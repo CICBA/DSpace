@@ -7,8 +7,12 @@ import com.hp.hpl.jena.query.QuerySolution;
 public class Institution_CICBA_Authority extends General_CICBA_Authority {
 
 	@Override
-	protected String getSelectQueryFields() {
-		return super.getSelectQueryFields() +" ?initials";
+	protected String getSelectQueryFields(boolean idSearch) {
+		String selectFields= super.getSelectQueryFields(idSearch);
+		//Si la query se hace por text hay que agregar la variable initials que retorna las siglas de la institucion
+		if (!idSearch)
+			selectFields +=" ?initials";
+		return selectFields;
 	}
 
 	@Override
