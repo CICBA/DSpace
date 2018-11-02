@@ -19,6 +19,7 @@ import org.dspace.app.xmlui.wing.Message;
 import org.dspace.app.xmlui.wing.WingException;
 import org.dspace.app.xmlui.wing.element.Body;
 import org.dspace.app.xmlui.wing.element.Button;
+import org.dspace.app.xmlui.wing.element.CheckBox;
 import org.dspace.app.xmlui.wing.element.Division;
 import org.dspace.app.xmlui.wing.element.File;
 import org.dspace.app.xmlui.wing.element.Item;
@@ -61,7 +62,11 @@ public class AddBitstreamForm extends AbstractDSpaceTransformer
 	private static final Message T_description_label = message("xmlui.administrative.item.AddBitstreamForm.description_label");
 	private static final Message T_description_help = message("xmlui.administrative.item.AddBitstreamForm.description_help");
 	private static final Message T_submit_upload = message("xmlui.administrative.item.AddBitstreamForm.submit_upload");
-
+	private static final Message T_open_access_label = message("xmlui.administrative.item.EditBitstreamForm.open_access_label");
+	private static final Message T_open_access_help = message("xmlui.administrative.item.EditBitstreamForm.open_access_help");
+	private static final Message T_open_access_checkBox_help = message("xmlui.administrative.item.EditBitstreamForm.open_access_checkBox_help");
+	private static final Message T_open_access_title = message("xmlui.administrative.item.EditBitstreamForm.open_access_title");
+	private static final Message T_open_access_embargo_disabled = message("xmlui.administrative.item.EditBitstreamForm.open_access_embargo_disabled");
 	private static final Message T_no_bundles = message("xmlui.administrative.item.AddBitstreamForm.no_bundles");
 
 	
@@ -145,15 +150,24 @@ public class AddBitstreamForm extends AbstractDSpaceTransformer
                 upload.addItem().addContent(T_no_bundles);
             }
 
+
+            //Open access fields
+            List openAccessSection= upload.addList("openAccessSection",List.TYPE_FORM);
+            openAccessSection.setHead(T_open_access_title);
+            //Private bitstream CheckBox
+            CheckBox privateBitstream = openAccessSection.addItem().addCheckBox("publicBitstream");
+            privateBitstream.setLabel(T_open_access_label);
+            privateBitstream.setHelp(T_open_access_help);
+            privateBitstream.addOption(true,"public-bitstream").addContent(T_open_access_checkBox_help);
+            openAccessSection.addItem("embargo-disabled",null).addContent(T_open_access_embargo_disabled);
             // EMBARGO FIELD
             // if AdvancedAccessPolicy=false: add Embargo Fields.
             if(!isAdvancedFormEnabled){
                 AccessStepUtil asu = new AccessStepUtil(context);
                 // if the item is embargoed default value will be displayed.
-                asu.addEmbargoDateSimpleForm(item, upload, -1);
-                asu.addReason(null, upload, -1);
+                asu.addEmbargoDateSimpleForm(item, openAccessSection, -1);
+                asu.addReason(null, openAccessSection, -1);
             }
-
 
 
             // ITEM: actions

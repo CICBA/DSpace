@@ -1418,7 +1418,11 @@
     <message key="xmlui.administrative.item.EditBitstreamForm.user_help">O aplicativo usado para criar o arquivo, e o número da versão (por exemplo, "<i>ACMESoft SuperApp version 1.5</i>").</message>
     <message key="xmlui.administrative.item.EditBitstreamForm.name_label">Nome do arquivo</message>
     <message key="xmlui.administrative.item.EditBitstreamForm.name_help">Renomeie o arquivo para o bitstream. Note que isto irá mudar a exibição da URL bistream , mas links antigos ainda serão usados enquanto a sequencia ID não muda.</message>
-
+    <message key="xmlui.administrative.item.EditBitstreamForm.open_access_label">Acesso aberto ao bitstream</message>
+    <message key="xmlui.administrative.item.EditBitstreamForm.open_access_help">Ao permitir acesso aberto a um bitstream, ele ficará visível para toda a comunidade. Caso contrário, somente os administradores e o proprietário do item terão acesso a ele.</message>
+    <message key="xmlui.administrative.item.EditBitstreamForm.open_access_checkBox_help">Permitir acesso aberto ao bitstream</message>
+    <message key="xmlui.administrative.item.EditBitstreamForm.open_access_title">Configuração de acesso aberto</message>
+    <message key="xmlui.administrative.item.EditBitstreamForm.open_access_embargo_disabled">Nenhum embargo pode ser aplicado a um bitstream privado (com acesso aberto desativado)</message>
     <!-- org.dspace.app.xmlui.administrative.item.EditItemBitstreamsForm -->
     <message key="xmlui.administrative.item.EditItemBitstreamsForm.title">Item Bitstreams</message>
     <message key="xmlui.administrative.item.EditItemBitstreamsForm.trail">Item bitstreams</message>
