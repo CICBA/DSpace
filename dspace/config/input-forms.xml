@@ -202,11 +202,9 @@
        <field>
          <dc-schema>cic</dc-schema>
          <dc-element>institucionOrigen</dc-element>
-         <repeatable>true</repeatable>
          <label>Centro CIC</label>
          <input-type>onebox</input-type>
-         <hint>Centro CIC al que pertenece la obra</hint>
-         <required>Debe indicar el centro CIC al que pertenece la obra.</required>
+         <hint>Centro CIC al que pertenece.</hint>
        </field>
      
      	<field>
@@ -565,11 +563,9 @@
      	<field>
          <dc-schema>cic</dc-schema>
          <dc-element>institucionOrigen</dc-element>
-         <repeatable>true</repeatable>
          <label>Centro CIC</label>
          <input-type>onebox</input-type>
-         <hint>Centro CIC al que pertenece la obra</hint>
-         <required>Debe indicar el centro CIC al que pertenece la obra.</required>
+         <hint>Centro CIC al que pertenece.</hint>
        </field>
      
      	<field>
