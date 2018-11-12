@@ -56,11 +56,6 @@ DATEMTH=date +%m
 ##  SOLR
 ##################################################################################
 
-#backups del core de estadisticas de solr COMPLETO (todos los miercoles y domingo a las 19:00hs)
-0 19 * * 0	root	tar --directory $DSPACE_INSTALL_DIR -czf $DSPACE_BACKUP_DIR/solr/statistics.backup.domingo.tgz solr/statistics/
-0 19 * * 3	root	tar --directory $DSPACE_INSTALL_DIR -czf $DSPACE_BACKUP_DIR/solr/statistics.backup.miercoles.tgz solr/statistics/
-
-
 #backups de cores de solr. Todos los días a las 5AM. 
 0 5 * * *	root	{ echo "Realizo backup del core statistics a las $($DATESTR)"; wget -q -O - "http://$SOLR_SERVER/statistics/replication?command=backup&location=$DSPACE_BACKUP_DIR/solr/statistics/&numberToKeep=3"; }>> $DSPACE_INSTALL_DIR/log/solr-backups.log  
 5 5 * * *	root	{ echo "Realizo backup del core oai a las $($DATESTR)"; wget -q -O - "http://$SOLR_SERVER/oai/replication?command=backup&location=$DSPACE_BACKUP_DIR/solr/oai/&numberToKeep=3"; }>> $DSPACE_INSTALL_DIR/log/solr-backups.log  
