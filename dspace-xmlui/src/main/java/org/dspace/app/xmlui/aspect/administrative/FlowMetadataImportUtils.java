@@ -84,6 +84,8 @@ public class FlowMetadataImportUtils
                 result.addError(e.getLocalizedMessage());
                 result.setMessage(T_import_failed);
                 log.debug(LogManager.getHeader(context, "metadataimport", "Error encountered while making changes - " + e.getMessage()));
+                //Se relanza la excepción para forzar un context.abort() y evitar inconsistencias en la BD
+                throw e;
             }
         }
         else {

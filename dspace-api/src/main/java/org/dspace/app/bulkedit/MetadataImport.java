@@ -419,7 +419,7 @@ public class MetadataImport
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            throw new MetadataImportException(e.getMessage());
         }
 
         // Return the changes
