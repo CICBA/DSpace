@@ -149,7 +149,7 @@
          <dc-schema>dcterms</dc-schema>
          <dc-element>creator</dc-element>
          <dc-qualifier>editor</dc-qualifier>
-         <repeatable>false</repeatable>
+         <repeatable>true</repeatable>
          <label>Editor</label>
 		 <type-bind>Libro</type-bind>
          <input-type>onebox</input-type>
