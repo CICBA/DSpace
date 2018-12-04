@@ -107,25 +107,24 @@ public class PDFFilter extends MediaFilter
             
             try
             {
-                long fileSize = 0;
                 if (source instanceof FileInputStream) {
-                  fileSize = ((FileInputStream) source).getChannel().size();
-                }
 
-                long minSize  = ConfigurationManager.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5);
-                float xmxFactor = (float) ConfigurationManager.getIntProperty("pdffilter.maxSizeHeapPercentage",100)/100;
+                  long fileSize = ((FileInputStream) source).getChannel().size();
+                  long minSize  = ConfigurationManager.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5)*1024*1024;
+                  float xmxFactor = (float) ConfigurationManager.getIntProperty("pdffilter.maxSizeHeapPercentage",100)/100;
 
-                if (((FileInputStream) source).getChannel().size()<minSize*1024*1024) {
-                    pdfDoc = PDDocument.load(source);
+                  if (((FileInputStream) source).getChannel().size()<minSize) {
+                      pdfDoc = PDDocument.load(source);
+                  }
+                  else if(fileSize < (long) (Runtime.getRuntime().maxMemory()*xmxFactor)){
+                      pdfDoc = PDDocument.load(source,MemoryUsageSetting.setupTempFileOnly());
+                  }
+                  else {
+                      log.warn("PDF too large!");
+                      return null;
+                  }
+                  pts.writeText(pdfDoc, writer);
                 }
-                else if(fileSize < (long) (Runtime.getRuntime().maxMemory()*xmxFactor)){
-                    pdfDoc = PDDocument.load(source,MemoryUsageSetting.setupTempFileOnly());
-                }
-                else {
-                    System.out.println("PDF too large!");
-                    return null;
-                }
-                pts.writeText(pdfDoc, writer);
             }
             finally
             {
