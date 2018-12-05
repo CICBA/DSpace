@@ -1086,11 +1086,11 @@ class BrowseParams
             String filter_key;
             String filter_value;
             if (scope.getAuthorityValue() != null) {
-                filter_key   = BrowseParams.FILTER_VALUE[1];
+                filter_key = BrowseParams.FILTER_VALUE[1];
                 filter_value = scope.getAuthorityValue();
             }
             else {
-                filter_key   = BrowseParams.FILTER_VALUE[0];
+                filter_key = BrowseParams.FILTER_VALUE[0];
                 filter_value = scope.getFilterValue();
             }
             paramMap.put(filter_key,filter_value);
