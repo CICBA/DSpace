@@ -1617,15 +1617,15 @@ function doEditItemMetadata(itemID, templateCollectionID)
 			// go back to wherever we came from.
 			return null;
 		}
-		else if (cocoon.request.get("submit_add"))
-		{
-			// Add a new metadata entry
-			result = FlowItemUtils.processAddMetadata(getDSContext(),itemID,cocoon.request);
-		}
 		else if (cocoon.request.get("submit_update"))
 		{
 			// Update the item
 			result = FlowItemUtils.processEditItem(getDSContext(),itemID,cocoon.request);
+			//Check if the user wants to add new metadata as well
+			if (cocoon.request.get("value") && (cocoon.request.get("value") != "")){
+				  // Add a new metadata entry
+				  result = FlowItemUtils.processAddMetadata(getDSContext(),itemID,cocoon.request);
+			}
 		}
 	} while (true)
 }
