@@ -197,7 +197,7 @@ public class EditItemMetadataForm extends AbstractDSpaceTransformer {
                 addAuthority.setLabel(T_authority_label);
                 
 
-                addForm.addItem().addButton("submit_add").setValue(T_submit_add);
+                addForm.addItem().addButton("submit_update").setValue(T_submit_add);
 
                 
                 
