@@ -2483,10 +2483,14 @@ function doEditCollection(collectionID,newCollectionP)
 
 	do {
 
-		if (cocoon.request.get("submit_return") || cocoon.request.get("submit_save"))
+		if (cocoon.request.get("submit_return"))
 		{
 			// go back to wherever we came from.
 			return null;
+		}
+		else if (cocoon.request.get("submit_save"))
+		{
+			doEditCollectionMetadata(collectionID,-1)
 		}
 		else if (cocoon.request.get("submit_metadata"))
 		{
@@ -2524,12 +2528,18 @@ function doEditCollection(collectionID,newCollectionP)
  */
 function doEditCollectionMetadata(collectionID)
 {
+	var clearcache;
+	if (cocoon.request.get("submit_save"))
+		clearcache = "?clearcache=true";
+	else
+		clearcache = "";
+
 	assertEditCollection(collectionID);
 
 	var result;
 
 	do {
-		sendPageAndWait("admin/collection/editMetadata",{"collectionID":collectionID},result);
+		sendPageAndWait("admin/collection/editMetadata"+clearcache,{"collectionID":collectionID},result);
 		assertEditCollection(collectionID);
 		result=null;
 
@@ -2633,13 +2643,20 @@ function setOriginalWorkflowRoles(collectionID, result) {
 }
 function doAssignCollectionRoles(collectionID)
 {
+
+	var clearcache;
+	if (cocoon.request.get("submit_save"))
+		clearcache = "?clearcache=true";
+	else
+		clearcache = "";
+
 	assertEditCollection(collectionID);
 
 	var result;
 	var workflow = null;
 
 	do {
-		sendPageAndWait("admin/collection/assignRoles",{"collectionID":collectionID},result);
+		sendPageAndWait("admin/collection/assignRoles"+clearcache,{"collectionID":collectionID},result);
 		assertEditCollection(collectionID);
 		result = null;
 
@@ -2911,7 +2928,7 @@ function doDeleteCollection(collectionID)
 		var result = FlowContainerUtils.processDeleteCollection(getDSContext(),collectionID);
 
 		if (result.getContinue()) {
-			cocoon.redirectTo(cocoon.request.getContextPath()+"/community-list",true);
+			cocoon.redirectTo(cocoon.request.getContextPath()+"/community-list?clearcache=true",true);
 			getDSContext().complete();
 			cocoon.exit();
 		}
@@ -3048,11 +3065,17 @@ function doEditCommunity(communityID)
  */
 function doEditCommunityMetadata(communityID)
 {
+	var clearcache;
+	if (cocoon.request.get("submit_save"))
+		clearcache = "?clearcache=true";
+	else
+		clearcache = "";
+
 	assertEditCommunity(communityID);
 	var result;
 
 	do {
-		sendPageAndWait("admin/community/editMetadata",{"communityID":communityID},result);
+		sendPageAndWait("admin/community/editMetadata"+clearcache,{"communityID":communityID},result);
 		assertEditCommunity(communityID);
 		result=null;
 
@@ -3088,7 +3111,7 @@ function doDeleteCommunity(communityID) {
 		var result = FlowContainerUtils.processDeleteCommunity(getDSContext(),communityID);
 
 		if (result.getContinue()) {
-			cocoon.redirectTo(cocoon.request.getContextPath()+"/community-list",true);
+			cocoon.redirectTo(cocoon.request.getContextPath()+"/community-list?clearcache=true",true);
 			getDSContext().complete();
 			cocoon.exit();
 		}

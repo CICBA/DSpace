@@ -32,6 +32,11 @@ collections / items / and bitstreams.
                 <map:matcher name="HandleAuthorizedMatcher" src="org.dspace.app.xmlui.aspect.general.HandleAuthorizedMatcher"/>
                 <map:matcher name="ContainerHomePageSelector" src="org.dspace.app.xmlui.aspect.viewArtifacts.ContainerHomePageMatcher"/>
         </map:matchers>
+
+        <map:actions>
+                <map:action name="ClearCacheByGroupAction" src="ar.unlp.sedici.cocoon.acting.ClearCacheByGroupAction"/>
+        </map:actions>
+
     </map:components>
 
     <map:pipelines>
@@ -53,6 +58,9 @@ collections / items / and bitstreams.
 
             <!-- List all communities & collections in DSpace -->
             <map:match pattern="community-list">
+                    <map:match type="request" pattern="clearcache">
+                            <map:act type="ClearCacheByGroupAction"/>
+                    </map:match>
                     <map:transform type="CommunityBrowser">
                             <map:parameter name="depth" value="999"/>
                     </map:transform>
