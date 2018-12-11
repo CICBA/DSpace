@@ -108,6 +108,7 @@ to administer DSpace.
     		<map:action name="ControlPanelAction" src="org.dspace.app.xmlui.aspect.administrative.ControlPanelAction" />
     		<map:action name="CurrentActivityAction" src="org.dspace.app.xmlui.aspect.administrative.CurrentActivityAction" />
                 <map:action name="ClearCacheAction" src="org.apache.cocoon.acting.ClearCacheAction"/>        
+                <map:action name="ClearCacheByGroupAction" src="ar.unlp.sedici.cocoon.acting.ClearCacheByGroupAction"/>
     	</map:actions>		
 		
 		<map:selectors>
@@ -338,8 +339,12 @@ to administer DSpace.
 		        		<map:match pattern="admin/not-authorized">
 		        			<map:transform type="NotAuthorized"/>
 		        	</map:match>
-		        		
-		        		
+
+		                <!-- If the 'clearcache' request parameter is specified, first clear the cocoon cache -->
+		                <map:match type="request" pattern="clearcache">
+		                     <map:act type="ClearCacheByGroupAction"/>
+		                </map:match>
+
 		        	<!-- EPeople management pages -->
 		        		
 		        		
