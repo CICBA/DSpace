@@ -552,12 +552,19 @@ function startMetadataImport()
 {
 
         assertAdministrator();
-
+    try{
 	doMetadataImport();
 
 	cocoon.redirectTo(cocoon.request.getContextPath());
         getDSContext().complete();
 	cocoon.exit();
+    }catch (error){
+       cocoon.redirectTo(cocoon.request.getContextPath());
+       //Hubo un error en la importacion, se revierten los cambios en la BD
+       getDSContext().abort();
+       //Se relanza la excepcion para cortar la ejecucion y mostrar el error
+       throw error.message;
+    }
 }
 
 function startBatchImport()
