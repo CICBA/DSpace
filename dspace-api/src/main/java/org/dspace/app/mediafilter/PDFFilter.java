@@ -120,7 +120,8 @@ public class PDFFilter extends MediaFilter
                       pdfDoc = PDDocument.load(source,MemoryUsageSetting.setupTempFileOnly());
                   }
                   else {
-                      log.warn("PDF too large!");
+                      log.warn("PDF too large! (Item handle " + currentItem.getHandle() + "). PDF Size (" + fileSize + " bytes) "
+                      		+ "is bigger than the max filesize allowed (" + (long) (Runtime.getRuntime().maxMemory() * xmxFactor) + " bytes)");
                       return null;
                   }
                   pts.writeText(pdfDoc, writer);
