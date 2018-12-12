@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.dspace.content.Item;
@@ -106,8 +107,25 @@ public class PDFFilter extends MediaFilter
             
             try
             {
-                pdfDoc = PDDocument.load(source);
-                pts.writeText(pdfDoc, writer);
+                if (source instanceof FileInputStream) {
+
+                  long fileSize = ((FileInputStream) source).getChannel().size();
+                  long minSize  = ConfigurationManager.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5) * 1024 * 1024;
+                  float xmxFactor = (float) ConfigurationManager.getIntProperty("pdffilter.maxSizeHeapPercentage", 100) / 100;
+
+                  if (((FileInputStream) source).getChannel().size() < minSize) {
+                      pdfDoc = PDDocument.load(source);
+                  }
+                  else if(fileSize < (long) (Runtime.getRuntime().maxMemory() * xmxFactor)){
+                      pdfDoc = PDDocument.load(source,MemoryUsageSetting.setupTempFileOnly());
+                  }
+                  else {
+                      log.warn("PDF too large! (Item handle " + currentItem.getHandle() + "). PDF Size (" + fileSize + " bytes) "
+                      		+ "is bigger than the max filesize allowed (" + (long) (Runtime.getRuntime().maxMemory() * xmxFactor) + " bytes)");
+                      return null;
+                  }
+                  pts.writeText(pdfDoc, writer);
+                }
             }
             finally
             {
