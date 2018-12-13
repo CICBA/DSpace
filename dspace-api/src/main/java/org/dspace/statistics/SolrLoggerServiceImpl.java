@@ -661,6 +661,11 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
 
     public class ResultProcessor
     {
+        /**
+         * If true, every time when process a list of documents using {@link ResultProcessor#process(List)} a 
+         * {@link HttpSolrServer#commit()} will be executed.
+         */
+        private boolean commitAtEveryProcess = false;
 
         public void execute(String query) throws SolrServerException, IOException {
             Map<String, String> params = new HashMap<String, String>();
@@ -681,11 +686,19 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
             // Run over the rest
             for (int i = maxDocumetsPerProcess; i < numbFound; i += maxDocumetsPerProcess)
             {
-                params.put("start", String.valueOf(i));
+                if(commitAtEveryProcess) {
+                    commit();
+                } else {
+                    //If not use commit at each set of changes, pagination must be used To avoid solr version conflict when update a doc.
+                    //See "Optimistic concurrency control" in Solr.
+                    params.put("start", String.valueOf(i));
+                }
                 solrParams = new MapSolrParams(params);
                 response = solr.query(solrParams);
                 process(response.getResults());
             }
+            //Commit lastest changes
+            commit();
 
         }
 
@@ -701,6 +714,21 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
             for(SolrDocument doc : docs){
                 process(doc);
             }
+        }
+        
+        /**
+         * Set the processor to always make a commit of the changes to Solr when call {@link ResultProcessor#process(List)}.
+         */
+        public void alwaysCommitAtProcess() {
+            commitAtEveryProcess = true;
+        }
+        
+        /**
+         * The processor will not manage the commits of changes, it will be delegated to the default Solr configuration.
+         * Is the oposite of {@link ResultProcessor#alwaysCommitAtProcess()}.
+         */
+        public void onlyAutoCommit() {
+            commitAtEveryProcess = false;
         }
 
         /**
@@ -774,29 +802,33 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
     private void markRobotsBy(String solrFieldName, Set<String> listOfPatterns){
         listOfPatterns = (listOfPatterns == null)? new HashSet<String>(): listOfPatterns;
         int counter = 0;
-        if(solrFieldName == null && solrFieldName.isEmpty()) {
+        if(solrFieldName == null || solrFieldName.isEmpty()) {
             log.error("Invalid solr field name passed when marking bots: is null or empty.");
             return;
         }
+        
+        /* Result Process to alter record to be identified as a bot */
+        ResultProcessor processor = new ResultProcessor(){
+            @Override
+            public void process(SolrDocument doc) throws IOException, SolrServerException {
+                doc.removeFields("isBot");
+                doc.addField("isBot", true);
+                SolrInputDocument newInput = ClientUtils.toSolrInputDocument(doc);
+                solr.add(newInput);
+            }
+        };
+        
+        processor.alwaysCommitAtProcess();
         
         for(String pattern : listOfPatterns)
         {
             log.info("(" + counter + "/" + listOfPatterns.size() + ") Processing pattern for solr field \"" + solrFieldName + "\", pattern value: \"" + pattern + "\"");
             try {
-                /* Result Process to alter record to be identified as a bot */
-                ResultProcessor processor = new ResultProcessor(){
-                    @Override
-                    public void process(SolrDocument doc) throws IOException, SolrServerException {
-                        doc.removeFields("isBot");
-                        doc.addField("isBot", true);
-                        SolrInputDocument newInput = ClientUtils.toSolrInputDocument(doc);
-                        solr.add(newInput);
-                    }
-                };
                 /* query for the specified spider pattern, exclude results previously set as bots. */
                 processor.execute(solrFieldName + ":/" + buildSolrRegex(pattern) + "/ AND -isBot:true");
                 
-                solr.commit();
+                /** The processor is configured to make at every doc processing... See ResultProcessor.alwaysCommitAtProcess() */
+                //solr.commit();
             } catch (Exception e) {
                 log.error(e.getMessage(),e);
             }
@@ -868,6 +900,19 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
     }
     
     /**
+     * Delete Solr statistics records that matches the passed query.
+     * @param query
+     */
+    private static void deleteBy(String query)
+    {
+        try {
+            solr.deleteByQuery(query);
+        } catch (SolrServerException | IOException e) {
+            log.error(e.getMessage(),e);
+        }
+    }
+    
+    /**
      * Delete robots by multiple criteria: IP, User Agent, and Domain.
      */
     @Override
@@ -875,23 +920,15 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
     {
         log.info("Delete robots by IP starting now...");
         for(String ip : SpiderDetector.getSpiderIpAddresses()){
-            deleteIP(ip);
+            deleteBy("ip:" + ip + "*");
         }
         log.info("Delete robots by User Agent starting now...");
         for(String agent : SpiderDetector.getSpiderAgents()) {
-            try {
-                solr.deleteByQuery("userAgent:/"+ buildSolrRegex(agent) + "/");
-            } catch (Exception e) {
-                 log.error("[pattern '" + agent + "']" + e.getMessage(),e);
-            }
+            deleteBy("userAgent:/" + buildSolrRegex(agent) + "/");
         }
         log.info("Delete robots by Domain starting now...");
         for(String domain : SpiderDetector.getSpiderDomains()) {
-            try {
-                solr.deleteByQuery("dns:/"+ buildSolrRegex(domain) + "/");
-            } catch (Exception e) {
-                log.error("[pattern '" + domain + "']" + e.getMessage(),e);
-            }
+            deleteBy("dns:/" + buildSolrRegex(domain) + "/");
         }
     }
 
