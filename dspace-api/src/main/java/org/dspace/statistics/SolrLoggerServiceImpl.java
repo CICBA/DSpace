@@ -747,7 +747,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
                 log.error("ERROR when processing pattern for solr field \"ip\", "
                         + "with pattern value: \"" + ip + "\".\n" + e.getMessage(), e);
             } catch (RemoteSolrException e) {
-                log.fatal("ERROR when processing pattern for solr field \"ip\", "
+                log.error("ERROR when processing pattern for solr field \"ip\", "
                         + "with pattern value: \"" + ip + "\".\n" + e.getMessage(), e);
                 //Stop execution re-throwing runtime exception...
                 throw e;
@@ -814,7 +814,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
                 log.error("ERROR when processing pattern for solr field \"" + solrFieldName + "\", "
                         + "with pattern value: \"" + pattern + "\".\n" + e.getMessage(), e);
             } catch (RemoteSolrException e) {
-                log.fatal("ERROR when processing pattern for solr field \"" + solrFieldName + "\", "
+                log.error("ERROR when processing pattern for solr field \"" + solrFieldName + "\", "
                         + "with pattern value: \"" + pattern + "\".\n" + e.getMessage(), e);
               //Stop execution re-throwing runtime exception...
                 throw e;
@@ -898,7 +898,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
             log.error("ERROR when deleting records for delete query \"" + query + "\".\n" 
                          + e.getMessage(), e);
         } catch (RemoteSolrException e) {
-            log.fatal("ERROR when deleting records for delete query \"" + query + "\".\n" 
+            log.error("ERROR when deleting records for delete query \"" + query + "\".\n" 
                     + e.getMessage(), e);
             //Stop execution re-throwing runtime exception...
             throw e;
