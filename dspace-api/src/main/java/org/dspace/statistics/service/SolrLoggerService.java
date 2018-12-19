@@ -106,7 +106,7 @@ public interface SolrLoggerService {
 
     public void deleteIP(String ip);
 
-    public void deleteRobotsByIP();
+    public void deleteRobots();
 
     /*
      * update(String query, boolean addField, String fieldName, Object

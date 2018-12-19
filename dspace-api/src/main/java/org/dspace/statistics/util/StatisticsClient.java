@@ -89,7 +89,7 @@ public class StatisticsClient
         }
         else if(line.hasOption('i'))
         {
-            solrLoggerService.deleteRobotsByIP();
+            solrLoggerService.deleteRobots();
         }
         else if(line.hasOption('o'))
         {

@@ -890,7 +890,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
      * Delete Solr statistics records that matches the passed query.
      * @param query
      */
-    private static void deleteBy(String query)
+    private void deleteBy(String query)
     {
         try {
             solr.deleteByQuery(query);
@@ -909,7 +909,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
      * Delete robots by multiple criteria: IP, User Agent, and Domain.
      */
     @Override
-    public void deleteRobotsByIP()
+    public void deleteRobots()
     {
         log.info("Delete robots by IP starting now...");
         for(String ip : SpiderDetector.getSpiderIpAddresses()){
