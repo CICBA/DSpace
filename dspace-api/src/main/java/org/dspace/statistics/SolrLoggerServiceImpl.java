@@ -69,12 +69,12 @@ import org.dspace.content.Collection;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.BitstreamService;
 import org.dspace.content.service.DSpaceObjectLegacySupportService;
-import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Constants;
 import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.statistics.service.SolrLoggerService;
 import org.dspace.statistics.util.DnsLookup;
 import org.dspace.statistics.util.LocationUtils;
@@ -665,7 +665,8 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
 
         public void execute(String query) throws SolrServerException, IOException {
             Map<String, String> params = new HashMap<String, String>();
-            int maxDocumetsPerProcess= ConfigurationManager.getIntProperty("solr-statistics", "spiderDetector.batchUpdateSize",10);
+            ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+            int maxDocumetsPerProcess= configurationService.getIntProperty("spiderDetector.batchUpdateSize",10);
             params.put("q", query);
             params.put("rows", String.valueOf(maxDocumetsPerProcess));
             if(0 < statisticYearCores.size()){
