@@ -141,7 +141,7 @@
                       }
                     });
                 </script>
-                <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">&#160;</script>
+                <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">&#160;</script>
             </xsl:if>
             
             <!-- The following javascript removes the default text of empty text areas when they are focused on or submitted -->
