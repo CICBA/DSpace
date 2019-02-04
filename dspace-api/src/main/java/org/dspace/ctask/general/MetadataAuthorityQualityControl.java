@@ -23,7 +23,6 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	protected ChoiceAuthorityService choiceAuthorityService = ContentAuthorityServiceFactory.getInstance()
 			.getChoiceAuthorityService();
 
-	protected final String PLUGIN_PREFIX = "metadataauthorityqualitycontrol";
 	protected boolean fixmode = false;
 	protected boolean fixvariants = false;
 
