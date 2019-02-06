@@ -26,12 +26,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	protected boolean fixmode = false;
 	protected boolean fixvariants = false;
 
-	protected StringBuilder resultReport;
-
 	@Override
 	public void init(Curator curator, String taskId) throws IOException {
 		super.init(curator, taskId);
-		resultReport = new StringBuilder();
 		fixmode = taskBooleanProperty("fixmode", false);
 		if (fixmode) {
 			fixvariants = taskBooleanProperty("fixvariants", false);
@@ -40,38 +37,41 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	@Override
 	public int perform(DSpaceObject dso) throws IOException {
-
+		StringBuilder resultReport = new StringBuilder();
 		if (dso instanceof Item) {
 			item = (Item) dso;
 			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue value : values) {
-				resultReport.append("\n\n");
-				resultReport.append("Analizando metadata " + value.getMetadataField().toString() + ":\n");
 				if (metadataAuthorityService.isAuthorityControlled(value.getMetadataField())) {
-					if (value.getAuthority() == null) {
-						updateMetadataAuthority(value);
+					resultReport.append("\n\n");
+					resultReport.append("Analizando metadata " + value.getMetadataField().toString() + ":\n");
+					if (value.getAuthority() == null
+							&& metadataAuthorityService.isAuthorityRequired(value.getMetadataField())) {
+						updateMetadataAuthority(value, resultReport);
+					} else if (value.getAuthority() == null) {
+						updateConfidenceWithoutAuthority(value, resultReport);
 					} else {
-						updateMetadataValue(value);
+						updateMetadataValue(value, resultReport);
 					}
-				} else {
-					resultReport.append("El metadato no es authority controlled \n");
 				}
 			}
 			resultReport.append("\n\n");
 			status = Curator.CURATE_SUCCESS;
-			setResult(resultReport.toString());
-			report(resultReport.toString());
-		} else
+		} else {
+			resultReport.append("No es un item");
 			status = Curator.CURATE_SKIP;
-
+		}
+		setResult(resultReport.toString());
+		report(resultReport.toString());
 		return status;
 	}
 
-	private void updateMetadataAuthority(MetadataValue value) {
+	private void updateMetadataAuthority(MetadataValue value, StringBuilder resultReport) {
 		Choices choices = choiceAuthorityService.getBestMatch(value.getMetadataField().toString(), value.getValue(),
 				item.getOwningCollection(), null);
-		resultReport.append("Posee la authority key en null con text_value " + value.getValue() + "\n");
-		if (choices.total > 0) {
+		resultReport.append(
+				"Es authority required pero la authority key está en null con text_value " + value.getValue() + "\n");
+		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
 			String label = choices.values[0].label;
 			int newConfidence = choices.confidence;
@@ -101,14 +101,14 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 	}
 
-	private void updateMetadataValue(MetadataValue value) {
+	private void updateMetadataValue(MetadataValue value, StringBuilder resultReport) {
 		String label = choiceAuthorityService.getLabel(value.getMetadataField().toString(), value.getAuthority(), null);
 		if (label == null || label.isEmpty()) {
 			resultReport.append("La authority key es inválida \n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_NOTFOUND);
 				resultReport.append("Se cambió el confidence a " + Choices.CF_NOTFOUND);
-			} else {
+			} else if (value.getConfidence() != Choices.CF_NOTFOUND) {
 				resultReport.append("Se debería cambiar el confidence a " + Choices.CF_NOTFOUND);
 			}
 		} else if (!label.equals(value.getValue())) {
@@ -124,6 +124,19 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			if (fixmode) {
 				value.setConfidence(Choices.CF_UNCERTAIN);
 				resultReport.append("Se cambió el confidence a " + Choices.CF_UNCERTAIN + "\n");
+			}
+		} else {
+			resultReport.append("No se encontraron inconsistencias \n");
+		}
+	}
+
+	private void updateConfidenceWithoutAuthority(MetadataValue value, StringBuilder resultReport) {
+		resultReport.append("La authority key está en null pero el metadato es authority optional \n");
+		if (value.getConfidence() > Choices.CF_NOVALUE) {
+			resultReport.append("El confidence es incorrecto \n");
+			if (fixmode) {
+				value.setConfidence(Choices.CF_NOVALUE);
+				resultReport.append("Se cambió el confidence a " + Choices.CF_NOVALUE + "\n");
 			}
 		} else {
 			resultReport.append("No se encontraron inconsistencias \n");
