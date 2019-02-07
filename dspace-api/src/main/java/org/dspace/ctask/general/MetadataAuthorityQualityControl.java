@@ -45,13 +45,17 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 				if (metadataAuthorityService.isAuthorityControlled(value.getMetadataField())) {
 					resultReport.append("\n\n");
 					resultReport.append("Analizando metadata " + value.getMetadataField().toString() + ":\n");
-					if (value.getAuthority() == null
-							&& metadataAuthorityService.isAuthorityRequired(value.getMetadataField())) {
-						updateMetadataAuthority(value, resultReport);
-					} else if (value.getAuthority() == null) {
-						updateConfidenceWithoutAuthority(value, resultReport);
+					if (value.getAuthority() == null) {
+						if (value.getValue() == null) {
+							reportValueAndAuthorityNull(value, resultReport);
+						} else if (metadataAuthorityService.isAuthorityRequired(value.getMetadataField())) {
+							checkMetadataAuthority(value, resultReport);
+						} else {
+							checkConfidenceWithoutAuthority(value, resultReport);
+						}
+
 					} else {
-						updateMetadataValue(value, resultReport);
+						checkMetadataValue(value, resultReport);
 					}
 				}
 			}
@@ -66,11 +70,11 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		return status;
 	}
 
-	private void updateMetadataAuthority(MetadataValue value, StringBuilder resultReport) {
+	private void checkMetadataAuthority(MetadataValue value, StringBuilder resultReport) {
 		Choices choices = choiceAuthorityService.getBestMatch(value.getMetadataField().toString(), value.getValue(),
 				item.getOwningCollection(), null);
 		resultReport.append(
-				"Es authority required pero la authority key está en null con text_value " + value.getValue() + "\n");
+				"Es authority required pero la authority key está en null, con text_value " + value.getValue() + "\n");
 		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
 			String label = choices.values[0].label;
@@ -82,7 +86,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					resultReport.append("Se cambió la authority key por " + newAuthority + "\n");
 					resultReport.append("Se cambió el confidence a " + newConfidence + "\n");
 				} else {
-					resultReport.append("Existe una authority key válida: " + newAuthority + "\n");
+					resultReport.append("Existe una authority key válida única: " + newAuthority + "\n");
 				}
 			} else {
 				resultReport.append("Existe una posible authority key válida: " + newAuthority + ", con confidence "
@@ -101,7 +105,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 	}
 
-	private void updateMetadataValue(MetadataValue value, StringBuilder resultReport) {
+	private void checkMetadataValue(MetadataValue value, StringBuilder resultReport) {
 		String label = choiceAuthorityService.getLabel(value.getMetadataField().toString(), value.getAuthority(), null);
 		if (label == null || label.isEmpty()) {
 			resultReport.append("La authority key es inválida \n");
@@ -130,7 +134,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 	}
 
-	private void updateConfidenceWithoutAuthority(MetadataValue value, StringBuilder resultReport) {
+	private void checkConfidenceWithoutAuthority(MetadataValue value, StringBuilder resultReport) {
 		resultReport.append("La authority key está en null pero el metadato es authority optional \n");
 		if (value.getConfidence() > Choices.CF_NOVALUE) {
 			resultReport.append("El confidence es incorrecto \n");
@@ -140,6 +144,14 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			}
 		} else {
 			resultReport.append("No se encontraron inconsistencias \n");
+		}
+	}
+
+	private void reportValueAndAuthorityNull(MetadataValue value, StringBuilder resultReport) {
+		resultReport.append("Tanto el authority key como el label están en null");
+		if (fixmode) {
+			value.setConfidence(Choices.CF_UNSET);
+			resultReport.append("Se cambió el confidence a " + Choices.CF_UNSET + "\n");
 		}
 	}
 
