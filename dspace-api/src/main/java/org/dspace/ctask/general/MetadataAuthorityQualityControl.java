@@ -38,13 +38,15 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	@Override
 	public int perform(DSpaceObject dso) throws IOException {
 		StringBuilder resultReport = new StringBuilder();
+		StringBuilder resultSummary = new StringBuilder();
 		if (dso instanceof Item) {
 			item = (Item) dso;
+			resultReport.append("***********************************\n");
+			resultReport.append("Item " + item.getHandle() + "\n");
 			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue value : values) {
 				if (metadataAuthorityService.isAuthorityControlled(value.getMetadataField())) {
-					resultReport.append("\n\n");
-					resultReport.append("Analizando metadata " + value.getMetadataField().toString() + ":\n");
+					resultReport.append("- Analizando metadata " + value.getMetadataField().toString() + ":\n");
 					if (value.getAuthority() == null) {
 						if (value.getValue() == null) {
 							reportValueAndAuthorityNull(value, resultReport);
@@ -59,13 +61,19 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					}
 				}
 			}
-			resultReport.append("\n\n");
+			if (fixmode)
+				resultSummary.append("Modo fix: Se corrigieron los metadatos controlados por autoridad del item");
+			else if (fixvariants)
+				resultSummary.append("Modo fix variants: Se corrigieron los metadatos controlados por autoridad del item, incluyendo las variantes");
+			else
+				resultSummary.append("Se controlaron los metadatos controlados por autoridad del item");
 			status = Curator.CURATE_SUCCESS;
 		} else {
-			resultReport.append("No es un item");
+			resultSummary.append("No es un item");
 			status = Curator.CURATE_SKIP;
 		}
-		setResult(resultReport.toString());
+
+		setResult(resultSummary.toString());
 		report(resultReport.toString());
 		return status;
 	}
@@ -148,7 +156,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	private void reportValueAndAuthorityNull(MetadataValue value, StringBuilder resultReport) {
-		resultReport.append("Tanto el authority key como el label están en null");
+		resultReport.append("Tanto el authority key como el label están en null \n");
 		if (fixmode) {
 			value.setConfidence(Choices.CF_UNSET);
 			resultReport.append("Se cambió el confidence a " + Choices.CF_UNSET + "\n");
