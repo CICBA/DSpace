@@ -61,10 +61,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					}
 				}
 			}
-			if (fixmode)
-				resultSummary.append("Modo fix: Se corrigieron los metadatos controlados por autoridad del item");
-			else if (fixvariants)
+			if (fixvariants)
 				resultSummary.append("Modo fix variants: Se corrigieron los metadatos controlados por autoridad del item, incluyendo las variantes");
+			else if (fixmode)
+				resultSummary.append("Modo fix: Se corrigieron los metadatos controlados por autoridad del item");
 			else
 				resultSummary.append("Se controlaron los metadatos controlados por autoridad del item");
 			status = Curator.CURATE_SUCCESS;
