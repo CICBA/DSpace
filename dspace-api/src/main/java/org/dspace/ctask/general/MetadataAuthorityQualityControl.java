@@ -119,9 +119,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			resultReport.append("La authority key es inválida \n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_NOTFOUND);
-				resultReport.append("Se cambió el confidence a " + Choices.CF_NOTFOUND);
+				resultReport.append("Se cambió el confidence a " + Choices.CF_NOTFOUND + "\n");
 			} else if (value.getConfidence() != Choices.CF_NOTFOUND) {
-				resultReport.append("Se debería cambiar el confidence a " + Choices.CF_NOTFOUND);
+				resultReport.append("Se debería cambiar el confidence a " + Choices.CF_NOTFOUND + "\n");
 			}
 		} else if (!label.equals(value.getValue())) {
 			resultReport.append("La authority key no coincide con el label \n");
