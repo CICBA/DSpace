@@ -1,4 +1,4 @@
-package org.dspace.ctask.general;
+package ar.edu.unlp.sedici.dspace.ctask.general;
 
 import org.dspace.content.DSpaceObject;
 import org.dspace.content.Item;
@@ -9,14 +9,15 @@ import org.dspace.content.authority.service.ChoiceAuthorityService;
 import org.dspace.content.authority.service.MetadataAuthorityService;
 import org.dspace.curate.AbstractCurationTask;
 import org.dspace.curate.Curator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
 
 public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
-	protected int status = Curator.CURATE_UNSET;
 	private Item item;
+	private String metadataInfo;
 
 	protected MetadataAuthorityService metadataAuthorityService = ContentAuthorityServiceFactory.getInstance()
 			.getMetadataAuthorityService();
@@ -37,77 +38,66 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	@Override
 	public int perform(DSpaceObject dso) throws IOException {
+		int status = Curator.CURATE_UNSET;
 		StringBuilder resultReport = new StringBuilder();
-		StringBuilder resultSummary = new StringBuilder();
 		if (dso instanceof Item) {
 			item = (Item) dso;
-			resultReport.append("***********************************\n");
-			resultReport.append("Item " + item.getHandle() + "\n");
+			resultReport.append("####################\n");
+			resultReport.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
+					.append(item.getID()).append(" \n");
 			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue value : values) {
 				if (metadataAuthorityService.isAuthorityControlled(value.getMetadataField())) {
-					resultReport.append("- Analizando metadata " + value.getMetadataField().toString() + ":\n");
+					metadataInfo = "(" + value.getID() + "," + value.getMetadataField().toString() + ")";
 					if (value.getAuthority() == null) {
 						if (value.getValue() == null) {
-							reportValueAndAuthorityNull(value, resultReport);
+							resultReport.append("- ERROR ").append(metadataInfo)
+									.append(": Null both authority key and label \n");
 						} else if (metadataAuthorityService.isAuthorityRequired(value.getMetadataField())) {
 							checkMetadataAuthority(value, resultReport);
 						} else {
 							checkConfidenceWithoutAuthority(value, resultReport);
 						}
-
 					} else {
 						checkMetadataValue(value, resultReport);
 					}
 				}
 			}
-			if (fixvariants)
-				resultSummary.append("Modo fix variants: Se corrigieron los metadatos controlados por autoridad del item, incluyendo las variantes");
-			else if (fixmode)
-				resultSummary.append("Modo fix: Se corrigieron los metadatos controlados por autoridad del item");
-			else
-				resultSummary.append("Se controlaron los metadatos controlados por autoridad del item");
+			resultReport.append("####################\n");
+			report(resultReport.toString());
 			status = Curator.CURATE_SUCCESS;
 		} else {
-			resultSummary.append("No es un item");
 			status = Curator.CURATE_SKIP;
 		}
-
-		setResult(resultSummary.toString());
-		report(resultReport.toString());
+		setResult(resultReport.toString());
 		return status;
 	}
 
 	private void checkMetadataAuthority(MetadataValue value, StringBuilder resultReport) {
 		Choices choices = choiceAuthorityService.getBestMatch(value.getMetadataField().toString(), value.getValue(),
 				item.getOwningCollection(), null);
-		resultReport.append(
-				"Es authority required pero la authority key está en null, con text_value " + value.getValue() + "\n");
+		resultReport.append("- ERROR ").append(metadataInfo).append(": Null and required Authority key.");
 		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
 			String label = choices.values[0].label;
-			int newConfidence = choices.confidence;
 			if (label.equals(value.getValue())) {
+				resultReport.append(" Expected <<").append(newAuthority).append(">>\n");
 				if (fixmode) {
 					value.setAuthority(newAuthority);
 					value.setConfidence(choices.confidence);
-					resultReport.append("Se cambió la authority key por " + newAuthority + "\n");
-					resultReport.append("Se cambió el confidence a " + newConfidence + "\n");
-				} else {
-					resultReport.append("Existe una authority key válida única: " + newAuthority + "\n");
+					resultReport.append("FIXED \n ");
 				}
 			} else {
-				resultReport.append("Existe una posible authority key válida: " + newAuthority + ", con confidence "
-						+ newConfidence + "\n");
+				resultReport.append("Recommended value <<").append(newAuthority).append(">>\n");
 			}
 		} else {
-			resultReport.append("No se encontró ninguna authority key válida \n");
+			resultReport.append("\n No reasonable value found");
 			if (value.getConfidence() != Choices.CF_NOTFOUND) {
+				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
+						.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOTFOUND).append("\n");
 				if (fixmode) {
 					value.setConfidence(Choices.CF_NOTFOUND);
-					resultReport.append("Se cambió el confidence a " + Choices.CF_NOTFOUND + "\n");
-				} else {
-					resultReport.append("El confidence es incorrecto: " + value.getConfidence() + "\n");
+					resultReport.append("FIXED \n");
 				}
 			}
 		}
@@ -116,51 +106,44 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private void checkMetadataValue(MetadataValue value, StringBuilder resultReport) {
 		String label = choiceAuthorityService.getLabel(value.getMetadataField().toString(), value.getAuthority(), null);
 		if (label == null || label.isEmpty()) {
-			resultReport.append("La authority key es inválida \n");
-			if (fixmode) {
-				value.setConfidence(Choices.CF_NOTFOUND);
-				resultReport.append("Se cambió el confidence a " + Choices.CF_NOTFOUND + "\n");
-			} else if (value.getConfidence() != Choices.CF_NOTFOUND) {
-				resultReport.append("Se debería cambiar el confidence a " + Choices.CF_NOTFOUND + "\n");
+			resultReport.append("- ERROR ").append(metadataInfo).append(": Authority not found <<")
+					.append(value.getAuthority()).append(">>\n");
+			if (value.getConfidence() != Choices.CF_NOTFOUND) {
+				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
+						.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOTFOUND).append("\n");
+				if (fixmode) {
+					value.setConfidence(Choices.CF_NOTFOUND);
+					resultReport.append("FIXED \n");
+				}
 			}
 		} else if (!label.equals(value.getValue())) {
-			resultReport.append("La authority key no coincide con el label \n");
+			resultReport.append("- WARN ").append(metadataInfo).append(": Variant, label and authority do not match.")
+					.append("Metadata value <<").append(value.getValue()).append(">>. Authority label <<").append(label)
+					.append(">>\n");
 			if (fixvariants) {
 				value.setValue(label);
 				value.setConfidence(Choices.CF_UNCERTAIN);
-				resultReport.append("Se cambió el label a " + label + "\n");
-				resultReport.append("Se cambió el confidence a " + Choices.CF_UNCERTAIN + "\n");
+				resultReport.append("VARIANT FIXED \n");
 			}
 		} else if (value.getConfidence() < Choices.CF_UNCERTAIN) {
-			resultReport.append("El confidence es incorrecto \n");
+			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
+					.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_UNCERTAIN).append("\n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_UNCERTAIN);
-				resultReport.append("Se cambió el confidence a " + Choices.CF_UNCERTAIN + "\n");
+				resultReport.append("FIXED \n");
 			}
-		} else {
-			resultReport.append("No se encontraron inconsistencias \n");
 		}
 	}
 
 	private void checkConfidenceWithoutAuthority(MetadataValue value, StringBuilder resultReport) {
-		resultReport.append("La authority key está en null pero el metadato es authority optional \n");
+		resultReport.append("- WARN ").append(metadataInfo).append(": Null but optional authority key \n");
 		if (value.getConfidence() > Choices.CF_NOVALUE) {
-			resultReport.append("El confidence es incorrecto \n");
+			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
+					.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOVALUE).append("\n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_NOVALUE);
-				resultReport.append("Se cambió el confidence a " + Choices.CF_NOVALUE + "\n");
+				resultReport.append("FIXED \n");
 			}
-		} else {
-			resultReport.append("No se encontraron inconsistencias \n");
 		}
 	}
-
-	private void reportValueAndAuthorityNull(MetadataValue value, StringBuilder resultReport) {
-		resultReport.append("Tanto el authority key como el label están en null \n");
-		if (fixmode) {
-			value.setConfidence(Choices.CF_UNSET);
-			resultReport.append("Se cambió el confidence a " + Choices.CF_UNSET + "\n");
-		}
-	}
-
 }
