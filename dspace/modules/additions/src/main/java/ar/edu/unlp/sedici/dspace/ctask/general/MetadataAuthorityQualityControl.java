@@ -9,8 +9,6 @@ import org.dspace.content.authority.service.ChoiceAuthorityService;
 import org.dspace.content.authority.service.MetadataAuthorityService;
 import org.dspace.curate.AbstractCurationTask;
 import org.dspace.curate.Curator;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -19,13 +17,23 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private Item item;
 	private String metadataInfo;
 
-	protected MetadataAuthorityService metadataAuthorityService = ContentAuthorityServiceFactory.getInstance()
+	private MetadataAuthorityService metadataAuthorityService = ContentAuthorityServiceFactory.getInstance()
 			.getMetadataAuthorityService();
-	protected ChoiceAuthorityService choiceAuthorityService = ContentAuthorityServiceFactory.getInstance()
+	private ChoiceAuthorityService choiceAuthorityService = ContentAuthorityServiceFactory.getInstance()
 			.getChoiceAuthorityService();
 
-	protected boolean fixmode = false;
-	protected boolean fixvariants = false;
+	/**
+	 * Configuration property.
+	 * If true, curation task fixes the metadata errors by itself.
+	 * If false, only reports.
+	 */
+	private boolean fixmode = false;
+
+	/**
+	 * Configuration property, only works with fixmode in true.
+	 * If true, curation task also fixes metadata value variants.
+	 */
+	private boolean fixvariants = false;
 
 	@Override
 	public void init(Curator curator, String taskId) throws IOException {
@@ -91,10 +99,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 				resultReport.append("Recommended value <<").append(newAuthority).append(">>\n");
 			}
 		} else {
-			resultReport.append("\n No reasonable value found");
+			resultReport.append(" No reasonable value found \n");
 			if (value.getConfidence() != Choices.CF_NOTFOUND) {
 				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-						.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOTFOUND).append("\n");
+						.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOTFOUND).append("\n");
 				if (fixmode) {
 					value.setConfidence(Choices.CF_NOTFOUND);
 					resultReport.append("FIXED \n");
@@ -110,7 +118,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					.append(value.getAuthority()).append(">>\n");
 			if (value.getConfidence() != Choices.CF_NOTFOUND) {
 				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-						.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOTFOUND).append("\n");
+						.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOTFOUND).append("\n");
 				if (fixmode) {
 					value.setConfidence(Choices.CF_NOTFOUND);
 					resultReport.append("FIXED \n");
@@ -118,8 +126,8 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			}
 		} else if (!label.equals(value.getValue())) {
 			resultReport.append("- WARN ").append(metadataInfo).append(": Variant, label and authority do not match.")
-					.append("Metadata value <<").append(value.getValue()).append(">>. Authority label <<").append(label)
-					.append(">>\n");
+					.append(" Metadata value <<").append(value.getValue()).append(">>. Authority label <<")
+					.append(label).append(">>\n");
 			if (fixvariants) {
 				value.setValue(label);
 				value.setConfidence(Choices.CF_UNCERTAIN);
@@ -127,7 +135,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			}
 		} else if (value.getConfidence() < Choices.CF_UNCERTAIN) {
 			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-					.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_UNCERTAIN).append("\n");
+					.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_UNCERTAIN).append("\n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_UNCERTAIN);
 				resultReport.append("FIXED \n");
@@ -139,7 +147,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		resultReport.append("- WARN ").append(metadataInfo).append(": Null but optional authority key \n");
 		if (value.getConfidence() > Choices.CF_NOVALUE) {
 			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-					.append(value.getConfidence()).append(".Expected: ").append(Choices.CF_NOVALUE).append("\n");
+					.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOVALUE).append("\n");
 			if (fixmode) {
 				value.setConfidence(Choices.CF_NOVALUE);
 				resultReport.append("FIXED \n");
