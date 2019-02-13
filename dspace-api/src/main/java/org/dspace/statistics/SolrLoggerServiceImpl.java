@@ -679,11 +679,14 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
             // Run over the rest
             for (int i = 10; i < numbFound; i += 10)
             {
-                params.put("start", String.valueOf(i));
+            	//force solr commit to avoid pagination problems when triggering autocommits inside solr
+                commit();
                 solrParams = new MapSolrParams(params);
                 response = solr.query(solrParams);
                 process(response.getResults());
             }
+          //Commit latest changes
+          commit();
 
         }
 
@@ -734,7 +737,8 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
                 /* query for ip, exclude results previously set as bots. */
                 processor.execute("ip:"+ip+ "* AND -isBot:true");
 
-                solr.commit();
+                //Disable external commit, because the ResultProcessor always makes a commit at each processing batch...
+                //solr.commit();
 
             } catch (Exception e) {
                 log.error(e.getMessage(),e);
