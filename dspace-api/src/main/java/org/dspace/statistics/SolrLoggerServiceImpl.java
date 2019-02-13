@@ -663,8 +663,9 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
 
         public void execute(String query) throws SolrServerException, IOException {
             Map<String, String> params = new HashMap<String, String>();
+            int maxDocumetsPerProcess= configurationService.getIntProperty("spiderDetector.batchUpdateSize",10);
             params.put("q", query);
-            params.put("rows", "10");
+            params.put("rows", String.valueOf(maxDocumetsPerProcess));
             if(0 < statisticYearCores.size()){
                 params.put(ShardParams.SHARDS, StringUtils.join(statisticYearCores.iterator(), ','));
             }
@@ -677,7 +678,7 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
             process(response.getResults());
 
             // Run over the rest
-            for (int i = 10; i < numbFound; i += 10)
+            for (int i = maxDocumetsPerProcess; i < numbFound; i += maxDocumetsPerProcess)
             {
                 params.put("start", String.valueOf(i));
                 solrParams = new MapSolrParams(params);
