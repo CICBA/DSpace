@@ -15,23 +15,21 @@ import java.util.List;
 public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	private Item item;
-	private String metadataInfo;
 
-	private MetadataAuthorityService metadataAuthorityService = ContentAuthorityServiceFactory.getInstance()
+	private MetadataAuthorityService authService = ContentAuthorityServiceFactory.getInstance()
 			.getMetadataAuthorityService();
 	private ChoiceAuthorityService choiceAuthorityService = ContentAuthorityServiceFactory.getInstance()
 			.getChoiceAuthorityService();
 
 	/**
-	 * Configuration property.
-	 * If true, curation task fixes the metadata errors by itself.
-	 * If false, only reports.
+	 * Configuration property. If true, curation task fixes the metadata errors by
+	 * itself. If false, only reports.
 	 */
 	private boolean fixmode = false;
 
 	/**
-	 * Configuration property, only works with fixmode in true.
-	 * If true, curation task also fixes metadata value variants.
+	 * Configuration property, only works with fixmode in true. If true, curation
+	 * task also fixes metadata value variants.
 	 */
 	private boolean fixvariants = false;
 
@@ -47,111 +45,138 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	@Override
 	public int perform(DSpaceObject dso) throws IOException {
 		int status = Curator.CURATE_UNSET;
-		StringBuilder resultReport = new StringBuilder();
+		StringBuilder reporter = new StringBuilder();
 		if (dso instanceof Item) {
 			item = (Item) dso;
-			resultReport.append("####################\n");
-			resultReport.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
-					.append(item.getID()).append(" \n");
+			reporter.append("####################\n");
+			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
+					.append(item.getID()).append("\n");
 			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue value : values) {
-				if (metadataAuthorityService.isAuthorityControlled(value.getMetadataField())) {
-					metadataInfo = "(" + value.getID() + "," + value.getMetadataField().toString() + ")";
-					if (value.getAuthority() == null) {
-						if (value.getValue() == null) {
-							resultReport.append("- ERROR ").append(metadataInfo)
-									.append(": Null both authority key and label \n");
-						} else if (metadataAuthorityService.isAuthorityRequired(value.getMetadataField())) {
-							checkMetadataAuthority(value, resultReport);
-						} else {
-							checkConfidenceWithoutAuthority(value, resultReport);
-						}
-					} else {
-						checkMetadataValue(value, resultReport);
-					}
+				if (authService.isAuthorityControlled(value.getMetadataField())) {
+					checkMetadataAuthority(reporter, value);
 				}
 			}
-			resultReport.append("####################\n");
-			report(resultReport.toString());
+			reporter.append("####################");
+			report(reporter.toString());
 			status = Curator.CURATE_SUCCESS;
 		} else {
 			status = Curator.CURATE_SKIP;
 		}
-		setResult(resultReport.toString());
+		setResult(reporter.toString());
 		return status;
 	}
 
-	private void checkMetadataAuthority(MetadataValue value, StringBuilder resultReport) {
-		Choices choices = choiceAuthorityService.getBestMatch(value.getMetadataField().toString(), value.getValue(),
-				item.getOwningCollection(), null);
-		resultReport.append("- ERROR ").append(metadataInfo).append(": Null and required Authority key.");
+	private void checkMetadataAuthority(StringBuilder reporter, MetadataValue mv) {
+
+		if (mv.getAuthority() == null && mv.getValue() == null) {
+			report(reporter, mv, "ERROR", "Null both authority key and label");
+		} else if (mv.getAuthority() == null) {
+			checkMetadataWithoutAuthorityKey(reporter, mv);
+		} else {
+			checkMetadataWithAuthorityKey(reporter, mv);
+		}
+	}
+
+	/**
+	 * Reconciles metadata value with authority
+	 */
+	private void checkMetadataWithoutAuthorityKey(StringBuilder reporter, MetadataValue mv) {
+
+		Choices choices = choiceAuthorityService.getBestMatch(mv.getMetadataField().toString(), mv.getValue(),
+				item.getOwningCollection(), mv.getLanguage());
+		if (authService.isAuthorityRequired(mv.getMetadataField())) {
+			report(reporter, mv, "ERROR", "Missing authority key for <<", mv.getValue(), ">>");
+		} else {
+			report(reporter, mv, "INFO", "Missing optional authority key for <<", mv.getValue(), ">>");
+		}
 		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
 			String label = choices.values[0].label;
-			if (label.equals(value.getValue())) {
-				resultReport.append(" Expected <<").append(newAuthority).append(">>\n");
-				if (fixmode) {
-					value.setAuthority(newAuthority);
-					value.setConfidence(choices.confidence);
-					resultReport.append("FIXED \n ");
-				}
+			//Should implement a better string.equals method here, with at least a trim to both strings
+			if (label.equals(mv.getValue())) {
+				saveAuthorityKey(reporter, mv, newAuthority, choices);
 			} else {
-				resultReport.append("Recommended value <<").append(newAuthority).append(">>\n");
+				// do not fix because can be either a false positive or variant
+				report(reporter, mv, "INFO", "Recommended value <<", newAuthority,
+						">> with confidence ", String.valueOf(choices.confidence));
 			}
 		} else {
-			resultReport.append(" No reasonable value found \n");
-			if (value.getConfidence() != Choices.CF_NOTFOUND) {
-				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-						.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOTFOUND).append("\n");
-				if (fixmode) {
-					value.setConfidence(Choices.CF_NOTFOUND);
-					resultReport.append("FIXED \n");
-				}
-			}
+			assertConfidenceNotFound(reporter, mv);
 		}
+
 	}
 
-	private void checkMetadataValue(MetadataValue value, StringBuilder resultReport) {
-		String label = choiceAuthorityService.getLabel(value.getMetadataField().toString(), value.getAuthority(), null);
+	private void checkMetadataWithAuthorityKey(StringBuilder reporter, MetadataValue mv) {
+		String label = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), mv.getAuthority(),
+				mv.getLanguage());
 		if (label == null || label.isEmpty()) {
-			resultReport.append("- ERROR ").append(metadataInfo).append(": Authority not found <<")
-					.append(value.getAuthority()).append(">>\n");
-			if (value.getConfidence() != Choices.CF_NOTFOUND) {
-				resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-						.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOTFOUND).append("\n");
-				if (fixmode) {
-					value.setConfidence(Choices.CF_NOTFOUND);
-					resultReport.append("FIXED \n");
-				}
-			}
-		} else if (!label.equals(value.getValue())) {
-			resultReport.append("- WARN ").append(metadataInfo).append(": Variant, label and authority do not match.")
-					.append(" Metadata value <<").append(value.getValue()).append(">>. Authority label <<")
-					.append(label).append(">>\n");
-			if (fixvariants) {
-				value.setValue(label);
-				value.setConfidence(Choices.CF_UNCERTAIN);
-				resultReport.append("VARIANT FIXED \n");
-			}
-		} else if (value.getConfidence() < Choices.CF_UNCERTAIN) {
-			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-					.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_UNCERTAIN).append("\n");
+			// Authority not found
+			report(reporter, mv, "ERROR", "Authority <<", mv.getAuthority(), ">> not found");
+			assertConfidenceNotFound(reporter, mv);
+			//Should implement a better string.equals method here, with at least a trim to both strings
+		} else if (label.equals(mv.getValue())) {
+			// Authority found, label==value
+			assertConfidenceUncertain(reporter, mv);
+		} else {
+			// Authority found, but label!=value
+			saveVariant(reporter, mv, label);
+		}
+	}
+
+	private void assertConfidenceUncertain(StringBuilder reporter, MetadataValue mv) {
+		if (mv.getConfidence() < Choices.CF_UNCERTAIN) {
+			report(reporter, mv, "ERROR",
+					": Wrong confidence: ", String.valueOf(mv.getConfidence()), ". Expected: ", String.valueOf(Choices.CF_UNCERTAIN));
 			if (fixmode) {
-				value.setConfidence(Choices.CF_UNCERTAIN);
-				resultReport.append("FIXED \n");
+				mv.setConfidence(Choices.CF_UNCERTAIN);
+				reporter.append("FIXED \n");
 			}
 		}
 	}
 
-	private void checkConfidenceWithoutAuthority(MetadataValue value, StringBuilder resultReport) {
-		resultReport.append("- WARN ").append(metadataInfo).append(": Null but optional authority key \n");
-		if (value.getConfidence() > Choices.CF_NOVALUE) {
-			resultReport.append("- ERROR ").append(metadataInfo).append(": Wrong confidence: ")
-					.append(value.getConfidence()).append(". Expected: ").append(Choices.CF_NOVALUE).append("\n");
+	private void assertConfidenceNotFound(StringBuilder reporter, MetadataValue mv) {
+		if (mv.getConfidence() > Choices.CF_NOTFOUND) {
+			report(reporter, mv, "ERROR", "Wrong confidence: ",
+					String.valueOf(mv.getConfidence()), ". Expected: ", String.valueOf(Choices.CF_NOTFOUND));
 			if (fixmode) {
-				value.setConfidence(Choices.CF_NOVALUE);
-				resultReport.append("FIXED \n");
+				mv.setConfidence(Choices.CF_NOTFOUND);
+				reporter.append("FIXED \n");
 			}
 		}
 	}
+
+	private void saveVariant(StringBuilder reporter, MetadataValue mv, String label) {
+		report(reporter, mv, "WARN", "Variant, label and authority do not match. Metadata value <<", mv.getValue(),
+				">>. Authority label <<", label, ">>");
+		if (fixvariants) {
+			mv.setValue(label);
+			mv.setConfidence(Choices.CF_UNCERTAIN);
+			reporter.append("VARIANT FIXED \n");
+		}
+
+	}
+
+	private void saveAuthorityKey(StringBuilder reporter, MetadataValue mv, String newAuthority, Choices choices) {
+		report(reporter, mv, "INFO", " Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>");
+		if (fixmode && choices.confidence >= Choices.CF_UNCERTAIN) {
+			mv.setAuthority(newAuthority);
+			mv.setConfidence(choices.confidence);
+			reporter.append("FIXED \n ");
+		} else if (choices.confidence < Choices.CF_UNCERTAIN) {
+			reporter.append("Ambiguous authority");
+		}
+
+	}
+
+	private void report(StringBuilder reporter, MetadataValue value, String level, String... messages) {
+		reporter.append("- ").append(level).append(" (").append(value.getID()).append(",")
+				.append(value.getMetadataField()).append(") : ");
+		for (String message : messages) {
+			reporter.append(message);
+		}
+		reporter.append("\n");
+
+	}
+
 }
