@@ -14,8 +14,6 @@ import java.util.List;
 
 public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
-	private Item item;
-
 	private MetadataAuthorityService authService = ContentAuthorityServiceFactory.getInstance()
 			.getMetadataAuthorityService();
 	private ChoiceAuthorityService choiceAuthorityService = ContentAuthorityServiceFactory.getInstance()
@@ -47,14 +45,14 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		int status = Curator.CURATE_UNSET;
 		StringBuilder reporter = new StringBuilder();
 		if (dso instanceof Item) {
-			item = (Item) dso;
+			Item item = (Item) dso;
 			reporter.append("####################\n");
 			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
 					.append(item.getID()).append("\n");
 			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue value : values) {
 				if (authService.isAuthorityControlled(value.getMetadataField())) {
-					checkMetadataAuthority(reporter, value);
+					checkMetadataAuthority(reporter, value, item);
 				}
 			}
 			reporter.append("####################");
@@ -67,12 +65,12 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		return status;
 	}
 
-	private void checkMetadataAuthority(StringBuilder reporter, MetadataValue mv) {
+	private void checkMetadataAuthority(StringBuilder reporter, MetadataValue mv, Item item) {
 
 		if (mv.getAuthority() == null && mv.getValue() == null) {
 			report(reporter, mv, "ERROR", "Null both authority key and label");
 		} else if (mv.getAuthority() == null) {
-			checkMetadataWithoutAuthorityKey(reporter, mv);
+			checkMetadataWithoutAuthorityKey(reporter, mv, item);
 		} else {
 			checkMetadataWithAuthorityKey(reporter, mv);
 		}
@@ -81,7 +79,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	/**
 	 * Reconciles metadata value with authority
 	 */
-	private void checkMetadataWithoutAuthorityKey(StringBuilder reporter, MetadataValue mv) {
+	private void checkMetadataWithoutAuthorityKey(StringBuilder reporter, MetadataValue mv, Item item) {
 
 		Choices choices = choiceAuthorityService.getBestMatch(mv.getMetadataField().toString(), mv.getValue(),
 				item.getOwningCollection(), mv.getLanguage());
@@ -93,13 +91,13 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
 			String label = choices.values[0].label;
-			//Should implement a better string.equals method here, with at least a trim to both strings
+			// Should implement a better string.equals method here, with at least a trim to both strings
 			if (label.equals(mv.getValue())) {
 				saveAuthorityKey(reporter, mv, newAuthority, choices);
 			} else {
 				// do not fix because can be either a false positive or variant
-				report(reporter, mv, "INFO", "Recommended value <<", newAuthority,
-						">> with confidence ", String.valueOf(choices.confidence));
+				report(reporter, mv, "INFO", "Recommended value <<", newAuthority, ">> with confidence ",
+						String.valueOf(choices.confidence));
 			}
 		} else {
 			assertConfidenceNotFound(reporter, mv);
@@ -112,9 +110,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 				mv.getLanguage());
 		if (label == null || label.isEmpty()) {
 			// Authority not found
-			report(reporter, mv, "ERROR", "Authority <<", mv.getAuthority(), ">> not found");
+			report(reporter, mv, "ERROR", "Authority key <<", mv.getAuthority(), ">> not found");
 			assertConfidenceNotFound(reporter, mv);
-			//Should implement a better string.equals method here, with at least a trim to both strings
+			// Should implement a better string.equals method here, with at least a trim to both strings
 		} else if (label.equals(mv.getValue())) {
 			// Authority found, label==value
 			assertConfidenceUncertain(reporter, mv);
@@ -126,45 +124,48 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	private void assertConfidenceUncertain(StringBuilder reporter, MetadataValue mv) {
 		if (mv.getConfidence() < Choices.CF_UNCERTAIN) {
-			report(reporter, mv, "ERROR",
-					": Wrong confidence: ", String.valueOf(mv.getConfidence()), ". Expected: ", String.valueOf(Choices.CF_UNCERTAIN));
+			report(reporter, mv, "ERROR", ": Invalid confidence ", String.valueOf(mv.getConfidence()), ", expected ",
+					String.valueOf(Choices.CF_UNCERTAIN));
 			if (fixmode) {
 				mv.setConfidence(Choices.CF_UNCERTAIN);
-				reporter.append("FIXED \n");
+				report(reporter, mv, "FIXED", "[CONFIDENCE] confidence replaced with value ",
+						String.valueOf(Choices.CF_UNCERTAIN));
 			}
 		}
 	}
 
 	private void assertConfidenceNotFound(StringBuilder reporter, MetadataValue mv) {
 		if (mv.getConfidence() > Choices.CF_NOTFOUND) {
-			report(reporter, mv, "ERROR", "Wrong confidence: ",
-					String.valueOf(mv.getConfidence()), ". Expected: ", String.valueOf(Choices.CF_NOTFOUND));
+			report(reporter, mv, "ERROR", "Invalid confidence ", String.valueOf(mv.getConfidence()), ", expected ",
+					String.valueOf(Choices.CF_NOTFOUND));
 			if (fixmode) {
 				mv.setConfidence(Choices.CF_NOTFOUND);
-				reporter.append("FIXED \n");
+				report(reporter, mv, "FIXED", "[CONFIDENCE] confidence replaced with value ",
+						String.valueOf(Choices.CF_NOTFOUND));
 			}
 		}
 	}
 
 	private void saveVariant(StringBuilder reporter, MetadataValue mv, String label) {
-		report(reporter, mv, "WARN", "Variant, label and authority do not match. Metadata value <<", mv.getValue(),
-				">>. Authority label <<", label, ">>");
+		report(reporter, mv, "WARN", "text_value and label do not match for authority <<", mv.getAuthority(),
+				">>. Metadata value <<", mv.getValue(), ">>. Authority label <<", label, ">>");
 		if (fixvariants) {
 			mv.setValue(label);
 			mv.setConfidence(Choices.CF_UNCERTAIN);
-			reporter.append("VARIANT FIXED \n");
+			report(reporter, mv, "FIXED", "[VARIANT] text_value replaced with authority's label.");
 		}
 
 	}
 
 	private void saveAuthorityKey(StringBuilder reporter, MetadataValue mv, String newAuthority, Choices choices) {
-		report(reporter, mv, "INFO", " Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>");
+		report(reporter, mv, "INFO", " Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>.");
 		if (fixmode && choices.confidence >= Choices.CF_UNCERTAIN) {
 			mv.setAuthority(newAuthority);
 			mv.setConfidence(choices.confidence);
-			reporter.append("FIXED \n ");
+			report(reporter, mv, "FIXED", "[AUTHORITY] Authority set with value <<", newAuthority, ">>");
 		} else if (choices.confidence < Choices.CF_UNCERTAIN) {
-			reporter.append("Ambiguous authority");
+			report(reporter, mv, "NOT FIXED", "[AMBIGUOUS AUTHORITY] Authority key <<", newAuthority,
+					">> is ambiguous for text_value");
 		}
 
 	}
