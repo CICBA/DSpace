@@ -49,10 +49,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			reporter.append("####################\n");
 			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
 					.append(item.getID()).append("\n");
-			List<MetadataValue> values = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
-			for (MetadataValue value : values) {
-				if (authService.isAuthorityControlled(value.getMetadataField())) {
-					checkMetadataAuthority(reporter, value, item);
+			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
+			for (MetadataValue metadataValue : mValues) {
+				if (authService.isAuthorityControlled(metadataValue.getMetadataField())) {
+					checkMetadataAuthority(reporter, metadataValue, item);
 				}
 			}
 			reporter.append("####################");
@@ -68,7 +68,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private void checkMetadataAuthority(StringBuilder reporter, MetadataValue mv, Item item) {
 
 		if (mv.getAuthority() == null && mv.getValue() == null) {
-			report(reporter, mv, "ERROR", "Null both authority key and label");
+			report(reporter, mv, "ERROR", "Null both authority key and text_value");
 		} else if (mv.getAuthority() == null) {
 			checkMetadataWithoutAuthorityKey(reporter, mv, item);
 		} else {
@@ -90,9 +90,8 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 		if (choices.values.length > 0) {
 			String newAuthority = choices.values[0].authority;
-			String label = choices.values[0].label;
-			// Should implement a better string.equals method here, with at least a trim to both strings
-			if (label.equals(mv.getValue())) {
+			String value = choices.values[0].value;
+			if (compare(value, mv.getValue())) {
 				saveAuthorityKey(reporter, mv, newAuthority, choices);
 			} else {
 				// do not fix because can be either a false positive or variant
@@ -106,19 +105,18 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	private void checkMetadataWithAuthorityKey(StringBuilder reporter, MetadataValue mv) {
-		String label = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), mv.getAuthority(),
+		String value = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), mv.getAuthority(),
 				mv.getLanguage());
-		if (label == null || label.isEmpty()) {
+		if (value == null || value.isEmpty()) {
 			// Authority not found
 			report(reporter, mv, "ERROR", "Authority key <<", mv.getAuthority(), ">> not found");
 			assertConfidenceNotFound(reporter, mv);
-			// Should implement a better string.equals method here, with at least a trim to both strings
-		} else if (label.equals(mv.getValue())) {
-			// Authority found, label==value
+		} else if (compare(value, mv.getValue())) {
+			// Authority found, value==text_value
 			assertConfidenceUncertain(reporter, mv);
 		} else {
-			// Authority found, but label!=value
-			saveVariant(reporter, mv, label);
+			// Authority found, but value!=text_value
+			saveVariant(reporter, mv, value);
 		}
 	}
 
@@ -146,13 +144,13 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 	}
 
-	private void saveVariant(StringBuilder reporter, MetadataValue mv, String label) {
-		report(reporter, mv, "WARN", "text_value and label do not match for authority <<", mv.getAuthority(),
-				">>. Metadata value <<", mv.getValue(), ">>. Authority label <<", label, ">>");
+	private void saveVariant(StringBuilder reporter, MetadataValue mv, String value) {
+		report(reporter, mv, "WARN", "text_value and value do not match for authority <<", mv.getAuthority(),
+				">>. Metadata text_value <<", mv.getValue(), ">>. Authority value <<", value, ">>");
 		if (fixvariants) {
-			mv.setValue(label);
+			mv.setValue(value);
 			mv.setConfidence(Choices.CF_UNCERTAIN);
-			report(reporter, mv, "FIXED", "[VARIANT] text_value replaced with authority's label.");
+			report(reporter, mv, "FIXED", "[VARIANT] text_value replaced with authority's value.");
 		}
 
 	}
@@ -178,6 +176,18 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		}
 		reporter.append("\n");
 
+	}
+
+	/**
+	 * Method used to compare 2 strings, considering several criteria
+	 * @param value1
+	 * @param value2
+	 * @return true if value1.equals(valu22) after some functions applied to both strings
+	 */
+	private boolean compare(String value1, String value2) {
+		String customValue1 = value1.trim();
+		String customValue2 = value2.trim();
+		return customValue1.equalsIgnoreCase(customValue2);
 	}
 
 }
