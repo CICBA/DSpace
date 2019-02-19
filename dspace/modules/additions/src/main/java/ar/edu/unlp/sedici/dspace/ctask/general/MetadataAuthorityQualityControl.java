@@ -2,6 +2,7 @@ package ar.edu.unlp.sedici.dspace.ctask.general;
 
 import org.dspace.content.DSpaceObject;
 import org.dspace.content.Item;
+import org.dspace.content.MetadataField;
 import org.dspace.content.MetadataValue;
 import org.dspace.content.authority.Choices;
 import org.dspace.content.authority.factory.ContentAuthorityServiceFactory;
@@ -31,6 +32,12 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	 */
 	private boolean fixvariants = false;
 
+	/**
+	 * Configuration property. List of metadata_fields which are authority
+	 * controlled but we don't want the curation task process them
+	 */
+	private String[] metadataToSkip;
+
 	@Override
 	public void init(Curator curator, String taskId) throws IOException {
 		super.init(curator, taskId);
@@ -38,6 +45,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		if (fixmode) {
 			fixvariants = taskBooleanProperty("fixvariants", false);
 		}
+		metadataToSkip = this.taskArrayProperty("skipmetadata");
 	}
 
 	@Override
@@ -50,9 +58,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
 					.append(item.getID()).append("\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
-			for (MetadataValue metadataValue : mValues) {
-				if (authService.isAuthorityControlled(metadataValue.getMetadataField())) {
-					checkMetadataAuthority(reporter, metadataValue, item);
+			for (MetadataValue mv : mValues) {
+				if (authService.isAuthorityControlled(mv.getMetadataField()) && dontSkip(mv.getMetadataField())) {
+					checkMetadataAuthority(reporter, mv, item);
 				}
 			}
 			reporter.append("####################");
@@ -180,14 +188,31 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	/**
 	 * Method used to compare 2 strings, considering several criteria
+	 *
 	 * @param value1
 	 * @param value2
-	 * @return true if value1.equals(valu22) after some functions applied to both strings
+	 * @return true if value1.equals(value2) after some functions applied to both
+	 *         strings
 	 */
 	private boolean compare(String value1, String value2) {
 		String customValue1 = value1.trim();
 		String customValue2 = value2.trim();
 		return customValue1.equalsIgnoreCase(customValue2);
+	}
+
+	/**
+	 * Check if current metadata must be processed or not.
+	 *
+	 * @param mf metadata field of the current metadata being processed
+	 * @return true if metadataToSkip array doesn't contain mf
+	 */
+	private boolean dontSkip(MetadataField mf) {
+		for (String dataToSkip : metadataToSkip) {
+			if (mf.toString().equals(dataToSkip)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
