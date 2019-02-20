@@ -33,19 +33,42 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private boolean fixvariants = false;
 
 	/**
+	 * Configuration property, only works with fixmode in true. If true, curation
+	 * task also unset every authority key which is not connected with any
+	 * authority.
+	 */
+	private boolean fixDangling = false;
+
+	/**
+	 * Configuration property, only works with fixmode in true. If true, curation
+	 * task also tries to find an authority key for those metadata with a missing
+	 * authority key.
+	 */
+	private boolean fixMissing = false;
+
+	/**
 	 * Configuration property. List of metadata_fields which are authority
-	 * controlled but we don't want the curation task process them
+	 * controlled but we don't want the curation task to process them
 	 */
 	private String[] metadataToSkip;
+
+	/**
+	 * Configuration property. List of metadata_fields that we want the curation
+	 * task process Empty array = all metadata
+	 */
+	private String[] metadataToCheck;
 
 	@Override
 	public void init(Curator curator, String taskId) throws IOException {
 		super.init(curator, taskId);
 		fixmode = taskBooleanProperty("fixmode", false);
 		if (fixmode) {
-			fixvariants = taskBooleanProperty("fixvariants", false);
+			fixvariants = taskBooleanProperty("fixVariants", false);
+			fixMissing = taskBooleanProperty("fixMissing", false);
+			fixDangling = taskBooleanProperty("fixDangling", false);
 		}
-		metadataToSkip = this.taskArrayProperty("skipmetadata");
+		metadataToSkip = this.taskArrayProperty("skipMetadata");
+		metadataToCheck = this.taskArrayProperty("checkMetadata");
 	}
 
 	@Override
@@ -59,7 +82,8 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					.append(item.getID()).append("\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue mv : mValues) {
-				if (authService.isAuthorityControlled(mv.getMetadataField()) && !skipMetadata(mv.getMetadataField())) {
+				if (authService.isAuthorityControlled(mv.getMetadataField()) && !skipMetadata(mv.getMetadataField())
+						&& isMetadataToCheck(mv.getMetadataField())) {
 					checkMetadataAuthority(reporter, mv, item);
 				}
 			}
@@ -75,9 +99,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	private void checkMetadataAuthority(StringBuilder reporter, MetadataValue mv, Item item) {
 
-		if (mv.getAuthority() == null && mv.getValue() == null) {
+		if ((mv.getAuthority() == null || mv.getAuthority().isEmpty())
+				&& (mv.getValue() == null || mv.getValue().isEmpty())) {
 			report(reporter, mv, "ERROR", "Null both authority key and text_value");
-		} else if (mv.getAuthority() == null) {
+		} else if (mv.getAuthority() == null || mv.getAuthority().isEmpty()) {
 			checkMetadataWithoutAuthorityKey(reporter, mv, item);
 		} else {
 			checkMetadataWithAuthorityKey(reporter, mv);
@@ -97,13 +122,12 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			report(reporter, mv, "INFO", "Missing optional authority key for <<", mv.getValue(), ">>");
 		}
 		if (choices.values.length > 0) {
-			String newAuthority = choices.values[0].authority;
 			String value = choices.values[0].value;
 			if (compare(value, mv.getValue())) {
-				saveAuthorityKey(reporter, mv, newAuthority, choices);
+				saveAuthorityKey(reporter, mv, choices);
 			} else {
 				// do not fix because can be either a false positive or variant
-				report(reporter, mv, "INFO", "Recommended value <<", newAuthority, ">> with confidence ",
+				report(reporter, mv, "INFO", "Recommended value <<", choices.values[0].authority, ">> with confidence ",
 						String.valueOf(choices.confidence));
 			}
 		} else {
@@ -117,8 +141,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 				mv.getLanguage());
 		if (value == null || value.isEmpty()) {
 			// Authority not found
-			report(reporter, mv, "ERROR", "Authority key <<", mv.getAuthority(), ">> not found");
-			assertConfidenceNotFound(reporter, mv);
+			saveDanglingAuthority(reporter, mv);
 		} else if (compare(value, mv.getValue())) {
 			// Authority found, value==text_value
 			assertConfidenceUncertain(reporter, mv);
@@ -163,17 +186,28 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	}
 
-	private void saveAuthorityKey(StringBuilder reporter, MetadataValue mv, String newAuthority, Choices choices) {
+	private void saveAuthorityKey(StringBuilder reporter, MetadataValue mv, Choices choices) {
+		String newAuthority = choices.values[0].authority;
 		report(reporter, mv, "INFO", " Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>.");
-		if (fixmode && choices.confidence >= Choices.CF_UNCERTAIN) {
+		if (fixMissing && choices.confidence >= Choices.CF_UNCERTAIN) {
 			mv.setAuthority(newAuthority);
 			mv.setConfidence(choices.confidence);
-			report(reporter, mv, "FIXED", "[AUTHORITY] Authority set with value <<", newAuthority, ">>");
+			report(reporter, mv, "FIXED", "[MISSING AUTHORITY] Authority set with value <<", newAuthority, ">>");
 		} else if (choices.confidence < Choices.CF_UNCERTAIN) {
 			report(reporter, mv, "NOT FIXED", "[AMBIGUOUS AUTHORITY] Authority key <<", newAuthority,
 					">> is ambiguous for text_value");
 		}
 
+	}
+
+	private void saveDanglingAuthority(StringBuilder reporter, MetadataValue mv) {
+		report(reporter, mv, "ERROR", "Authority key <<", mv.getAuthority(), ">> not found");
+		assertConfidenceNotFound(reporter, mv);
+		if (fixDangling) {
+			mv.setAuthority(null);
+			report(reporter, mv, "FIXED", "[DANGLING AUTHORITY] Authority set with NULL");
+			checkMetadataWithoutAuthorityKey(reporter, mv, (Item) mv.getDSpaceObject());
+		}
 	}
 
 	private void report(StringBuilder reporter, MetadataValue value, String level, String... messages) {
@@ -201,7 +235,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	/**
-	 * Check if current metadata must be processed or not.
+	 * Check if current metadata must not be processed.
 	 *
 	 * @param mf metadata field of the current metadata being processed
 	 * @return true if metadataToSkip array contains mf
@@ -209,6 +243,26 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private boolean skipMetadata(MetadataField mf) {
 		for (String dataToSkip : metadataToSkip) {
 			if (mf.toString().equals(dataToSkip)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check if current metadata must be processed. If metadataToCheck is empty all
+	 * authority controlled metadata can be processed
+	 *
+	 * @param mf metadata field of the current metadata being processed
+	 * @return true if metadataToCheck array contains mf or if metadataTocheck is
+	 *         empty
+	 */
+	private boolean isMetadataToCheck(MetadataField mf) {
+		if (metadataToCheck.length == 0) {
+			return true;
+		}
+		for (String dataToCheck : metadataToCheck) {
+			if (mf.toString().equals(dataToCheck)) {
 				return true;
 			}
 		}
