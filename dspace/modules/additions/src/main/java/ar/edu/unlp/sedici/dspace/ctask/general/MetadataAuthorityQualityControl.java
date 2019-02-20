@@ -59,7 +59,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					.append(item.getID()).append("\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue mv : mValues) {
-				if (authService.isAuthorityControlled(mv.getMetadataField()) && dontSkip(mv.getMetadataField())) {
+				if (authService.isAuthorityControlled(mv.getMetadataField()) && !skipMetadata(mv.getMetadataField())) {
 					checkMetadataAuthority(reporter, mv, item);
 				}
 			}
@@ -204,15 +204,15 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	 * Check if current metadata must be processed or not.
 	 *
 	 * @param mf metadata field of the current metadata being processed
-	 * @return true if metadataToSkip array doesn't contain mf
+	 * @return true if metadataToSkip array contains mf
 	 */
-	private boolean dontSkip(MetadataField mf) {
+	private boolean skipMetadata(MetadataField mf) {
 		for (String dataToSkip : metadataToSkip) {
 			if (mf.toString().equals(dataToSkip)) {
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 }
