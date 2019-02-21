@@ -27,34 +27,35 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private boolean fixmode = false;
 
 	/**
-	 * Configuration property, only works with fixmode in true. If true, curation
-	 * task also fixes metadata value variants.
+	 * Configuration property, only works with fixmode in true.
+	 * If true, curation task also fixes metadata value variants.
 	 */
 	private boolean fixvariants = false;
 
 	/**
-	 * Configuration property, only works with fixmode in true. If true, curation
-	 * task also unset every authority key which is not connected with any
-	 * authority.
+	 * Configuration property, only works with fixmode in true.
+	 * If true, curation task also unsets every authority key
+	 * which is not connected with any authority.
 	 */
 	private boolean fixDangling = false;
 
 	/**
-	 * Configuration property, only works with fixmode in true. If true, curation
-	 * task also tries to find an authority key for those metadata with a missing
-	 * authority key.
+	 * Configuration property, only works with fixmode in true.
+	 * If true, curation task also tries to find an authority key
+	 * for those metadata with a missing authority key.
 	 */
 	private boolean fixMissing = false;
 
 	/**
 	 * Configuration property. List of metadata_fields which are authority
-	 * controlled but we don't want the curation task to process them
+	 * controlled but we don't want the curation task to process
 	 */
 	private String[] metadataToSkip;
 
 	/**
 	 * Configuration property. List of metadata_fields that we want the curation
-	 * task process Empty array = all metadata
+	 * task process. If metadataToCheck = "*" then all authority controlled metadata
+	 * can be processed
 	 */
 	private String[] metadataToCheck;
 
@@ -250,15 +251,15 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	/**
-	 * Check if current metadata must be processed. If metadataToCheck is empty all
-	 * authority controlled metadata can be processed
+	 * Check if current metadata must be processed. If metadataToCheck is equals to "*",
+	 *  all authority controlled metadata can be processed
 	 *
 	 * @param mf metadata field of the current metadata being processed
 	 * @return true if metadataToCheck array contains mf or if metadataTocheck is
 	 *         empty
 	 */
 	private boolean isMetadataToCheck(MetadataField mf) {
-		if (metadataToCheck.length == 0) {
+		if (metadataToCheck.length > 0 && metadataToCheck[0].equals("*")) {
 			return true;
 		}
 		for (String dataToCheck : metadataToCheck) {
