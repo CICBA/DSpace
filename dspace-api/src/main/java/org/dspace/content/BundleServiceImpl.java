@@ -174,10 +174,10 @@ public class BundleServiceImpl extends DSpaceObjectServiceImpl<Bundle> implement
     public void removeBitstream(Context context, Bundle bundle, Bitstream bitstream) throws AuthorizeException, SQLException, IOException {
         // Check authorisation
         authorizeService.authorizeAction(context, bundle, Constants.REMOVE);
+        authorizeService.authorizeAction(context, bitstream, Constants.DELETE);
 
         log.info(LogManager.getHeader(context, "remove_bitstream",
                 "bundle_id=" + bundle.getID() + ",bitstream_id=" + bitstream.getID()));
-
 
         context.addEvent(new Event(Event.REMOVE, Constants.BUNDLE, bundle.getID(),
                 Constants.BITSTREAM, bitstream.getID(), String.valueOf(bitstream.getSequenceID()),
@@ -443,6 +443,7 @@ public class BundleServiceImpl extends DSpaceObjectServiceImpl<Bundle> implement
 
         // Remove bitstreams
         List<Bitstream> bitstreams = bundle.getBitstreams();
+        bundle.clearBitstreams();
         for (Bitstream bitstream : bitstreams) {
             removeBitstream(context, bundle, bitstream);
         }
