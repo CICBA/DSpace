@@ -13,6 +13,10 @@ import org.dspace.curate.Curator;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Curation task that checks each authority controlled metadata of an item, reports anomalies and optionally fix them
+ *
+ */
 public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 
 	private MetadataAuthorityService authService = ContentAuthorityServiceFactory.getInstance()
@@ -83,6 +87,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					.append(item.getID()).append("\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue mv : mValues) {
+				//Only check metadata if it is authority controlled
 				if (authService.isAuthorityControlled(mv.getMetadataField()) && !skipMetadata(mv.getMetadataField())
 						&& isMetadataToCheck(mv.getMetadataField())) {
 					checkMetadataAuthority(reporter, mv, item);
@@ -114,7 +119,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	 * Reconciles metadata value with authority
 	 */
 	private void checkMetadataWithoutAuthorityKey(StringBuilder reporter, MetadataValue mv, Item item) {
-
+		//Null or empty authority, try to find one from the text_value
 		Choices choices = choiceAuthorityService.getBestMatch(mv.getMetadataField().toString(), mv.getValue(),
 				item.getOwningCollection(), mv.getLanguage());
 		if (authService.isAuthorityRequired(mv.getMetadataField())) {
@@ -123,8 +128,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			report(reporter, mv, "INFO", "Missing optional authority key for <<", mv.getValue(), ">>");
 		}
 		if (choices.values.length > 0) {
+			//Authority found from the text_value
 			String value = choices.values[0].value;
 			if (compare(value, mv.getValue())) {
+				//Exact match, new authority available
 				saveAuthorityKey(reporter, mv, choices);
 			} else {
 				// do not fix because can be either a false positive or variant
@@ -132,6 +139,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 						String.valueOf(choices.confidence));
 			}
 		} else {
+			//Authority not found from the text_value, just check confidence
 			assertConfidenceNotFound(reporter, mv);
 		}
 
