@@ -333,10 +333,10 @@
 					tesis de maestría
 				</xsl:when>				
 				<xsl:when test="$theValue='Trabajo de especializacion'">
-					tesis
+					tesis de maestría
 				</xsl:when>
 				<xsl:when test="$theValue='Trabajo de especialización'">
-					tesis
+					tesis de maestría
 				</xsl:when>
 				<xsl:when test="$theValue='Tesis de grado'">
 					tesis de grado
