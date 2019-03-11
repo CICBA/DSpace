@@ -506,7 +506,7 @@ public class MetadataImport
                     dcvalues[i] = dcv.getValue();
                 } else {
                     dcvalues[i] = dcv.getValue() + csv.getAuthoritySeparator() + dcv.getAuthority();
-                    dcvalues[i] += csv.getAuthoritySeparator() + (dcv.getConfidence() != -1 ? dcv.getConfidence() : Choices.CF_ACCEPTED);
+                    dcvalues[i] += csv.getAuthoritySeparator() + (dcv.getConfidence() != -1 ? dcv.getConfidence() : Choices.CF_UNCERTAIN);
                 }
                 i++;
                 log.debug(LogManager.getHeader(c, "metadata_import",
@@ -551,7 +551,7 @@ public class MetadataImport
                 String[] parts = value.split(csv.getAuthoritySeparator());
                 dcv.setValue(parts[0]);
                 dcv.setAuthority(parts[1]);
-                dcv.setConfidence((parts.length > 2 ? Integer.valueOf(parts[2]) : Choices.CF_ACCEPTED));
+                dcv.setConfidence((parts.length > 2 ? Integer.valueOf(parts[2]) : Choices.CF_UNCERTAIN));
             }
 
             if ((value != null) && (!"".equals(value)) && (!contains(value, fromCSV)) && fromAuthority==null)
@@ -890,7 +890,7 @@ public class MetadataImport
             String[] parts = value.split(csv.getEscapedAuthoritySeparator());
             dcv.setValue(parts[0]);
             dcv.setAuthority(parts[1]);
-            dcv.setConfidence((parts.length > 2 ? Integer.valueOf(parts[2]) : Choices.CF_ACCEPTED));
+            dcv.setConfidence((parts.length > 2 ? Integer.valueOf(parts[2]) : Choices.CF_UNCERTAIN));
         }
         return dcv;
     }
