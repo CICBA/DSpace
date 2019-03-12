@@ -82,9 +82,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 		StringBuilder reporter = new StringBuilder();
 		if (dso instanceof Item) {
 			Item item = (Item) dso;
-			reporter.append("####################\n");
+			reporter.append("########## ");
 			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
-					.append(item.getID()).append("\n");
+					.append(item.getID());
+			reporter.append(" ##########\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue mv : mValues) {
 				//Only check metadata if it is authority controlled
@@ -93,7 +94,6 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 					checkMetadataAuthority(reporter, mv, item);
 				}
 			}
-			reporter.append("####################");
 			report(reporter.toString());
 			status = Curator.CURATE_SUCCESS;
 		} else {
