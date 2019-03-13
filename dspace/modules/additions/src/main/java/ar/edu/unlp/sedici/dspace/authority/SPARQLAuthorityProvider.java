@@ -95,7 +95,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 			int limit) {
 
 		parameterizedSparqlString.setParams(globalParameters);
-		Query query = QueryFactory.create(normalizeTextForHttpQuery(parameterizedSparqlString),
+		Query query = QueryFactory.create(normalizeTextForHttpQuery(parameterizedSparqlString.toString()),
 				this.getSPARQLSyntax());
 		query.setOffset(offset);
 
@@ -129,16 +129,23 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 		return Syntax.syntaxSPARQL_10;
 	}
 
-	private String normalizeTextForHttpQuery(ParameterizedSparqlString parameterizedSparqlString) {
-		String query = parameterizedSparqlString.toString();
-		if (query.indexOf("\\(") >= 0) query = query.replace("\\(", "\\\\\\(");
-		if (query.indexOf("\\)") >= 0) query = query.replace("\\)", "\\\\\\)");
+	private String normalizeTextForHttpQuery(String query) {
+		if (query.indexOf("\\(") >= 0) {
+			query = query.replace("\\(", "\\\\\\(");
+		}
+		if (query.indexOf("\\)") >= 0) {
+			query = query.replace("\\)", "\\\\\\)");
+		}
 		return query;
 	}
 
 	protected String normalizeTextForParserSPARQL10(String text) {
-		if (text.indexOf("(") >= 0) text = text.replace("(", "\\\\(");
-		if (text.indexOf(")") >= 0) text = text.replace(")", "\\\\)");
+		if (text.indexOf("(") >= 0) {
+			text = text.replace("(", "\\\\(");
+		}
+		if (text.indexOf(")") >= 0) {
+			text = text.replace(")", "\\\\)");
+		}
 		return text;
 	}
 
