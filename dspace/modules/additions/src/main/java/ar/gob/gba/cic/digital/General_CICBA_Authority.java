@@ -68,6 +68,7 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 			pqs.setLiteral("key", filter);
 		}
 		else {
+			filter = normalizeTextForParserSPARQL10(filter);
 			getTextFilterQuery(pqs,filter);
 			pqs.append("}\n");
 			pqs.append("ORDER BY ASC(?label)\n");

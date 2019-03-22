@@ -91,6 +91,7 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 	protected ParameterizedSparqlString getSparqlSearchByTextQuery(
 			String field, String text, String locale) {
 		ParameterizedSparqlString pqs = new ParameterizedSparqlString();
+		text = normalizeTextForParserSPARQL10(text);
 
 		pqs.setNsPrefix("foaf", NS_FOAF);
 		pqs.setNsPrefix("dc", NS_DC);
