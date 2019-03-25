@@ -85,6 +85,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 			reporter.append("########## ");
 			reporter.append("Checking item with handle ").append(item.getHandle()).append(" and item id ")
 					.append(item.getID());
+			if (item.isWithdrawn()) {
+				reporter.append(" (WITHDRAWN)");
+			}
 			reporter.append(" ##########\n");
 			List<MetadataValue> mValues = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
 			for (MetadataValue mv : mValues) {
