@@ -185,19 +185,19 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	private void saveVariant(StringBuilder reporter, MetadataValue mv, String value) {
-		report(reporter, mv, "WARN", "text_value and value do not match for authority <<", mv.getAuthority(),
-				">>. Metadata text_value <<", mv.getValue(), ">>. Authority value <<", value, ">>");
+		report(reporter, mv, "WARN", "Variant found. Authority  <<", mv.getAuthority(),
+				">>; Metadata text_value <<", mv.getValue(), ">>; Authority value <<", value, ">>");
 		if (fixvariants) {
 			mv.setValue(value);
 			mv.setConfidence(Choices.CF_UNCERTAIN);
-			report(reporter, mv, "FIXED", "[VARIANT] text_value replaced with authority's value.");
+			report(reporter, mv, "FIXED", "[VARIANT] variant replaced with authority's value.");
 		}
 
 	}
 
 	private void saveAuthorityKey(StringBuilder reporter, MetadataValue mv, Choices choices) {
 		String newAuthority = choices.values[0].authority;
-		report(reporter, mv, "INFO", " Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>.");
+		report(reporter, mv, "INFO", "Found Authority <<", newAuthority, ">> for value <<", mv.getValue(), ">>.");
 		if (fixMissing && choices.confidence >= Choices.CF_UNCERTAIN) {
 			mv.setAuthority(newAuthority);
 			mv.setConfidence(choices.confidence);
