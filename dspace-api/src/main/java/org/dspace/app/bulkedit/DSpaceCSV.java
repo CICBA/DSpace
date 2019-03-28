@@ -459,7 +459,7 @@ public class DSpaceCSV implements Serializable
                 String mdValue = value.getValue();
                 if (value.getAuthority() != null && !"".equals(value.getAuthority()))
                 {
-                    mdValue += authoritySeparator + value.getAuthority() + authoritySeparator + (value.getConfidence() != -1 ? value.getConfidence() : Choices.CF_ACCEPTED);
+                    mdValue += authoritySeparator + value.getAuthority() + authoritySeparator + (value.getConfidence() != -1 ? value.getConfidence() : Choices.CF_UNCERTAIN);
                 }
                 line.add(key, mdValue);
                 if (!headings.contains(key))
