@@ -3,7 +3,7 @@
     <workflow-map>
         <name-map collection="default" workflow="default"/>
         <name-map collection="11746/2" workflow="autoarchive"/>
-<!--        <name-map collection="11746/7270" workflow="CICINV18"/> -->
+        <name-map collection="11746/9041" workflow="CICINV19"/>
 <!--        <name-map collection="11746/7272" workflow="autoarchive"/> -->
     </workflow-map>
 
@@ -30,11 +30,11 @@
 		</step>
 	</workflow>
 
-<!-- Este wfg fue habilitado para el concuros CICINV18. Todo lo que entraba acá se publicaba  -->
-<!--	<workflow start="CIC-ADMIN_review" id="CICINV18"> -->
-<!--		<step id="CIC-ADMIN_review" userSelectionMethod="noUserSelectionAction"> -->
-<!-- -->
-<!--		</step> -->
-<!--	</workflow> -->
+<!-- Este wfg fue habilitado para el concuros CICINV19. Todo lo que entraba acá se publicaba  -->
+	<workflow start="CIC-ADMIN_review" id="CICINV19">
+		<step id="CIC-ADMIN_review" userSelectionMethod="noUserSelectionAction">
+
+		</step>
+	</workflow>
 
 </wf-config>
