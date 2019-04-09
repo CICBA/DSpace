@@ -112,6 +112,7 @@ public class ClientInfoServiceImpl implements ClientInfoService {
         /* This header is a comma delimited list */
         String headerValue = StringUtils.trimToEmpty(xForwardedForValue);
         for (String xfip : headerValue.split(",")) {
+            xfip = xfip.trim();
             /* proxy itself will sometime populate this header with the same value in
                remote address. ordering in spec is vague, we'll just take the last
                not equal to the proxy
@@ -120,7 +121,7 @@ public class ClientInfoServiceImpl implements ClientInfoService {
                     //if we have trusted proxies, we'll assume that they are not the client IP
                     && (trustedProxies == null || !isRequestFromTrustedProxy(xfip))) {
 
-                ip = xfip.trim();
+                ip = xfip;
             }
         }
 
