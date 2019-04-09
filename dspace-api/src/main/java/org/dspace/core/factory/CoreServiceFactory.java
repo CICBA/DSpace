@@ -10,6 +10,7 @@ package org.dspace.core.factory;
 import org.dspace.core.service.LicenseService;
 import org.dspace.core.service.NewsService;
 import org.dspace.core.service.PluginService;
+import org.dspace.service.ClientInfoService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 
 /**
@@ -25,8 +26,10 @@ public abstract class CoreServiceFactory {
 
     public abstract PluginService getPluginService();
 
-    public static CoreServiceFactory getInstance()
-    {
-        return DSpaceServicesFactory.getInstance().getServiceManager().getServiceByName("coreServiceFactory", CoreServiceFactory.class);
+    public abstract ClientInfoService getClientInfoService();
+
+    public static CoreServiceFactory getInstance() {
+        return DSpaceServicesFactory.getInstance().getServiceManager()
+                                    .getServiceByName("coreServiceFactory", CoreServiceFactory.class);
     }
 }
