@@ -129,8 +129,8 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
         Choice v[] = new Choice[values.length];
         for (int i = 0; i < values.length; ++i)
         {
-            v[i] = new Choice(values[i], values[i], labels[i]);
-            if (values[i].equalsIgnoreCase(query))
+            v[i] = new Choice(values[i], labels[i], labels[i]);
+            if (labels[i].equalsIgnoreCase(query))
             {
                 dflt = i;
             }
@@ -144,10 +144,10 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
         init();
         for (int i = 0; i < values.length; ++i)
         {
-            if (text.equalsIgnoreCase(values[i]))
+            if (text.equalsIgnoreCase(labels[i]))
             {
                 Choice v[] = new Choice[1];
-                v[0] = new Choice(String.valueOf(i), values[i], labels[i]);
+                v[0] = new Choice(values[i], labels[i], labels[i]);
                 return new Choices(v, 0, v.length, Choices.CF_UNCERTAIN, false, 0);
             }
         }
