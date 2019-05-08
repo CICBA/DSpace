@@ -475,12 +475,28 @@ public class Curator
         {
             return false;
         }
-        for (Community subcomm : comm.getSubcommunities())
-        {
-            if (! doCommunity(tr, subcomm))
-            {
-                return false;
+        try {
+            Context curCtx = curationCtx.get();
+            //If scope="object", objects might be detached from db session so we must reload them
+            if (txScope.equals(TxScope.OBJECT)) {
+                comm = curCtx.reloadEntity(comm);
             }
+
+            for (Community subcomm : comm.getSubcommunities())
+            {
+                if (! doCommunity(tr, subcomm))
+                {
+                    return false;
+                }
+            }
+
+            //If scope="object", objects might be detached from db session so we must reload them
+            if (txScope.equals(TxScope.OBJECT)) {
+                comm = curCtx.reloadEntity(comm);
+            }
+        }
+        catch (SQLException sqlE) {
+            throw new IOException(sqlE.getMessage(), sqlE);
         }
         for (Collection coll : comm.getCollections())
         {
@@ -509,9 +525,11 @@ public class Curator
             }
             Context context = curationContext();
             Iterator<Item> iter = itemService.findByCollection(context, coll);
-            while (iter.hasNext())
-            {
-                Item item = iter.next();
+            List<Item> items =  new ArrayList<Item>();
+            while (iter.hasNext()) {
+                items.add(iter.next());
+            }
+            for (Item item : items) {
                 boolean shouldContinue = tr.run(item);
                 context.uncacheEntity(item);
                 if (!shouldContinue)
@@ -538,7 +556,12 @@ public class Curator
     	{
             if (txScope.equals(TxScope.OBJECT))
             {
-                curCtx.dispatchEvents();
+                try {
+                    curCtx.commit();
+                }
+                catch (SQLException sqlE) {
+                    throw new IOException(sqlE.getMessage(), sqlE);
+                }
             }
     	}
     }
@@ -561,6 +584,16 @@ public class Curator
                 if (dso == null)
                 {
                     throw new IOException("DSpaceObject is null");
+                }
+                try {
+                    Context ctx = curationContext();
+                    //If scope="object", objects might be detached from db session so we must reload them
+                    if (txScope.equals(TxScope.OBJECT)) {
+                        dso = ctx.reloadEntity(dso);
+                    }
+                }
+                catch (SQLException sqlE) {
+                    throw new IOException(sqlE.getMessage(), sqlE);
                 }
                 statusCode = task.perform(dso);
                 String id = (dso.getHandle() != null) ? dso.getHandle() : "workflow item: " + dso.getID();
