@@ -34,6 +34,9 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 
 # Full path of your local DSpace Installation (e.g. /home/dspace or /dspace or similar)
 DSPACE=/var/dspace/install
+
+# GeoIP2 License Key used for download Geolitev2 IP database (https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/)
+GEOLITEv2_LICENSE_KEY=XXX-YYY-ZZZ
  
 #--------------
 # HOURLY TASKS (Recommended to be run multiple times per day, if possible)
@@ -104,7 +107,7 @@ DSPACE=/var/dspace/install
 #0 1 1 * *	dspace	$DSPACE/bin/dspace cleanup > /dev/null
 
 #Actualizacion de la bbdd geolite el día 2 de cada mes 
-0 5 2 * *       dspace  wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz -q -O - | gunzip > $DSPACE/config/GeoLite2-City.mmdb
+0 5 2 * *       dspace  wget -qO- "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=$GEOLITEv2_LICENSE_KEY&suffix=tar.gz" | tar --wildcards --directory $DSPACE/config/ -xz "GeoLite2-City_*/GeoLite2-City.mmdb" --strip-components 1
  
 #----------------
 # YEARLY TASKS (Recommended to be run once per year)
