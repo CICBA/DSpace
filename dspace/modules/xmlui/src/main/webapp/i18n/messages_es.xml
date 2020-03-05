@@ -264,6 +264,7 @@
 <message key="xmlui.ArtifactBrowser.FeedbackForm.trail">Sugerencias</message>
 <message key="xmlui.ArtifactBrowser.FeedbackForm.head">Sugerencias</message>
 <message key="xmlui.ArtifactBrowser.FeedbackForm.para1">Gracias por compartir sus sugerencias sobre CIC-Digital. Sus comentarios serán tenidos en cuenta por los administradores del sitio.</message>
+<message key="xmlui.ArtifactBrowser.FeedbackForm.para2">Este es el Repositorio Institucional de la Comisión de Investigaciones Científicas (CIC). Por consulta de materiales o estudios, por favor diríjase al centro correspondiente en <a href="https://www.gba.gob.ar/cic/informacion_de_centros">https://www.gba.gob.ar/cic/informacion_de_centros</a>.</message>
 <message key="xmlui.ArtifactBrowser.FeedbackForm.email">Su correo electrónico</message>
 <message key="xmlui.ArtifactBrowser.FeedbackForm.email_help">Esta dirección será utilizada para seguimiento de su sugerencia.</message>
 <message key="xmlui.ArtifactBrowser.FeedbackForm.comments">Comentarios</message>

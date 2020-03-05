@@ -52,6 +52,9 @@ public class FeedbackForm extends AbstractDSpaceTransformer implements Cacheable
     private static final Message T_para1 =
         message("xmlui.ArtifactBrowser.FeedbackForm.para1");
     
+    private static final Message T_para2 =
+            message("xmlui.ArtifactBrowser.FeedbackForm.para2");
+    
     private static final Message T_email =
         message("xmlui.ArtifactBrowser.FeedbackForm.email");
 
@@ -114,6 +117,8 @@ public class FeedbackForm extends AbstractDSpaceTransformer implements Cacheable
         feedback.setHead(T_head);
         
         feedback.addPara(T_para1);
+        
+        feedback.addPara(T_para2);
         
         List form = feedback.addList("form",List.TYPE_FORM);
         

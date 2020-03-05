@@ -265,6 +265,7 @@
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.trail">Give feedback</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.head">Give feedback</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.para1">Thanks for sharing your feedback about the CIC-Digital system. Your comments will be taken into account by the site administrators.</message>
+	<message key="xmlui.ArtifactBrowser.FeedbackForm.para2"> This is the Institional Repository of the Comisión de Investigaciones Científicas (CIC). For questions about materials or studies, please go to the corresponding center at <a href="https://www.gba.gob.ar/cic/informacion_de_centros">https://www.gba.gob.ar/cic/informacion_de_centros</a>.</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.email">Your Email</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.email_help">This address will be used to follow up on your feedback.</message>
 	<message key="xmlui.ArtifactBrowser.FeedbackForm.comments">Comments</message>

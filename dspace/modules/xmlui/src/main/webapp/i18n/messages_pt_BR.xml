@@ -238,6 +238,7 @@
     <message key="xmlui.ArtifactBrowser.FeedbackForm.trail">Dê a sua opinião</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.head">Dê a sua opinião</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.para1">Obrigado por compartilhar sua opinião sobre o repositório! Seus comentários são bem-vindos!</message>
+    <message key="xmlui.ArtifactBrowser.FeedbackForm.para2">Este é o Repositório Institucional da Comisión de Investigaciones Científicas (CIC). Para perguntas sobre materiais ou estudos, acesse o centro correspondente em <a href="https://www.gba.gob.ar/cic/informacion_de_centros">https://www.gba.gob.ar/cic/informacion_de_centros</a>.</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.email">Seu email</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.email_help">Este endereço será utilizado para acompanhamento dos seus comentários.</message>
     <message key="xmlui.ArtifactBrowser.FeedbackForm.comments">Comentários</message>
