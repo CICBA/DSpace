@@ -1,7 +1,7 @@
 Mozilla\/5\.0 \(compatible; PRTG Network Monitor \(www\.paessler\.com\); Windows\)
 Mozilla\/5\.0 \(compatible; monitis \- premium monitoring service; http:\/\/www\.monitis\.com\)
 Pingdom\.com_bot_version_1\.4_\(http:\/\/www\.pingdom\.com\/\)
-Alexandria(\s|\+)prototype(\s|\+)project
+Alexandria(\ |\+)prototype(\ |\+)project
 AllenTrack
 Arachmo
 Brutus\/AET
@@ -13,30 +13,30 @@ DataCha0s\/2\.0
 Demo\sBot
 EmailSiphon
 EmailWolf
-FDM(\s|\+)1
-Fetch(\s|\+)API(\s|\+)Request
+FDM(\ |\+)1
+Fetch(\ |\+)API(\ |\+)Request
 GetRight
-Goldfire(\s|\+)Server
+Goldfire(\ |\+)Server
 Googlebot
 HTTrack
 LOCKSS
 LWP\:\:Simple
 MSNBot
-Microsoft(\s|\+)URL(\s|\+)Control
+Microsoft(\ |\+)URL(\ |\+)Control
 Milbot
 MuscatFerre
 NABOT
 NaverBot
-Offline(\s|\+)Navigator
+Offline(\ |\+)Navigator
 OurBrowser
 Python\-urllib
 Readpaper
 Strider
 T\-H\-U\-N\-D\-E\-R\-S\-T\-O\-N\-E
-Teleport(\s|\+)Pro
+Teleport(\ |\+)Pro
 Teoma
 Wanadoo
-Web(\s|\+)Downloader
+Web(\ |\+)Downloader
 WebCloner
 WebCopier
 WebReaper
@@ -45,7 +45,7 @@ WebZIP
 Webinator
 Webmetrics
 Wget
-Xenu(\s|\+)Link(\s|\+)Sleuth
+Xenu(\ |\+)Link(\ |\+)Sleuth
 #[+:,\.\;\/\\-]bot
 [^a]fish
 ^voyager\/
@@ -140,7 +140,7 @@ lwp
 lwp\-request
 lwp\-tivial
 lwp\-trivial
-lycos[_+]
+lycos[_\+]
 mail.ru
 mediapartners\-google
 megite
@@ -202,7 +202,7 @@ ucsd
 ultraseek
 urlaliasbuilder
 urllib
-virus[_+]detector
+virus[_\+]detector
 voila
 w3c\-checklink
 webcollage
