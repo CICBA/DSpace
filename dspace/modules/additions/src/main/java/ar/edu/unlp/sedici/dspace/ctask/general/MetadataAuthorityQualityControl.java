@@ -12,6 +12,8 @@ import org.dspace.curate.AbstractCurationTask;
 import org.dspace.curate.Curator;
 import java.io.IOException;
 import java.util.List;
+import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP;
+import com.hp.hpl.jena.sparql.expr.ExprException;
 
 /**
  * Curation task that checks each authority controlled metadata of an item, reports anomalies and optionally fix them
@@ -94,7 +96,12 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 				//Only check metadata if it is authority controlled
 				if (authService.isAuthorityControlled(mv.getMetadataField()) && !skipMetadata(mv.getMetadataField())
 						&& isMetadataToCheck(mv.getMetadataField())) {
-					checkMetadataAuthority(reporter, mv, item);
+					try {
+						checkMetadataAuthority(reporter, mv, item);
+					} catch (ExprException | QueryExceptionHTTP e) {
+						report(reporter, mv, "ERROR", "An error ocurred processing metadata: ", e.getMessage());
+						e.printStackTrace();
+					}
 				}
 			}
 			report(reporter.toString());
