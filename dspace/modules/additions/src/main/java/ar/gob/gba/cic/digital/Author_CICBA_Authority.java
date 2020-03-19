@@ -106,7 +106,11 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 		pqs.append("	?person foaf:mbox ?mail . \n");
 		pqs.append("	} . \n");
 		pqs.append("	OPTIONAL {\n");
-		pqs.append("	?person cerif:linksToOrganisationUnit ?link . ?link cerif:startDate ?inicio; cerif:endDate ?fin; foaf:Organization ?org . ?org dc:title ?affiliation; sioc:id ?id\n");
+		pqs.append("	?person cerif:linksToOrganisationUnit ?link . ");
+		pqs.append("        OPTIONAL { ?link cerif:startDate ?inicio; cerif:endDate ?fin. } .");
+		pqs.append("        OPTIONAL { ?link foaf:Organization ?org . ?org dc:title ?affiliation. ");
+		pqs.append("                     OPTIONAL { ?org sioc:id ?id . }.");
+		pqs.append("                 } \n");
 		pqs.append("	}\n");
 		if (!"".equals(text)) {
 			String[] tokens = text.split(",");
@@ -132,13 +136,14 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 			Statement link = links.next();
 			
 			Resource affiliation = link.getObject().asResource();
-			Resource org = affiliation.getProperty(organization).getObject().asResource();			
-			String id = org.getProperty(siocId).getString();
-			if (!"".equals(id)){
-				string.append(id);
-			}
-			else{
-				string.append(org.getProperty(title).getString());
+			if (affiliation.hasProperty(organization)){
+				Resource org = affiliation.getProperty(organization).getObject().asResource();
+				if (org.hasProperty(siocId) && !org.getProperty(siocId).getString().equals("")){
+					string.append(org.getProperty(siocId).getString());
+				}
+				else if (org.hasProperty(title)) {
+					string.append(org.getProperty(title).getString());
+				}
 			}
 			String start = affiliation.getProperty(startDate).getString();
 			String end = affiliation.getProperty(endDate).getString();
