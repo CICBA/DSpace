@@ -164,6 +164,27 @@
 		    </xsl:text>
 		</script>
 		
+        <script type="text/javascript">
+            <xsl:text disable-output-escaping="yes">
+                $(document).ready(function() {
+            </xsl:text>
+                    <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.administrative.item.MoveItemForm.div.move-item']">
+                        <xsl:text>$("select#aspect_administrative_item_MoveItemForm_field_collectionID").select2();</xsl:text>
+                    </xsl:if>
+                    <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.xmlworkflow.WorkflowTransformer.div.change-collection']">
+                        <xsl:text>$("select#aspect_xmlworkflow_WorkflowTransformer_field_collection_handle").select2();</xsl:text>
+                    </xsl:if>
+                    <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.submission.submit.SelectCollectionStep.div.select-collection']">
+                        <xsl:text>$("select#aspect_submission_submit_SelectCollectionStep_field_handle").select2();</xsl:text>
+                    </xsl:if>
+                    <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.eperson.EditProfile.div.information']">
+                        <xsl:text>$("select#aspect_eperson_EditProfile_field_subscriptions").select2();</xsl:text>
+                    </xsl:if>
+            <xsl:text>
+                });
+            </xsl:text>
+        </script>
+
 		<xsl:call-template name="google-analytic-tracking" />
 
 		<!-- Add a contextpath to a JS variable -->
