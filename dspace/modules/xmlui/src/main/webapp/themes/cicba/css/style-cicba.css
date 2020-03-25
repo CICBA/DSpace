@@ -1067,3 +1067,8 @@ input[id^="aspect_discovery_SimpleSearch_field_filter_"]{
 	width:150px;
 }
 
+select#aspect_eperson_EditProfile_field_subscriptions, select#aspect_xmlworkflow_WorkflowTransformer_field_collection_handle,
+select#aspect_administrative_item_MoveItemForm_field_collectionID {
+    max-width: 350px;
+}
+
