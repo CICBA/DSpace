@@ -558,6 +558,7 @@
          <label>Resumen</label>
          <input-type>textarea</input-type>
          <hint>Resumen de la obra. En caso de ser un Informe de Investigación generar un índice del mismo en función de los títulos del punto 6.</hint>
+         <required>Debe completar el resumen de la obra</required>
        </field>
      
      	<field>
@@ -679,6 +680,7 @@
          Para objetos de conferencia: Nombre evento en la que este item fue presentado. 
          Para artículos: Titulo de la revista en la que este item fue publicado.  
 		</hint>
+		<required>Debe indicar la revista o evento respectivo</required>
        </field>
               
        <field>
