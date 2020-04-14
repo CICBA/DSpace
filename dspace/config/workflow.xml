@@ -3,7 +3,7 @@
     <workflow-map>
         <name-map collection="default" workflow="default"/>
         <name-map collection="11746/2" workflow="autoarchive"/>
-        <name-map collection="11746/9041" workflow="CICINV19"/>
+<!--        <name-map collection="11746/9041" workflow="CICINV19"/> -->
 <!--        <name-map collection="11746/7272" workflow="autoarchive"/> -->
     </workflow-map>
 
