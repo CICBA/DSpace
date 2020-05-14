@@ -110,6 +110,8 @@ public class SolrServiceImpl implements SearchService, IndexingService {
 
     public static final String VARIANTS_STORE_SEPARATOR = "###";
 
+    public static final int MAX_RESULTS_ALLOWED = 100;
+
     @Autowired(required = true)
     protected ContentServiceFactory contentServiceFactory;
     @Autowired(required = true)
@@ -1676,6 +1678,10 @@ public class SolrServiceImpl implements SearchService, IndexingService {
 
         if(discoveryQuery.getMaxResults() != -1)
         {
+            if (discoveryQuery.getMaxResults() > MAX_RESULTS_ALLOWED)
+            {
+                discoveryQuery.setMaxResults(MAX_RESULTS_ALLOWED);
+            }
             solrQuery.setRows(discoveryQuery.getMaxResults());
         }
 
