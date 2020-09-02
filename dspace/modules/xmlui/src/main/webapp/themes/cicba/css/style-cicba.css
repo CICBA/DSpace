@@ -7,7 +7,7 @@ namespace xml "http: //www.w3.org /XML/1998/namespace"
 	
 }
 
-/* Azul #4365a2 */
+/* Azul #00aec3 */
 /* Azul rgba(67,101,162, 1); */
 
 
@@ -30,7 +30,7 @@ ol {
 #cic-header {
 	/*background-image: url('../images/header_72.png');*/
 /* 	padding: 0px; */
-	color: #4365a2;
+	color: #00aec3;
 }
 
 #logo-cic-digital > a:hover{
@@ -41,7 +41,7 @@ ol {
 /* 	#logo-cic-digital{ */
 /* 		background-image: url('../images/header_72.png'); */
 /* 		padding: unset; */
-/* 		background-color: #4365a2; Azul */
+/* 		background-color: #00aec3; Azul */
 /* 		text-align: center; */
 /* 	} */
 }
@@ -116,7 +116,7 @@ ol {
 		padding:30px;
 	color: black;
   padding: 25px 10px;
-  border-top: 1px solid #4365a2;
+  border-top: 1px solid #00aec3;
 }
 
 #cic-footer address {
@@ -168,7 +168,7 @@ ol {
 }
 
 #home-highlight-content form {
-	background-color: rgba(67,101,162, 1);
+	background-color: rgba(0,174,195, 1);
 	padding: 8px 15px;
 }
 
@@ -196,7 +196,7 @@ ol {
 }
 
 #home-highlight-content .glyphicon-search {
-	color: rgba(67,101,162, 1);
+	color: rgba(0,174,195, 1);
 	font-weight: bold;
 	font-size: 22pt;
 	vertical-align: middle;
@@ -274,7 +274,7 @@ ol {
 
 
 #home-autoarchivo {
-	border: 3px solid #4365a2;
+	border: 3px solid #00aec3;
 	padding: 40px;
 	color:black;
 	background-color: #F8F8F8;
@@ -468,12 +468,12 @@ li.ds-artifact-item.community {
 }
 
 .metadata-dc_type {
-	color: #31708f;
+	color: #00aec3;
 	font-size: 95%;
 }
 
 #item-context {
-	color: #31708f;
+	color: #00aec3;
 	font-size: 95%;
 }
 
@@ -641,7 +641,7 @@ width: 700px;
 .bs-callout {
   padding: 20px;
   margin: 20px 0;
-  border: 1px solid #4365a2;
+  border: 1px solid #00aec3;
   border-left-width: 5px;
   border-radius: 3px;
     margin-top: 30px;
@@ -815,7 +815,7 @@ width: 700px;
 
 
 div#aspect_discovery_SimpleSearch_div_search-controls-gear > span:first-child{
-	color: #31708f;
+	color: #00aec3;
 }
 
 div#aspect_discovery_SimpleSearch_div_search-controls-gear > span:first-child:hover{
@@ -823,7 +823,7 @@ div#aspect_discovery_SimpleSearch_div_search-controls-gear > span:first-child:ho
 }
 
 .glyphicon-sort:before{
-	color:#31708f;
+	color:#00aec3;
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -1023,7 +1023,7 @@ form#aspect_administrative_collection_EditCollectionMetadataForm_div_collection-
 	margin-right: 0.5%;
 	margin-top: 0.5%;
 	background-image: none;
-	background-color: #6d859c;
+	background-color: #00aec3;
 	border-color: #1F3F5E;
 }
 
@@ -1072,3 +1072,14 @@ select#aspect_administrative_item_MoveItemForm_field_collectionID {
     max-width: 350px;
 }
 
+a {
+ color: #7a797b;   
+}
+
+a:hover{
+    color: #00aec3;
+}
+
+.ds-button-field {
+    background-color: #00aec3;
+}
