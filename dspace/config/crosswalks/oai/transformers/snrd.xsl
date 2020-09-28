@@ -173,10 +173,10 @@
 					review
 				</xsl:when>
 				<xsl:when test="$theValue ='Contribucion a revista'">
-					other
+					article
 				</xsl:when>
 				<xsl:when test="$theValue ='Contribución a revista'">
-					other
+					article
 				</xsl:when>
 				<xsl:when test="$theValue ='Informe tecnico/Reporte'">
 					report
