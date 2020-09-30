@@ -1109,7 +1109,7 @@ public class ItemAdapter extends AbstractAdapter
         }
         String checksumType = bitstream.getChecksumAlgorithm();
         String checksum = bitstream.getChecksum();
-        long size = bitstream.getSize();
+        long size = bitstream.getSizeBytes();
 
         // ////////////////////////////////
         // Start the actual file
