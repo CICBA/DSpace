@@ -732,6 +732,8 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
                         doc.removeFields("isBot");
                         doc.addField("isBot", true);
                         SolrInputDocument newInput = ClientUtils.toSolrInputDocument(doc);
+                        //Removing field "[shard]" added in commit 301c493. Otherwise, solr.add() gives an error...
+                        newInput.removeField("[shard]");
                         solr.add(newInput);
                         log.info("Marked " + doc.getFieldValue("ip") + " as bot");
                     }
@@ -797,6 +799,8 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
                 doc.removeFields("isBot");
                 doc.addField("isBot", true);
                 SolrInputDocument newInput = ClientUtils.toSolrInputDocument(doc);
+                //Removing field "[shard]" added in commit 301c493. Otherwise, solr.add() gives an error...
+                newInput.removeField("[shard]");
                 solr.add(newInput);
             }
         };
