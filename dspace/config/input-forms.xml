@@ -560,7 +560,19 @@
          <hint>Resumen de la obra. En caso de ser un Informe de Investigación generar un índice del mismo en función de los títulos del punto 6.</hint>
          <required>Debe completar el resumen de la obra</required>
        </field>
-     
+
+
+       <field>
+         <dc-schema>cic</dc-schema>
+         <dc-element>lugarDesarrollo</dc-element>
+         <repeatable>true</repeatable>
+         <label>Lugar de desarrollo</label>
+         <input-type>onebox</input-type>
+         <hint>Institución, departamento y/o unidad en la cual se desarrolló el trabajo. En el caso de informes de investigación, corresponde al punto 4.</hint>
+         <required>Debe indicar el lugar o lugares donde se desarrolló el trabajo.</required>
+       </field>
+
+
      	<field>
          <dc-schema>cic</dc-schema>
          <dc-element>institucionOrigen</dc-element>
