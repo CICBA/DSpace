@@ -18,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.core.Constants;
+import org.dspace.core.factory.CoreServiceFactory;
 import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.service.ClientInfoService;
 import org.dspace.services.ConfigurationService;
@@ -55,21 +56,10 @@ public class GoogleRecorderEventListener extends AbstractUsageEventListener {
     public GoogleRecorderEventListener() {
         // httpclient is threadsafe so we only need one.
         httpclient = HttpClients.createDefault();
-    }
-
-    @Autowired
-    public void setContentServiceFactory(ContentServiceFactory contentServiceFactory) {
-        this.contentServiceFactory = contentServiceFactory;
-    }
-
-    @Autowired
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
-    }
-
-    @Autowired
-    public void setClientInfoService(ClientInfoService clientInfoService) {
-        this.clientInfoService = clientInfoService;
+        this.contentServiceFactory = ContentServiceFactory.getInstance();
+        this.clientInfoService = CoreServiceFactory.getInstance().getClientInfoService();
+        this.configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+        
     }
 
     @Override
