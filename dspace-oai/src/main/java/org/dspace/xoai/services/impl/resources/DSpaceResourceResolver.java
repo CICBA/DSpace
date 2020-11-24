@@ -25,7 +25,7 @@ import com.lyncode.xoai.dataprovider.services.api.ResourceResolver;
 public class DSpaceResourceResolver implements ResourceResolver
 {
     private static final TransformerFactory transformerFactory = TransformerFactory
-            .newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+            .newInstance();
 
     private final String basePath = ConfigurationManager.getProperty("oai",
             "config.dir");
