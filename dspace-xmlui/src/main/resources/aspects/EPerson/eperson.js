@@ -16,7 +16,7 @@ importClass(Packages.org.dspace.eperson.factory.EPersonServiceFactory);
 importClass(Packages.org.dspace.content.factory.ContentServiceFactory);
 importClass(Packages.java.util.UUID)
 
-
+importClass(Packages.org.dspace.app.util.Util)
 importClass(Packages.org.dspace.app.xmlui.utils.AuthenticationUtil);
 importClass(Packages.org.dspace.app.xmlui.utils.ContextUtil);
 
@@ -98,7 +98,17 @@ function doRegister()
             var errors = new Array();
             accountExists = false;
             
+            //Check captcha
+            var number1 = cocoon.request.getParameter("number1");
+            var number2 = cocoon.request.getParameter("number2");
+            var result = cocoon.request.getParameter("captcha_input");
+            var isValidUser = Util.isValidCaptchaResult(number1, number2, result);
             var submit_forgot = cocoon.request.getParameter("submit_forgot");
+            if (!isValidUser && result!=null){
+                // Captcha result was not successfull, send error
+                errors = new Array("captcha");
+                continue;
+            }
             
             if (submit_forgot != null)
             {

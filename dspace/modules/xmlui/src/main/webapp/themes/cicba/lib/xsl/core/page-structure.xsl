@@ -691,7 +691,7 @@
             </script>  
          </xsl:if>
 
-         <xsl:if test="/dri:document/dri:body/dri:div[@id='aspect.artifactbrowser.FeedbackForm.div.feedback-form']">
+         <xsl:if test="(/dri:document/dri:body/dri:div[@id='aspect.artifactbrowser.FeedbackForm.div.feedback-form']) or (/dri:document/dri:body/dri:div[@id='aspect.eperson.StartRegistration.div.register'])">
             <script type="text/javascript">
                 <xsl:attribute name="src">
                     <xsl:call-template name="print-theme-path">

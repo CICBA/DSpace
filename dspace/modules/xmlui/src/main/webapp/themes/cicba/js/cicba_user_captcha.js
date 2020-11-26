@@ -1,8 +1,8 @@
 function add_captcha (){
-	li=document.getElementById("aspect_artifactbrowser_FeedbackForm_item_captcha");
+	li=document.querySelectorAll('[id$=item_captcha]')[0]
 	captcha=li.getElementsByTagName("div")[0];
 	//Create captcha text
-	captcha_input=document.getElementById("aspect_artifactbrowser_FeedbackForm_field_captcha_input");
+	captcha_input=document.querySelectorAll('[id$=field_captcha_input]')[0];
 
 	var number1=Math.floor((Math.random() * 20));
 	var number2=Math.floor((Math.random() * 10));
@@ -29,7 +29,6 @@ function createHiddenNumber(name,value){
 }
 
 function setUserFeedbackInputsRequired(){
-	document.getElementById("aspect_artifactbrowser_FeedbackForm_field_email").setAttribute("required","true");
-	document.getElementById("aspect_artifactbrowser_FeedbackForm_field_comments").setAttribute("required","true");
-	document.getElementById("aspect_artifactbrowser_FeedbackForm_field_captcha_input").setAttribute("required","true");
+	document.querySelectorAll('[id$=field_email]')[0].setAttribute("required","true");
+	document.querySelectorAll('[id$=field_captcha_input]')[0].setAttribute("required","true");
 }
