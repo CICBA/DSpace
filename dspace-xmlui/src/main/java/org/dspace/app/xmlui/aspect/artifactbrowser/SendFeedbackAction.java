@@ -25,6 +25,7 @@ import org.dspace.core.Context;
 import org.dspace.core.Email;
 import org.dspace.core.I18nUtil;
 import org.dspace.eperson.EPerson;
+import org.dspace.app.util.Util;
 
 /**
  * @author Scott Phillips
@@ -51,7 +52,7 @@ public class SendFeedbackAction extends AbstractAction
         String number1 = request.getParameter("number1");
         String number2 = request.getParameter("number2");
         String result = request.getParameter("captcha_input");
-        Boolean isValidUser = isValidUser(number1,number2,result);
+        Boolean isValidUser = Util.isValidCaptchaResult(number1, number2, result);
 
         // Obtain information from request
         // The page where the user came from
@@ -161,20 +162,6 @@ public class SendFeedbackAction extends AbstractAction
         }
 
         return false;
-    }
-
-    private boolean isValidUser(String number1,String number2,String result) {
-        boolean isValidUser=false;
-        if(number1!=null && number2!=null && result!=null) {
-            try {
-                if (Integer.parseInt(number1)+Integer.parseInt(number2)==Integer.parseInt(result))
-                    isValidUser=true;
-            }
-            catch (NumberFormatException e) {
-                isValidUser=false;
-            }
-        }
-        return isValidUser;
     }
 
 }
