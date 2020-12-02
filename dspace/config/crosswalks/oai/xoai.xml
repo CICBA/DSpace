@@ -445,7 +445,8 @@
 					<string>Trabajo de especializacion</string>
 					<string>Trabajo de especialización</string>
 					<string>Informe tecnico</string>
-					<string>Informe técnico</string>					
+					<string>Informe técnico</string>
+					<string>Conjunto de datos</string>
 				</list>
 			</Configuration>			
 		</CustomCondition>

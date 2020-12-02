@@ -212,8 +212,19 @@
          <dc-element>issued</dc-element>
          <repeatable>false</repeatable>
          <label>Fecha de publicación</label>
+         <type-bind>!Conjunto de datos</type-bind>
          <input-type>date</input-type>
          <hint>Fecha de publicación, distribución pública o exposición. En caso de no haber difundido nunca su obra por ningún medio, indique la fecha de hoy como fecha de publicación. Puede omitir el día y mes si no lo sabe. </hint>
+       </field>
+       
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>created</dc-element>
+         <repeatable>false</repeatable>
+         <label>Fecha de creación</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>date</input-type>
+         <hint>Se puede indicar el año, año y mes, o año,mes y día. En caso de incertidumbre, indicar el año más próximo considerado y aclarar luego en las notas acerca de esta situación con c (circa), década o siglo. Ejemplo: c. 1910, Siglo XX.</hint>
        </field>
      
      	<!-- TODO: Este debe ofrecer una materia dentro del vocabulario FOS!!-->
@@ -260,6 +271,36 @@
          <label>Cobertura espacial</label>
          <input-type>twobox</input-type> <!-- TODO: select/lookup -->
          <hint>Información sobre la cobertura espacial/geográfica de la obra.</hint>
+       </field>
+       
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>temporal</dc-element>
+         <repeatable>true</repeatable>
+         <label>Alcance temporal</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>onebox</input-type>
+         <hint>Información sobre el período de tiempo específico del recurso. Si es posible, se debe indicar el comienzo y el fin del intervalo de tiempo, de la siguiente manera: "AñoComienzo-AñoFin" (por ejemplo, 1900-1978)</hint>
+       </field>
+
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>format</dc-element>
+         <repeatable>true</repeatable>
+         <label>Descripción fisica</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>textarea</input-type>
+         <hint>Descripción sobre la estructuración del conjunto de datos. Por ejemplo: "El conjunto de datos se compone de varios archivos .zip, donde cada uno contiene varias imágenes sobre..."</hint>
+       </field>
+
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>medium</dc-element>
+         <repeatable>true</repeatable>
+         <label>Materiales / Técnicas</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>textarea</input-type>
+         <hint>Materiales / Técnicas de recolección utilizadas para la generación del conjunto de datos.</hint>
        </field>
        
        <field>
@@ -482,10 +523,10 @@
          <dc-schema>dcterms</dc-schema>
          <dc-element>license</dc-element>
          <repeatable>false</repeatable>
-         <label>Licencia Creative Commons</label>
+         <label>Licencia</label>
 		<input-type>onebox</input-type>
-         <hint>Elija la licencia Creative Commons adecuada para el ítem.</hint>
-         <required>Debe asignarle una licencia Creative Commons al item.</required>
+         <hint>Elija la licencia adecuada para el ítem.</hint>
+         <required>Debe asignarle una licencia al item.</required>
        </field>
   	</page>
    </form>
@@ -586,8 +627,59 @@
          <dc-element>issued</dc-element>
          <repeatable>false</repeatable>
          <label>Fecha de publicación</label>
+         <type-bind>!Conjunto de datos</type-bind>
          <input-type>date</input-type>
          <hint>Fecha de publicación, distribución o exposición. En caso de no haber difundido nunca su obra por ningún medio, indique la fecha de hoy como fecha de publicación.</hint>
+       </field>
+       
+     	<field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>created</dc-element>
+         <repeatable>false</repeatable>
+         <label>Fecha de creación</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>date</input-type>
+         <hint>Se puede indicar el año, año y mes, o año,mes y día. En caso de incertidumbre, indicar el año más próximo considerado y aclarar luego en las notas acerca de esta situación con c (circa), década o siglo. Ejemplo: c. 1910, Siglo XX.</hint>
+       </field>
+       
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>spatial</dc-element>
+         <repeatable>true</repeatable>
+         <label>Cobertura espacial</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>twobox</input-type>
+         <hint>Información sobre la cobertura espacial/geográfica del recurso.</hint>
+       </field>
+
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>temporal</dc-element>
+         <repeatable>true</repeatable>
+         <label>Alcance temporal</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>onebox</input-type>
+         <hint>Información sobre el período de tiempo específico del recurso. Si es posible, se debe indicar el comienzo y el fin del intervalo de tiempo, de la siguiente manera: "AñoComienzo-AñoFin" (por ejemplo, 1900-1978)</hint>
+       </field>
+
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>medium</dc-element>
+         <repeatable>true</repeatable>
+         <label>Materiales / Técnicas</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>textarea</input-type>
+         <hint>Materiales / Técnicas de recolección utilizadas para la generación del conjunto de datos.</hint>
+       </field>
+
+       <field>
+         <dc-schema>dcterms</dc-schema>
+         <dc-element>format</dc-element>
+         <repeatable>true</repeatable>
+         <label>Descripción fisica</label>
+         <type-bind>Conjunto de datos</type-bind>
+         <input-type>onebox</input-type>
+         <hint>Descripción sobre la estructuración del conjunto de datos. Por ejemplo: "El conjunto de datos se compone de varios archivos .zip, donde cada uno contiene varias imágenes sobre..."</hint>
        </field>
      
      	<!-- TODO: Este debe ofrecer un multi-vocabulario controlado decs+ACM -->
@@ -879,6 +971,18 @@
 			<displayed-value>Attribution-NonCommercial-NoDerivs  2.5 (BY-NC-ND 2.5 Argentina)</displayed-value>
 			<stored-value>http://creativecommons.org/licenses/by-nc-nd/2.5/ar/</stored-value>
 		</pair>
+		<pair>
+			<displayed-value>Open Data Commons Open Database License (ODbL) v1.0</displayed-value>
+			<stored-value>https://opendatacommons.org/licenses/odbl/1-0/</stored-value>
+		</pair>
+		<pair>
+			<displayed-value>Open Data Commons Attribution License (ODC-By) v1.0</displayed-value>
+			<stored-value>https://opendatacommons.org/licenses/by/1-0/</stored-value>
+		</pair>
+		<pair>
+			<displayed-value>Open Data Commons Public Domain Dedication and License (PDDL) v1.0</displayed-value>
+			<stored-value>https://opendatacommons.org/licenses/pddl/1-0/</stored-value>
+		</pair>
 	</value-pairs>
     
     <value-pairs value-pairs-name="cic_areas" dc-term="dcterms_subject_area">
@@ -1053,6 +1157,10 @@
 		<displayed-value>Video</displayed-value>
 		<stored-value>cic:types/imagenEnMovimiento/video</stored-value>
 	</pair>
+	<pair>
+        <displayed-value>Conjunto de datos</displayed-value>
+        <stored-value>cic:types/conjuntoDeDatos/conjuntoDeDatos</stored-value>
+    </pair>
 </value-pairs>
     
  </form-value-pairs>

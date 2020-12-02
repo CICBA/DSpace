@@ -262,6 +262,9 @@
 				<xsl:when test="$theValue='Informe técnico'">
 					report
 				</xsl:when>
+				<xsl:when test="$theValue='Conjunto de datos'">
+					other
+				</xsl:when>
 				<!-- No se exporta 
 				<xsl:when test="$value='Objeto de Aprendizaje'">
 					report
@@ -395,6 +398,9 @@
 					report
 				</xsl:when>
 				 -->		
+                <xsl:when test="$theValue='Conjunto de datos'">
+                    conjunto de datos
+                </xsl:when>
 			</xsl:choose>
 		</xsl:variable>
 		<doc:element name="type">

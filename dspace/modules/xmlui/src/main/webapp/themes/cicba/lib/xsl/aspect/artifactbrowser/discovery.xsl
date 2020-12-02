@@ -273,6 +273,9 @@
 	                        <xsl:when test="dri:list[@n=(concat($handle, ':dcterms.issued')) and descendant::text()]">
 	                            <xsl:value-of select="substring(dri:list[@n=(concat($handle, ':dcterms.issued'))]/dri:item[position()=1]/text(), 1, 4)" />
 	                        </xsl:when>
+	                        <xsl:when test="dri:list[@n=(concat($handle, ':dcterms.created')) and descendant::text()]">
+	                            <xsl:value-of select="substring(dri:list[@n=(concat($handle, ':dcterms.created'))]/dri:item[position()=1]/text(), 1, 4)" />
+	                        </xsl:when>
 	                        <xsl:otherwise>
 <!-- 	                        		Sin título -->
 	                            <i18n:text>xmlui.dri2xhtml.METS-1.0.no-date</i18n:text>

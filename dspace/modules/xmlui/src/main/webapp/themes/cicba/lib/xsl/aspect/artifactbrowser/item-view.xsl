@@ -305,10 +305,10 @@
 				</div>
 				<div class="row col-md-2 col-md-push-10" id="yearbox-container">
 					<div class="hidden-xs hidden-sm year-box">
-		    			<label id="año"><i18n:text>xmlui.ArtifactBrowser.ItemViewer.year</i18n:text><h3><xsl:value-of select="substring(//mets:dmdSec/mets:mdWrap/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms'][@element='issued']/text(), 1, 4)"></xsl:value-of></h3></label>
+		    			<label id="año"><i18n:text>xmlui.ArtifactBrowser.ItemViewer.year</i18n:text><h3><xsl:value-of select="substring(//mets:dmdSec/mets:mdWrap/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms'][@element='issued' or @element='created']/text(), 1, 4)"></xsl:value-of></h3></label>
 		    		</div>
 		    		<div class="col-md-1 col-md-push-3 visible-xs visible-sm year-box" id="year-box-small">
-		    			<label id="año"><i18n:text>xmlui.ArtifactBrowser.ItemViewer.year</i18n:text>: <xsl:value-of select="substring(//mets:dmdSec/mets:mdWrap/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms'][@element='issued']/text(), 1, 4)"></xsl:value-of></label>
+		    			<label id="año"><i18n:text>xmlui.ArtifactBrowser.ItemViewer.year</i18n:text>: <xsl:value-of select="substring(//mets:dmdSec/mets:mdWrap/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms'][@element='issued' or @element='created']/text(), 1, 4)"></xsl:value-of></label>
 		    		</div>					
 				</div>
 	    		
@@ -397,6 +397,7 @@
         	<xsl:variable name="cc-uri">
 				<xsl:value-of select="./mets:dmdSec/mets:mdWrap[@OTHERMDTYPE='DIM']/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms' and @element='license']/@authority"/>
 			</xsl:variable>
+		   <xsl:if test="contains($cc-uri, 'creativecommons.org')">
         	<div class="col-md-1">
 		        <!-- Generate the Creative Commons license information from the file section (DSpace deposit license hidden by default)-->
 				<!-- <xsl:apply-templates select="./mets:fileSec/mets:fileGrp[@USE='CC-LICENSE']"/> -->
@@ -408,6 +409,17 @@
 				<i18n:text>xmlui.dri2xhtml.structural.cc-item-view-text</i18n:text>
 				<i18n:text><xsl:value-of select="concat('xmlui.dri2xhtml.structural.cc-',xmlui:stripDash(xmlui:replaceAll(substring-after($cc-uri, 'http://creativecommons.org/licenses/'), '/', '-')))"/></i18n:text>
 			</div>
+		   </xsl:if>
+		   <xsl:if test="contains($cc-uri, 'opendatacommons.org')">
+            <xsl:variable name="license-text" select="./mets:dmdSec/mets:mdWrap[@OTHERMDTYPE='DIM']/mets:xmlData/dim:dim/dim:field[@mdschema='dcterms' and @element='license']/text()"/>
+            <div class="col-md-6">
+                <i18n:text>xmlui.dri2xhtml.structural.opendatacommonslicense-item-view-text</i18n:text>
+                <a>
+                    <xsl:attribute name="href"><xsl:value-of select="$cc-uri"/></xsl:attribute>
+                    <xsl:value-of select="$license-text"/>
+                </a>
+            </div>
+		   </xsl:if>
 	     </div>
 	     
 	     <!-- Show full link -->
@@ -669,11 +681,23 @@
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>
 					<xsl:call-template name="render-metadata">
+						<xsl:with-param name="field" select="'dcterms.temporal'" />
+						<xsl:with-param name="container" select="'li'" />
+					</xsl:call-template>
+					<xsl:call-template name="render-metadata">
 						<xsl:with-param name="field" select="'dcterms.language'" />
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>
 					<xsl:call-template name="render-metadata">
 						<xsl:with-param name="field" select="'dcterms.extent'" />
+						<xsl:with-param name="container" select="'li'" />
+					</xsl:call-template>
+					<xsl:call-template name="render-metadata">
+						<xsl:with-param name="field" select="'dcterms.format'" />
+						<xsl:with-param name="container" select="'li'" />
+					</xsl:call-template>
+					<xsl:call-template name="render-metadata">
+						<xsl:with-param name="field" select="'dcterms.medium'" />
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>
 				</ul>
@@ -700,6 +724,11 @@
 						</xsl:call-template>
 						<xsl:call-template name="render-metadata">
 							<xsl:with-param name="field" select="'dcterms.issued'" />
+							<xsl:with-param name="container" select="'li'" />
+							<xsl:with-param name="isDate">True</xsl:with-param>
+						</xsl:call-template>
+						<xsl:call-template name="render-metadata">
+							<xsl:with-param name="field" select="'dcterms.created'" />
 							<xsl:with-param name="container" select="'li'" />
 							<xsl:with-param name="isDate">True</xsl:with-param>
 						</xsl:call-template>

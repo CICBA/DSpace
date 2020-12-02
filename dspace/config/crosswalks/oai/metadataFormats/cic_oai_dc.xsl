@@ -74,6 +74,10 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='issued']/doc:element/doc:field[@name='value']">
 				<dc:date><xsl:value-of select="." /></dc:date>
 			</xsl:for-each>
+			<!-- dcterms.created -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='created']/doc:element/doc:field[@name='value']">
+				<dc:date><xsl:value-of select="." /></dc:date>
+			</xsl:for-each>
 			<!-- license.embargoEnd -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='others']/doc:field[@name='embargoEnd']">
 				<dc:date><xsl:value-of select="." /></dc:date>
@@ -86,6 +90,22 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='extent']/doc:element/doc:field[@name='value']">
 				<dc:format><xsl:value-of select="." /></dc:format>
 			</xsl:for-each>
+			<!-- dcterms.format -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='format']/doc:element/doc:field[@name='value']">
+				<dc:format><xsl:value-of select="." /></dc:format>
+			</xsl:for-each>
+			<!-- dcterms.medium -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='medium']/doc:element/doc:field[@name='value']">
+				<dc:format><xsl:value-of select="." /></dc:format>
+			</xsl:for-each>
+            <!--  dcterms.spatial -->
+            <xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='spatial']/doc:element/doc:field[@name='value']">
+                <dc:coverage><xsl:value-of select="." /></dc:coverage>
+            </xsl:for-each>
+            <!--  dcterms.temporal -->
+            <xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='temporal']/doc:element/doc:field[@name='value']">
+                <dc:coverage><xsl:value-of select="." /></dc:coverage>
+            </xsl:for-each>
 			<!-- dcterms.publisher -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='publisher']/doc:element/doc:field[@name='value']">
 				<dc:publisher><xsl:value-of select="." /></dc:publisher>
