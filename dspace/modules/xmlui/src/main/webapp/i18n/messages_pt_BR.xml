@@ -2692,6 +2692,7 @@
     <message key="xmlui.XMLWorkflow.autoarchive.CIC-ADMIN_review.changecollection">Seleção de coleção CIC-Digital</message>
     <message key="xmlui.statistics.display.chartist.country.others">Outros países</message>
     <message key="xmlui.dri2xhtml.structural.cc-item-view-text">Este trabalho é publicado sob a licença Creative Commons</message>
+    <message key="xmlui.dri2xhtml.structural.opendatacommonslicense-item-view-text">Este trabalho é publicado sob a licença Open Data Commons</message>
     <message key="mxlui.dri2xhtml.structural.cc-phone">Telefone</message>
     <message key="mxlui.dri2xhtml.structural.cc-street">Rua</message>
     <message key="mxlui.dri2xhtml.structural.cc-between">entre</message>
@@ -2707,12 +2708,16 @@
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_abstract">Resumo</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_abstract_trabajoRealizado">Trabalho desenvolvido -></message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_issued">Data de publicação</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_created">Data de criação</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_materia">Matéria</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_area">Área temática</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject">Palavra chave</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_spatial">Cobertura Espacial</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_temporal">Alcance temporal</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_language">Idioma</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_extent">Extensão</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_format">Descrição física</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_medium">Materiais / Técnicas</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_publisher">Editorial</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_rights_embargoPeriod">Período de embargo</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_identifier_url">Localização Eletrônica</message>
