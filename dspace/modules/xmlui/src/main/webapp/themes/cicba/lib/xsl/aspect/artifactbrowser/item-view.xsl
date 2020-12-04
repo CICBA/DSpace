@@ -677,6 +677,11 @@
 						<xsl:with-param name="local_browse_type" select="'subject'"/>
 					</xsl:call-template>
 					<xsl:call-template name="render-metadata">
+						<xsl:with-param name="field" select="'dcterms.subject.ford'" />
+						<xsl:with-param name="container" select="'li'" />
+						<xsl:with-param name="is_linked_authority" select="'true'" />
+					</xsl:call-template>
+					<xsl:call-template name="render-metadata">
 						<xsl:with-param name="field" select="'dcterms.spatial'" />
 						<xsl:with-param name="container" select="'li'" />
 					</xsl:call-template>

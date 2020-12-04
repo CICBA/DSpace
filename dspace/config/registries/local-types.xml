@@ -118,7 +118,14 @@
 		<qualifier>materia</qualifier>
 		<scope_note>Materia (en sentido amplio) a que se refiere el item (ejemplo: Física).</scope_note>
 	</dc-type>
-	
+
+	<dc-type>
+		<schema>dcterms</schema>
+		<element>subject</element>
+		<qualifier>ford</qualifier>
+		<scope_note>Clasificación FORD por áreas de investigación y desarrollo del documento</scope_note>
+	</dc-type>
+
 	<dc-type>
 		<schema>dcterms</schema>
 		<element>subject</element>

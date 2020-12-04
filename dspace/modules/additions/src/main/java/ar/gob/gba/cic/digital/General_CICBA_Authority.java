@@ -21,6 +21,7 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
     protected final String CHOICES_PARENTPROPERTY_PREFIX = "choices.parentProperty.";
     protected final String CHOICES_TYPEPROPERTY_PREFIX = "choices.typeProperty.";
     protected final String CHOICES_LABELPROPERTY_PREFIX = "choices.labelProperty.";
+    protected final String CHOICES_EXTERNALKEY_PREFIX = "choices.externalKeyProperty.";
 
 	protected ParameterizedSparqlString getSparqlSearch(
 			String field, String filter, String locale,boolean idSearch) {
@@ -32,6 +33,7 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 		String parent= configurationService.getProperty(CHOICES_PARENT_PREFIX+metadataField,null);
 		String parentProperty= configurationService.getProperty(CHOICES_PARENTPROPERTY_PREFIX+metadataField,"skos:broader");
 		boolean onlyLeafs= configurationService.getBooleanProperty(CHOICES_ONLYLEAFS_PREFIX+metadataField,false);
+		String externalKey= configurationService.getProperty(CHOICES_EXTERNALKEY_PREFIX + metadataField, null);
 
 		ParameterizedSparqlString pqs = new ParameterizedSparqlString();
 
@@ -39,11 +41,16 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 		pqs.setNsPrefix("dc", NS_DC);
 		pqs.setNsPrefix("cic", NS_CIC);
 		pqs.setNsPrefix("skos", NS_SKOS);
+		pqs.setNsPrefix("owl", NS_OWL);
+		pqs.setNsPrefix("rdfs", NS_RDFS);
 
 		pqs.setCommandText("SELECT "+ this.getSelectQueryFields(idSearch) + "\n");
 		pqs.append("WHERE {\n");
 		pqs.append("?concept a "+ typeProperty + " .\n");
 		pqs.append("?concept "+ labelProperty +" ?label .\n");
+		if (externalKey != null) {
+			pqs.append("?concept "+ externalKey +" ?externalKey .\n");
+		}
 
 		if (parent != null) {
 		   //Si el parent es vacio se buscan nodos raiz, es decir, sin padre

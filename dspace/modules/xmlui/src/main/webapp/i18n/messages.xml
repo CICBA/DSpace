@@ -2324,6 +2324,7 @@
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_materia">Subject</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_area">Tematic area</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject">Keyword</message>
+	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_ford">FORD classification</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_spatial">Spatial coverage</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_temporal">Temporal coverage</message>
 	<message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_language">Lenguage</message>

@@ -27,6 +27,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	protected static final String NS_DC = "http://purl.org/dc/terms/";
 	protected static final String NS_SIOC = "http://rdfs.org/sioc/ns#";
 	protected static final String NS_CERIF = "http://spi-fm.uca.es/neologism/cerif/1.3#";
+	protected static final String NS_OWL= "http://www.w3.org/2002/07/owl#";
 
 	private QuerySolutionMap globalParameters;
 
