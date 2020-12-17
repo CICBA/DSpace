@@ -2712,6 +2712,7 @@
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_materia">Matéria</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_area">Área temática</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject">Palavra chave</message>
+    <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_subject_ford">Classificação FORD</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_spatial">Cobertura Espacial</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_temporal">Alcance temporal</message>
     <message key="xmlui.dri2xhtml.METS-1.0.item-dcterms_language">Idioma</message>

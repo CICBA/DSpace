@@ -54,8 +54,12 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='contributor']/doc:element[@name='director']/doc:element/doc:field[@name='value']">
 				<dc:contributor><xsl:value-of select="." /></dc:contributor>
 			</xsl:for-each>
-			<!-- dcterms.subject.* -->
-			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='subject']/doc:element/doc:element/doc:field[@name='value']">
+			<!-- dcterms.subject.* excepto subject.ford -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='subject']/doc:element[@name!='ford']/doc:element/doc:field[@name='value']">
+				<dc:subject><xsl:value-of select="." /></dc:subject>
+			</xsl:for-each>
+			<!--dcterms.subject.ford imprimo solo la uri de autoridad -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='subject']/doc:element[@name='ford']/doc:element/doc:field[@name='authority']">
 				<dc:subject><xsl:value-of select="." /></dc:subject>
 			</xsl:for-each>
 			<!-- dcterms.abstract -->
