@@ -1083,3 +1083,7 @@ a:hover{
 .ds-button-field {
     background-color: #00aec3;
 }
+
+select {
+    height: 100%;
+}
