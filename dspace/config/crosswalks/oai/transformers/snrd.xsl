@@ -38,13 +38,29 @@
 		</xsl:call-template>
 	</xsl:template>
 	
-	<!-- Formatting dc.date.issued--> 
+	<!-- Formatting dcterms.issued-->
 	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='issued']/doc:element/doc:field[@name='value']/text()">
 		<xsl:call-template name="formatdate">
 			<xsl:with-param name="datestr" select="." />
 		</xsl:call-template>
 	</xsl:template>
-	
+
+	<!--  Formatting dcterms.created -->
+	<!-- Sólo procesamos y mostramos el dcterms.created si es que NO EXISTE el dcterms.issued. -->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='created']">
+		<xsl:if test="not(../../../doc:element[@name='dcterms']/doc:element[@name='issued'])">
+			<doc:element name="created">
+				<doc:element name="es">
+					<doc:field name="value">
+						<xsl:call-template name="formatdate">
+							<xsl:with-param name="datestr" select="doc:element/doc:field/text()"/>
+						</xsl:call-template>
+					</doc:field>
+				</doc:element>
+			</doc:element>
+		</xsl:if>
+	</xsl:template>
+
 	<!-- Removing dc.date.available -->
 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='date']/doc:element[@name='available']/doc:field/text()"/> 
 		
@@ -62,32 +78,34 @@
 	</xsl:template>
 	
 	<!-- Formatting dcterms.identifier.isbn --> 			
-	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='isbn']/doc:field/text()">
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='isbn']/doc:element/doc:field/text()">
 		<xsl:call-template name="addPrefix">
 			<xsl:with-param name="value" select="."/>
-			<xsl:with-param name="prefix" select="'info:eu-repo/semantics/altIdentifier/isbn/'"/>
+			<xsl:with-param name="prefix" select="'isbn:'"/>
 		</xsl:call-template>
 	</xsl:template>
 	
 	<!--  Formatting dcterms.identifier.other -->
-	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='other']/doc:field[@name='value']/text()">
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='other']/doc:element/doc:field[@name='value']/text()">
 		<xsl:variable name="prefix" select="'info:eu-repo/semantics/altIdentifier/'"/>
 		<xsl:choose>
 			<xsl:when test="contains(.,':')">
 				<xsl:variable name="esquema" select="substring-before(.,':')"/>
 				<xsl:variable name="identificador" select="substring-after(.,':')"/>
-				<xsl:value-of select="concat($prefix,$esquema,$identificador)"/>		
+				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:variable name="esquema" select="substring-before(.,' ')"/>
 				<xsl:variable name="identificador" select="substring-after(.,' ')"/>
-				<xsl:value-of select="concat($prefix,$esquema,$identificador)"/>
+				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:otherwise>
 		</xsl:choose>
 					
 	</xsl:template>
 	
-	
+	<!--  Removing dcterms.identifier.url-->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='url']" />
+
 	<!--  Removing dc.description.provenance --> 
 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='description']/doc:element[@name='provenance']" />
 	
@@ -104,12 +122,14 @@
 		</xsl:call-template> 
 	</xsl:template>		
 	
+	<!-- Removing cic.thesis.degree -->
+	<xsl:template match="/doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='degree']/doc:element/doc:field[@name='value']/text()" />
+
 	<!-- Formatting cic.thesis.degree cic.thesis.grantor -->
-	
-	<xsl:template match="/doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='degree']/doc:element/doc:field[@name='value']/text()">
-		<xsl:variable name="grantor" select="/doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='grantor']/doc:element/doc:field[@name='value']/text()"/>
-		<xsl:value-of select="concat(.,'(',$grantor,')')"/>
-	</xsl:template>
+<!-- 	<xsl:template match="/doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='degree']/doc:element/doc:field[@name='value']/text()"> -->
+<!-- 		<xsl:variable name="grantor" select="/doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='grantor']/doc:element/doc:field[@name='value']/text()"/> -->
+<!-- 		<xsl:value-of select="concat(.,'(',$grantor,')')"/> -->
+<!-- 	</xsl:template> -->
 		
 	<!-- Prefixing and Modifying dc.rights -->
 	<!-- Removing unwanted -->
@@ -118,8 +138,6 @@
 <!-- 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='rights']/doc:element/doc:field/text()"> -->
 <!-- 		<xsl:text>info:eu-repo/semantics/openAccess</xsl:text> -->
 <!-- 	</xsl:template> -->
-	
-
 
 	<!-- AUXILIARY TEMPLATES -->
 	
@@ -483,5 +501,86 @@
 			<xsl:value-of select="substring($datestr,1,10)" />
 		</xsl:variable>
 		<xsl:value-of select="$sub" />
+	</xsl:template>
+
+	<xsl:template name="accessRightsAndEmbargo" >
+		<xsl:variable name="bitstreams" select="/doc:metadata/doc:element[@name='bundles']/doc:element[@name='bundle'][./doc:field/text()='ORIGINAL']/doc:element[@name='bitstreams']/doc:element[@name='bitstream']"/>
+		<xsl:variable name="embargoed" select="$bitstreams/doc:field[@name='embargo']"/>
+
+		<xsl:variable name="date-prefix">
+				<xsl:text>info:eu-repo/date/embargoEnd/</xsl:text>
+		</xsl:variable>
+
+		<xsl:choose>
+			<xsl:when test="count($bitstreams) &gt; 0 and count($embargoed[text() = 'forever']) = count($bitstreams) ">
+				<doc:element name="snrd">
+					<doc:element name="rights">
+						<doc:element name="accessRights">
+							<doc:element name="es">
+								<doc:field name="value">info:eu-repo/semantics/closedAccess</doc:field>
+							</doc:element>
+						</doc:element>
+					</doc:element>
+				</doc:element>
+			</xsl:when>
+			<xsl:when test="count($embargoed) = 0">
+				<doc:element name="snrd">
+					<doc:element name="rights">
+						<doc:element name="accessRights">
+							<doc:element name="es">
+								<doc:field name="value">info:eu-repo/semantics/openAccess</doc:field>
+							</doc:element>
+						</doc:element>
+					</doc:element>
+				</doc:element>
+			</xsl:when>
+			<xsl:when test="count($embargoed[text() = 'forever']) &gt; 0">
+				<doc:element name="snrd">
+					<doc:element name="rights">
+						<doc:element name="accessRights">
+							<doc:element name="es">
+								<doc:field name="value">info:eu-repo/semantics/restrictedAccess</doc:field>
+							</doc:element>
+						</doc:element>
+					</doc:element>
+				</doc:element>
+			</xsl:when>
+			<xsl:otherwise>
+<!-- 			es un embargoedAccess si o si -->
+			<xsl:for-each select="$embargoed">
+				<xsl:sort select="text()" />
+				<xsl:if test="position() = 1">
+					<xsl:variable name="liftDate">
+						<xsl:value-of select="text()" />
+					</xsl:variable>
+					<doc:element name="snrd">
+						<doc:element name="rights">
+							<doc:element name="accessRights">
+								<doc:element name="es">
+									<doc:field name="value">info:eu-repo/semantics/embargoedAccess</doc:field>
+								</doc:element>
+							</doc:element>
+						</doc:element>
+					</doc:element>
+					<doc:element name="snrd">
+						<doc:element name="rights">
+							<doc:element name="embargoEndDate">
+								<doc:element name="es">
+									<doc:field name="value">
+										<xsl:call-template name="formatdate">
+											<xsl:with-param name="datestr">
+												<xsl:value-of select="$liftDate" />
+											</xsl:with-param>
+											<xsl:with-param name="prefix" select="$date-prefix"/>
+										</xsl:call-template>
+									</doc:field>
+								</doc:element>
+							</doc:element>
+						</doc:element>
+					</doc:element>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

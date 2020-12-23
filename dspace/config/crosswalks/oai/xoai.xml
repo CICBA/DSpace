@@ -190,21 +190,40 @@
 
 
     <Filters>
-    
-    	<Filter id="snrdFilter">
-    		<Definition>
-    			<And>
-    				<LeftCondition>
-						<Custom ref="snrdDocumentsubtypeFilter"/>
-    				</LeftCondition>
-    				<RightCondition>
-<!--						REVISAR 
-						<Custom ref="dateExistsCondition"/>-->
-						<Custom ref="anonymousAccesAllow"/>
-    				</RightCondition>
-    			</And>
-    		</Definition>
-    	</Filter>
+
+        <Filter id="snrdFilter">
+            <Definition>
+                <And>
+                    <LeftCondition>
+                        <And>
+                            <LeftCondition>
+                                <And>
+                                    <LeftCondition>
+                                        <Custom ref="titleExistsCondition" />
+                                    </LeftCondition>
+                                    <RightCondition>
+                                        <Custom ref="creatorExistsCondition" />
+                                    </RightCondition>
+                                </And>
+                            </LeftCondition>
+                            <RightCondition>
+                                <Custom ref="dateExistsCondition" />
+                            </RightCondition>
+                        </And>
+                    </LeftCondition>
+                    <RightCondition>
+                        <And>
+                            <LeftCondition>
+                                <Custom ref="snrdDocumentsubtypeFilter" />
+                            </LeftCondition>
+                            <RightCondition>
+                                <Custom ref="anonymousAccesAllow" />
+                            </RightCondition>
+                        </And>
+                    </RightCondition>
+                </And>
+            </Definition>
+        </Filter>
     
     
         <!-- DRIVER filter for records returned by OAI-PMH.
@@ -470,7 +489,10 @@
         <CustomCondition id="creatorExistsCondition">
             <Class>org.dspace.xoai.filter.DSpaceMetadataExistsFilter</Class>
             <Configuration>
-                <string name="field">dcterms.creator.author</string>
+                <list name="fields">
+                    <string name="field">dcterms.creator.author</string>
+                    <string name="field">dcterms.creator.corporate</string>
+                </list>
             </Configuration>
         </CustomCondition>
         
@@ -482,11 +504,14 @@
             </Configuration>
         </CustomCondition>
         
-        <!-- This condition determines if an Item has a "dcterms.issued" -->
+        <!-- This condition determines if an Item has a "dcterms.issued" or a "dcterms.created -->
         <CustomCondition id="dateExistsCondition">
             <Class>org.dspace.xoai.filter.DSpaceMetadataExistsFilter</Class>
             <Configuration>
-                <string name="field">dcterms.issued</string>
+                <list name="fields">
+                    <string name="field">dcterms.issued</string>
+                    <string name="field">dcterms.created</string>
+                </list>
             </Configuration>
         </CustomCondition>
         
