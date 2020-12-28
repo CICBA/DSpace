@@ -16,6 +16,13 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:doc="http://www.lyncode.com/xoai">
 	<xsl:output indent="yes" method="xml" omit-xml-declaration="yes" />
+
+	<xsl:template match="/doc:metadata">
+		<doc:metadata>
+			<xsl:call-template name="accessRightsAndEmbargo" />
+			<xsl:apply-templates select="@*|node()" />
+		</doc:metadata>
+	</xsl:template>
 	
 	<xsl:template match="@*|node()">
 		<xsl:copy>
@@ -503,16 +510,20 @@
 		<xsl:value-of select="$sub" />
 	</xsl:template>
 
-	<xsl:template name="accessRightsAndEmbargo" >
-		<xsl:variable name="bitstreams" select="/doc:metadata/doc:element[@name='bundles']/doc:element[@name='bundle'][./doc:field/text()='ORIGINAL']/doc:element[@name='bitstreams']/doc:element[@name='bitstream']"/>
-		<xsl:variable name="embargoed" select="$bitstreams/doc:field[@name='embargo']"/>
+	<xsl:template name="accessRightsAndEmbargo">
+		<xsl:variable name="bitstreams"
+			select="/doc:metadata/doc:element[@name='bundles']/doc:element[@name='bundle'][./doc:field/text()='ORIGINAL']/doc:element[@name='bitstreams']/doc:element[@name='bitstream']" />
+		<xsl:variable name="accessType"
+			select="$bitstreams/doc:field[@name='drm']" />
 
 		<xsl:variable name="date-prefix">
-				<xsl:text>info:eu-repo/date/embargoEnd/</xsl:text>
+			<xsl:text>info:eu-repo/date/embargoEnd/</xsl:text>
 		</xsl:variable>
 
 		<xsl:choose>
-			<xsl:when test="count($bitstreams) &gt; 0 and count($embargoed[text() = 'forever']) = count($bitstreams) ">
+			<xsl:when
+				test="count($bitstreams) = 0">
+				<!-- Si no tiene bitstreams cuenta como closedAccess -->
 				<doc:element name="snrd">
 					<doc:element name="rights">
 						<doc:element name="accessRights">
@@ -523,18 +534,45 @@
 					</doc:element>
 				</doc:element>
 			</xsl:when>
-			<xsl:when test="count($embargoed) = 0">
-				<doc:element name="snrd">
-					<doc:element name="rights">
-						<doc:element name="accessRights">
-							<doc:element name="es">
-								<doc:field name="value">info:eu-repo/semantics/openAccess</doc:field>
+			<xsl:when test="count($accessType[contains(text(), 'embargoed access')]) &gt; 0">
+				<xsl:for-each select="$accessType">
+					<xsl:sort select="text()" />
+					<xsl:if test="position() = 1">
+						<xsl:variable name="liftDate">
+							<xsl:value-of select="substring-after(text(), '|||')" />
+						</xsl:variable>
+						<doc:element name="snrd">
+							<doc:element name="rights">
+								<doc:element name="accessRights">
+									<doc:element name="es">
+										<doc:field name="value">info:eu-repo/semantics/embargoedAccess</doc:field>
+									</doc:element>
+								</doc:element>
 							</doc:element>
 						</doc:element>
-					</doc:element>
-				</doc:element>
+						<!-- Si tiene embargo hay que mostrar la fecha de fin -->
+						<doc:element name="snrd">
+							<doc:element name="rights">
+								<doc:element name="embargoEndDate">
+									<doc:element name="es">
+										<doc:field name="value">
+											<xsl:call-template name="formatdate">
+												<xsl:with-param name="datestr">
+													<xsl:value-of select="$liftDate" />
+												</xsl:with-param>
+												<xsl:with-param name="prefix"
+													select="$date-prefix" />
+											</xsl:call-template>
+										</doc:field>
+									</doc:element>
+								</doc:element>
+							</doc:element>
+						</doc:element>
+					</xsl:if>
+				</xsl:for-each>
 			</xsl:when>
-			<xsl:when test="count($embargoed[text() = 'forever']) &gt; 0">
+			<xsl:when
+				test="count($accessType[text() = 'restricted access']) &gt; 0">
 				<doc:element name="snrd">
 					<doc:element name="rights">
 						<doc:element name="accessRights">
@@ -546,40 +584,16 @@
 				</doc:element>
 			</xsl:when>
 			<xsl:otherwise>
-<!-- 			es un embargoedAccess si o si -->
-			<xsl:for-each select="$embargoed">
-				<xsl:sort select="text()" />
-				<xsl:if test="position() = 1">
-					<xsl:variable name="liftDate">
-						<xsl:value-of select="text()" />
-					</xsl:variable>
-					<doc:element name="snrd">
-						<doc:element name="rights">
-							<doc:element name="accessRights">
-								<doc:element name="es">
-									<doc:field name="value">info:eu-repo/semantics/embargoedAccess</doc:field>
-								</doc:element>
+				<!-- es un openAccess si o si -->
+				<doc:element name="snrd">
+					<doc:element name="rights">
+						<doc:element name="accessRights">
+							<doc:element name="es">
+								<doc:field name="value">info:eu-repo/semantics/openAccess</doc:field>
 							</doc:element>
 						</doc:element>
 					</doc:element>
-					<doc:element name="snrd">
-						<doc:element name="rights">
-							<doc:element name="embargoEndDate">
-								<doc:element name="es">
-									<doc:field name="value">
-										<xsl:call-template name="formatdate">
-											<xsl:with-param name="datestr">
-												<xsl:value-of select="$liftDate" />
-											</xsl:with-param>
-											<xsl:with-param name="prefix" select="$date-prefix"/>
-										</xsl:call-template>
-									</doc:field>
-								</doc:element>
-							</doc:element>
-						</doc:element>
-					</doc:element>
-					</xsl:if>
-				</xsl:for-each>
+				</doc:element>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

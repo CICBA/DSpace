@@ -111,7 +111,8 @@
 				<dc:date><xsl:value-of select="." /></dc:date>
 			</xsl:for-each>
 			<!-- license.embargoEnd -->
-			<xsl:for-each select="doc:metadata/doc:element[@name='snrd']/doc:field[@name='rights']/doc:field[@name='embargoEnd']/doc:element/doc:field[@name='value']">
+			<!-- Si tiene embargo se debe mostrar la fecha de fin -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='snrd']/doc:element[@name='rights']/doc:element[@name='embargoEndDate']/doc:element/doc:field[@name='value']">
 				<dc:date><xsl:value-of select="." /></dc:date>
 			</xsl:for-each>
 			<!-- mimetype -->
@@ -150,15 +151,11 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='other']/doc:element/doc:field[@name='value']">
 				<dc:relation><xsl:value-of select="." /></dc:relation>
 			</xsl:for-each>
-<!-- 			 dc.rights.* -->
-<!-- 			<xsl:for-each select="doc:metadata/doc:element[@name='others']/doc:field[@name='accessRights']"> -->
-<!-- 				<dc:rights><xsl:value-of select="." /></dc:rights> -->
-<!-- 			</xsl:for-each> -->
 			<!-- dc.rights -->
-			<!-- Si es contexto snrd mostrar dc:rights dependiendo de si tiene o no embargo -->
-<!-- 			<xsl:for-each select="doc:metadata/doc:element[@name='snrd']/doc:element[@name='rights']/doc:element[@name='accessRights']/doc:element/doc:field[@name='value']"> -->
-			<dc:rights>info:eu-repo/semantics/openAccess</dc:rights>
-<!-- 			</xsl:for-each> -->
+			<!-- En el contexto snrd mostrar dc:rights dependiendo de si tiene o no embargo -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='snrd']/doc:element[@name='rights']/doc:element[@name='accessRights']/doc:element/doc:field[@name='value']">
+				<dc:rights><xsl:value-of select="." /></dc:rights>
+			</xsl:for-each>
 			<!-- dcterms.license -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='license']/doc:element/doc:field[@name='authority']">
 				<dc:rights><xsl:value-of select="." /></dc:rights>
