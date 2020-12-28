@@ -55,7 +55,7 @@
 	<!--  Formatting dcterms.created -->
 	<!-- Sólo procesamos y mostramos el dcterms.created si es que NO EXISTE el dcterms.issued. -->
 	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='created']">
-		<xsl:if test="not(../../../doc:element[@name='dcterms']/doc:element[@name='issued'])">
+		<xsl:if test="not(../../doc:element[@name='dcterms']/doc:element[@name='issued'])">
 			<doc:element name="created">
 				<doc:element name="es">
 					<doc:field name="value">
