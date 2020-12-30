@@ -98,12 +98,12 @@
 		<xsl:choose>
 			<xsl:when test="contains(.,':')">
 				<xsl:variable name="esquema" select="substring-before(.,':')"/>
-				<xsl:variable name="identificador" select="substring-after(.,':')"/>
+				<xsl:variable name="identificador" select="normalize-space(substring-after(.,':'))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:variable name="esquema" select="substring-before(.,' ')"/>
-				<xsl:variable name="identificador" select="substring-after(.,' ')"/>
+				<xsl:variable name="identificador" select="normalize-space(substring-after(.,' '))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -504,10 +504,11 @@
 	<!-- Date format -->
 	<xsl:template name="formatdate">
 		<xsl:param name="datestr" />
-		<xsl:variable name="sub">
+                <xsl:param name="prefix" />
+                <xsl:variable name="sub">
 			<xsl:value-of select="substring($datestr,1,10)" />
 		</xsl:variable>
-		<xsl:value-of select="$sub" />
+		<xsl:value-of select="concat($prefix,$sub)" />
 	</xsl:template>
 
 	<xsl:template name="accessRightsAndEmbargo">
