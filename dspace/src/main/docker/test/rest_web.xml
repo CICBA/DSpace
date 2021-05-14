@@ -12,9 +12,8 @@
     THIS FILE EXISTS TO SIMPLIFY TESTING IN DOCKER.
     This file overrides the requirement to connect to the legacy rest service over https.
  -->
- <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
 
@@ -74,7 +73,7 @@
         </user-data-constraint>
     </security-constraint>
      -->
-     
+
     <!-- ConfigurationService initialization for dspace.dir -->
     <context-param>
         <description>
@@ -104,7 +103,7 @@
     <listener>
         <listener-class>org.dspace.servicemanager.servlet.DSpaceKernelServletContextListener</listener-class>
     </listener>
-    
+
     <listener>
         <listener-class>
             org.springframework.web.context.ContextLoaderListener

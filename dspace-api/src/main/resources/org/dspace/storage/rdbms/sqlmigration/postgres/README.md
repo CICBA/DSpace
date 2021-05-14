@@ -29,3 +29,4 @@ This `update-sequences.sql` script can be executed by running
 "dspace database update-sequences". It will not harm your 
 database (or its contents) in any way. It just ensures all database counts (i.e.
 sequences) are properly set to the next available value.
+

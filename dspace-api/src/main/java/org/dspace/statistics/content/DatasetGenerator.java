@@ -11,11 +11,10 @@ package org.dspace.statistics.content;
 /**
  * Represents a single facet for filtering.
  * Can be one of the axes in a table.
- * 
+ *
  * @author kevinvandevelde at atmire.com
  * Date: 23-dec-2008
  * Time: 9:39:37
- * 
  */
 public abstract class DatasetGenerator {
     
@@ -24,14 +23,14 @@ public abstract class DatasetGenerator {
 
     protected boolean includeTotal = false;
 
-    public int getDatasetType(){
+    public int getDatasetType() {
         return datasetType;
     }
 
-    public void setDatasetType(int datasetType){
+    public void setDatasetType(int datasetType) {
         this.datasetType = datasetType;
     }
-    
+
     public boolean isIncludeTotal() {
         return includeTotal;
     }

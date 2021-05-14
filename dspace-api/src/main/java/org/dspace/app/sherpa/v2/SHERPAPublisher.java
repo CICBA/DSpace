@@ -7,11 +7,23 @@
  */
 package org.dspace.app.sherpa.v2;
 
+/**
+ * Plain java representation of a SHERPA Publisher object, based on SHERPA API v2 responses.
+ *
+ * In a search for SHERPA journal deposit policy, this publisher object will appear in a list of publishers
+ * from the journal object, and as a single publisher member for the primary/current publisher of the journal.
+ * In a search for SHERPA publisher information, this object will appear in a list of publishers from the main
+ * SHERPA Publisher Response object
+ *
+ * @see SHERPAJournal
+ * @see SHERPAPublisherResponse
+ */
 public class SHERPAPublisher {
-    private String name;
+    private String name = null;
     private String relationshipType;
     private String country;
-    private String uri;
+    private String uri = null;
+    private String identifier = null;
     private int publicationCount;
 
     // this is not technically in the same place in SHERPA data model but it makes more sense to apply it here
@@ -78,4 +90,11 @@ public class SHERPAPublisher {
         this.paidAccessUrl = paidAccessUrl;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 }

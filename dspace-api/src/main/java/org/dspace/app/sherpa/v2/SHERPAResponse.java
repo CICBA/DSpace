@@ -16,22 +16,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
-import org.dspace.core.I18nUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * Model class for the SHERPAv2 API (JSON) response
+ * Model class for the SHERPAv2 API (JSON) response for a publication (journal) search
  * The structure and approached used is quite different to the simple v1 API used previously
- * 
+ * The structure is based on journal data, which in turn contains data about publishers and policies
+ *
+ * @see SHERPAJournal
+ *
  * @author Kim Shepherd
- * 
+ *
  */
-public class SHERPAResponse
-{
+public class SHERPAResponse {
     // Is this response to be treated as an error?
     private boolean error;
 
@@ -55,7 +57,7 @@ public class SHERPAResponse
         JSON, XML
     };
 
-    private static Logger log = Logger.getLogger(SHERPAResponse.class);
+    private static Logger log = LogManager.getLogger();
 
     /**
      * Parse SHERPA v2 API for a given format
@@ -96,7 +98,7 @@ public class SHERPAResponse
                         SHERPAPublisher sherpaPublisher = new SHERPAPublisher();
                         SHERPAJournal sherpaJournal = new SHERPAJournal();
 
-                        JSONObject item = items.getJSONObject(0);
+                        JSONObject item = items.getJSONObject(itemIndex);
 
                         // Parse system metadata (per-item / result information)
                         if (item.has("system_metadata")) {
@@ -184,7 +186,7 @@ public class SHERPAResponse
                 message = "No results found";
             }
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             log.error("Failed to parse SHERPA response", e);
             error = true;
         } finally {
@@ -263,6 +265,7 @@ public class SHERPAResponse
                         + titleList.get(0));
                     sherpaJournal.setZetoPub(publisherName + ": "
                         + titleList.get(0));
+                    log.debug("Found journal title: " + titleList.get(0));
                 }
             }
         }
@@ -332,25 +335,39 @@ public class SHERPAResponse
             JSONArray permittedOA = policy.getJSONArray("permitted_oa");
             List<SHERPAPermittedVersion> permittedVersions = new ArrayList<>();
 
-            // Iterate each permitted OA version / option
+            // Iterate each permitted OA version / option. The permitted_oa node is also known as a 'pathway' --
+            // essentially "a way to get a work into a repository". Each pathway could refer to one article version
+            // like a pre-print, or multiple versions might have the same acceptable locations and conditions.
+            // As described below, where multiple versions are referenced in a single permitted_oa pathway, they will
+            // be split out and treated separately. This keeps processing simple, especially later in display or
+            // compliance checking when it is preferred to group / indicate rules by the article version
             for (int p = 0; p < permittedOA.length(); p++) {
                 JSONObject permitted = permittedOA.getJSONObject(p);
-                SHERPAPermittedVersion permittedVersion = parsePermittedVersion(permitted);
+                // Although it adds redundancy, we will treat each 'article version' within
+                // the permitted_oa ("pathway") node as a separate version altogether to keep the rest of our display
+                // handled nicely. This was confirmed as an appropriate approach by JISC
+                if (permitted.has("article_version")) {
+                    JSONArray versions = permitted.getJSONArray("article_version");
+                    for (int v = 0; v < versions.length(); v++) {
+                        // Parse this permitted_oa node but specifically looking for the article_version 'v'
+                        SHERPAPermittedVersion permittedVersion = parsePermittedVersion(permitted, v);
 
-                // To determine which option # we are, inspect article versions and set
-                allowed.add(permittedVersion.getArticleVersion());
-                if ("submitted".equals(permittedVersion.getArticleVersion())) {
-                    submittedOption++;
-                    currentOption = submittedOption;
-                } else if ("accepted".equals(permittedVersion.getArticleVersion())) {
-                    acceptedOption++;
-                    currentOption = acceptedOption;
-                } else if ("published".equals(permittedVersion.getArticleVersion())) {
-                    publishedOption++;
-                    currentOption = publishedOption;
+                        // To determine which option # we are, inspect article versions and set
+                        allowed.add(permittedVersion.getArticleVersion());
+                        if ("submitted".equals(permittedVersion.getArticleVersion())) {
+                            submittedOption++;
+                            currentOption = submittedOption;
+                        } else if ("accepted".equals(permittedVersion.getArticleVersion())) {
+                            acceptedOption++;
+                            currentOption = acceptedOption;
+                        } else if ("published".equals(permittedVersion.getArticleVersion())) {
+                            publishedOption++;
+                            currentOption = publishedOption;
+                        }
+                        permittedVersion.setOption(currentOption);
+                        permittedVersions.add(permittedVersion);
+                    }
                 }
-                permittedVersion.setOption(currentOption);
-                permittedVersions.add(permittedVersion);
 
                 // Populate the old indicators into the publisher policy object
                 if (allowed.contains("submitted")) {
@@ -375,7 +392,7 @@ public class SHERPAResponse
      * @param permitted - each 'permitted_oa' node in the JSON array
      * @return populated SHERPAPermittedVersion object
      */
-    private SHERPAPermittedVersion parsePermittedVersion(JSONObject permitted) {
+    private SHERPAPermittedVersion parsePermittedVersion(JSONObject permitted, int index) {
 
         SHERPAPermittedVersion permittedVersion = new SHERPAPermittedVersion();
 
@@ -384,22 +401,19 @@ public class SHERPAResponse
         // submitted = preprint
         // accepted = postprint
         // published = pdfversion
+        // These strings can be used to construct i18n messages.
         String articleVersion = "unknown";
         String versionLabel = "Unknown";
 
+        // Each 'permitted OA' can actually refer to multiple versions
         if (permitted.has("article_version")) {
             JSONArray versions = permitted.getJSONArray("article_version");
-            articleVersion = versions.getString(0);
+
+            // Get one particular article version to return as a PermittedVersion. The outer loop calling this
+            // is iterating all permitted_oa and permitted_oa->article_version array members
+            articleVersion = versions.getString(index);
             permittedVersion.setArticleVersion(articleVersion);
             log.debug("Added allowed version: " + articleVersion + " to list");
-        }
-
-        if ("submitted".equals(articleVersion)) {
-            versionLabel = I18nUtil.getMessage("jsp.sherpa.submitted-version-label");
-        } else if("accepted".equals(articleVersion)) {
-            versionLabel = I18nUtil.getMessage("jsp.sherpa.accepted-version-label");
-        } else if("published".equals(articleVersion)) {
-            versionLabel = I18nUtil.getMessage("jsp.sherpa.published-version-label");
         }
 
         // These are now child arrays, in old API they were explicit like
@@ -412,8 +426,6 @@ public class SHERPAResponse
             }
             permittedVersion.setConditions(conditionList);
         }
-
-        permittedVersion.setArticleVersionLabel(versionLabel);
 
         // Any prerequisites for this option (eg required by funder)
         List<String> prerequisites = new ArrayList<>();
@@ -507,19 +519,16 @@ public class SHERPAResponse
      * Create new response object to be handled as an error
      * @param message - the message to render in logs or error pages
      */
-    public SHERPAResponse(String message)
-    {
+    public SHERPAResponse(String message) {
         this.message = message;
         this.error = true;
     }
 
-    public boolean isError()
-    {
+    public boolean isError() {
         return error;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
@@ -527,8 +536,7 @@ public class SHERPAResponse
         this.message = message;
     }
 
-    public List<SHERPAJournal> getJournals()
-    {
+    public List<SHERPAJournal> getJournals() {
         return journals;
     }
 

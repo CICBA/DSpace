@@ -19,9 +19,8 @@
 -- JVMs.  The SQL code below will typically only be required after a direct
 -- SQL data dump from a backup or somesuch.
 
--- Depends on being run from sqlplus with incseq.sql in the current path
--- you can find incseq.sql at: http://www.akadia.com/services/scripts/incseq.sql
--- Here that script was renamed to updateseq.sql.
+-- The 'updateseq' procedure was derived from incseq.sql found at:
+-- http://www.akadia.com/services/scripts/incseq.sql
 
 DECLARE
  PROCEDURE updateseq ( seq IN VARCHAR,
@@ -48,8 +47,6 @@ BEGIN
   updateseq('fileextension_seq', 'fileextension', 'file_extension_id');
   updateseq('resourcepolicy_seq', 'resourcepolicy', 'policy_id');
   updateseq('workspaceitem_seq', 'workspaceitem', 'workspace_item_id');
-  updateseq('workflowitem_seq', 'workflowitem', 'workflow_id');
-  updateseq('tasklistitem_seq', 'tasklistitem', 'tasklist_id');
   updateseq('registrationdata_seq', 'registrationdata',
             'registrationdata_id');
   updateseq('subscription_seq', 'subscription', 'subscription_id');
