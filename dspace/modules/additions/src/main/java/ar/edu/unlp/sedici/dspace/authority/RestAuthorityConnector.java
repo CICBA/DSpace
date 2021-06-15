@@ -7,13 +7,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
+import org.apache.log4j.Logger;
 import org.dspace.services.ConfigurationService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 import org.json.JSONArray;
 
 public class RestAuthorityConnector {
+
+	protected static Logger log = Logger.getLogger(RestAuthorityProvider.class);
 
 	private static String getRestEndpoint() {
 		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
@@ -40,18 +45,22 @@ public class RestAuthorityConnector {
 		return json;
 	}
 
-	public static JSONArray executeGetRequest(String path, String param, String filter) {
+	public static JSONArray executeGetRequest(String path, HashMap<String, String> params) {
 		String base_url = getRestEndpoint();
 		base_url = base_url + "/" + path + "/";
 		String charset = StandardCharsets.UTF_8.name();
-		String param1 = param;
-		String filter1 = filter;
-		String query;
-		try {
-			query = String.format(param1 + "=%s", URLEncoder.encode(filter1, charset));
-		} catch (UnsupportedEncodingException e) {
-			query = "";
+		ArrayList<String> queryList = new ArrayList<String>();
+		if (params != null) {
+			for (String param : params.keySet()) {
+				String filter = params.get(param);
+				try {
+					queryList.add(String.format(param + "=%s", URLEncoder.encode(filter, charset)));
+				} catch (UnsupportedEncodingException e) {
+					log.error(e, e);
+				}
+			}
 		}
+		String query = String.join("&", queryList);
 		URL url;
 		try {
 			url = new URL(base_url + "?" + query);
@@ -61,7 +70,8 @@ public class RestAuthorityConnector {
 			conn.connect();
 			return getJsonResponseFromQuery(url.openStream());
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Failed to connect to " + base_url);
+			log.error(e, e);
 			return new JSONArray();
 		}
 	}
