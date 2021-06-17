@@ -3,33 +3,66 @@ package ar.edu.unlp.sedici.dspace.authority;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.Map;
+
 import org.dspace.content.Collection;
 import org.dspace.content.authority.Choice;
 import org.dspace.content.authority.ChoiceAuthority;
 import org.dspace.content.authority.Choices;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public abstract class RestAuthorityProvider implements ChoiceAuthority {
 
-	private final String idField = "auth_key";
+	private final String CHOICES_ENDPOINT_PATH_PREFIX;
 
-	protected static Logger log = Logger.getLogger(RestAuthorityProvider.class);
+	private final String CHOICES_FILTER_FIELD_PREFIX;
+
+	private final String CHOICES_ID_FIELD_PREFIX;
+
+	private final String ID_FIELD;
+
+	private final String FILTER_FIELD;
+
+	private ConfigurationService configurationService;
+
+	public RestAuthorityProvider() {
+		// Set config properties name prefix
+		this.CHOICES_ENDPOINT_PATH_PREFIX = "choices.endpointPath.";
+		this.CHOICES_FILTER_FIELD_PREFIX = "choices.filterField.";
+		this.CHOICES_ID_FIELD_PREFIX = "choices.idField.";
+		// Default value for id field
+		this.ID_FIELD = "auth_key";
+		// Default value for text filter field
+		this.FILTER_FIELD = "title";
+		this.configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+	}
 
 	/**
 	 *
 	 * @param field metadata field responsible for the query
 	 * @return the path to the specific endpoint aimed by our query
 	 */
-	protected abstract String getPath(String field);
+	private String getPath(String field) {
+		String metadataField = field.replace("_", ".");
+		// Gets the value from conf file if setted, else uses default value
+		String path = configurationService.getProperty(CHOICES_ENDPOINT_PATH_PREFIX + metadataField, "");
+		return path;
+	};
 
 	/**
 	 *
 	 * @param field metadata field responsible for the query
 	 * @return the attribute we are going to filter by
 	 */
-	protected abstract String getFilterField(String field);
+	protected final String getFilterField(String field) {
+		String metadataField = field.replace("_", ".");
+		// Gets the value from conf file if setted, else uses default value
+		String filterField = configurationService.getProperty(CHOICES_FILTER_FIELD_PREFIX + metadataField,
+				this.FILTER_FIELD);
+		return filterField;
+	}
 
 	/**
 	 *
@@ -38,40 +71,43 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 	 *         filtering
 	 */
 	protected final String getIdField(String field) {
-		return this.idField;
+		String metadataField = field.replace("_", ".");
+		// Gets the value from conf file if set, else uses default value
+		String idField = configurationService.getProperty(CHOICES_ID_FIELD_PREFIX + metadataField, this.ID_FIELD);
+		return idField;
 	};
 
 	/**
 	 *
 	 * @param field metadata field responsible for the query
-	 * @param jsonChoice one of the results returned by the query as a json object
+	 * @param singleResult one of the results returned by the query as a Map
 	 * @return a Choice object made from de json object result
 	 */
-	protected abstract Choice extractChoice(String field, JSONObject jsonChoice);
+	protected abstract Choice extractChoice(String field, Map<String, Object> singleResult);
 
-	protected final Choice[] extractChoicesfromQuery(String field, JSONArray response) {
+	private Choice[] extractChoicesfromQuery(String field, JSONArray response) {
 		List<Choice> choices = new LinkedList<Choice>();
 		for (int i = 0; i < response.length(); i++) {
-			JSONObject jsonResponse = response.getJSONObject(i);
-			choices.add(this.extractChoice(field, jsonResponse));
+			Map<String, Object> singleResult = response.getJSONObject(i).toMap();
+			choices.add(this.extractChoice(field, singleResult));
 		}
 		return choices.toArray(new Choice[0]);
 	}
 
-	private final Choice[] doChoicesQuery(String field, HashMap<String, String> params) {
+	private Choice[] doChoicesQuery(String field, HashMap<String, String> params) {
 		String path = getPath(field);
 		JSONArray response = RestAuthorityConnector.executeGetRequest(path, params);
 		return extractChoicesfromQuery(field, response);
 	}
 
-	protected final Choice[] doChoicesIdQuery(String field, String key) {
+	private Choice[] doChoicesIdQuery(String field, String key) {
 		String idField = getIdField(field);
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(idField, key);
 		return doChoicesQuery(field, params);
 	}
 
-	protected Choice[] doChoicesTextQuery(String field, String filter) {
+	private Choice[] doChoicesTextQuery(String field, String filter) {
 		String filterField = getFilterField(field);
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(filterField, filter);
@@ -82,7 +118,6 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 	public final Choices getMatches(String field, String text, Collection collection, int start, int limit,
 			String locale) {
 		Choice[] choices = this.doChoicesTextQuery(field, text);
-		log.trace(choices.length + "matches found for text " + text);
 		return new Choices(choices, start, limit, Choices.CF_ACCEPTED, false);
 	}
 

@@ -24,6 +24,9 @@ public class RestAuthorityConnector {
 		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
 		String endpoint = configurationService.getProperty("rest-authorities.endpoint.url", null);
 		if (endpoint != null) {
+			if (endpoint.endsWith("/")) {
+				endpoint = endpoint.substring(0, endpoint.length() - 1);
+			}
 			return endpoint;
 		} else {
 			throw new NullPointerException("Missing endpoint configuration.");
@@ -37,7 +40,7 @@ public class RestAuthorityConnector {
 		while (scanner.hasNext()) {
 			response += scanner.nextLine();
 		}
-		// Close the scanner and de inputStream
+		// Close the scanner and the inputStream
 		scanner.close();
 		queryStream.close();
 		// Using the JSONObject to simple parse the string into a json object
@@ -45,8 +48,19 @@ public class RestAuthorityConnector {
 		return json;
 	}
 
+	private static String deletePathSlashes(String path) {
+		if (path.startsWith("/")) {
+			path = path.substring(1, path.length());
+		}
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
+
 	public static JSONArray executeGetRequest(String path, HashMap<String, String> params) {
 		String base_url = getRestEndpoint();
+		path = deletePathSlashes(path);
 		base_url = base_url + "/" + path + "/";
 		String charset = StandardCharsets.UTF_8.name();
 		ArrayList<String> queryList = new ArrayList<String>();
