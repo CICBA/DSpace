@@ -24,10 +24,10 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
     protected final String CHOICES_EXTERNALKEY_PREFIX = "choices.externalKeyProperty.";
 
 	protected ParameterizedSparqlString getSparqlSearch(
-			String field, String filter, String locale,boolean idSearch) {
+			String filter, String locale, boolean idSearch) {
 
 		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
-		String metadataField= field.replace("_",".");
+		String metadataField= this.getMetadataField();
 		String typeProperty= configurationService.getProperty(CHOICES_TYPEPROPERTY_PREFIX+metadataField,"skos:concept");
 		String labelProperty= configurationService.getProperty(CHOICES_LABELPROPERTY_PREFIX+metadataField,"skos:prefLabel");
 		String parent= configurationService.getProperty(CHOICES_PARENT_PREFIX+metadataField,null);
@@ -82,6 +82,11 @@ public class General_CICBA_Authority extends SPARQLAuthorityProvider {
 		}
 
 		return pqs;
+	}
+
+	private String getMetadataField() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	protected String getSelectQueryFields(boolean idSearch){

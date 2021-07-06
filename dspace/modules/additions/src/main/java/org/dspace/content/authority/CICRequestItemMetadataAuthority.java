@@ -13,9 +13,10 @@ import org.dspace.content.MetadataValue;
 import org.dspace.content.authority.service.ChoiceAuthorityService;
 import org.dspace.content.authority.service.MetadataAuthorityService;
 import org.dspace.content.service.ItemService;
-import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.core.service.PluginService;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
@@ -59,7 +60,7 @@ public class CICRequestItemMetadataAuthority extends RequestItemSubmitterStrateg
 					}else if (metadata.length == 3){
 						fieldKey = metadataAuthorityService.makeFieldKey(metadata[0],metadata[1],metadata[2]);
 					}
-					if(choiceAuthorityService.isChoicesConfigured(fieldKey)){
+					if(choiceAuthorityService.isChoicesConfigured(fieldKey, item.getOwningCollection())){
 						this.getNameAndEmail(fieldKey, value,item.getOwningCollection(), 0, 0, null);					
 					}
 					//Check if we have an email and an author. If the author authority have them, then send an email, if not keep looking...
@@ -92,7 +93,8 @@ public class CICRequestItemMetadataAuthority extends RequestItemSubmitterStrateg
 			query.setLimit(Query.NOLIMIT);
 		else
 			query.setLimit(limit);
-		String endpoint = ConfigurationManager.getProperty("sparql-authorities", "endpoint.url");
+		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+		String endpoint = configurationService.getProperty("sparql-authorities", "endpoint.url");
 		QueryEngineHTTP httpQuery = new QueryEngineHTTP(endpoint, query);
 		httpQuery.setAllowDeflate(false);
 		httpQuery.setAllowGZip(false);

@@ -156,7 +156,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	private void checkMetadataWithAuthorityKey(StringBuilder reporter, MetadataValue mv) {
-		String value = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), mv.getAuthority(),
+		String value = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), null,  mv.getAuthority(),
 				mv.getLanguage());
 		if (value == null || value.isEmpty()) {
 			// Authority not found

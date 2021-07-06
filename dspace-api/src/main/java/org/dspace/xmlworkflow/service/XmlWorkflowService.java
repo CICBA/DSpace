@@ -75,9 +75,5 @@ public interface XmlWorkflowService extends WorkflowService<XmlWorkflowItem> {
 
     public void removeUserItemPolicies(Context context, Item item, EPerson e) throws SQLException, AuthorizeException;
 
-    public void grantUserAllItemPolicies(Context context, Item item, EPerson epa) throws AuthorizeException, SQLException;
-
-    public void removeUserItemPolicies(Context context, Item item, EPerson e) throws SQLException, AuthorizeException;
-
     public String getEPersonName(EPerson ePerson);
 }

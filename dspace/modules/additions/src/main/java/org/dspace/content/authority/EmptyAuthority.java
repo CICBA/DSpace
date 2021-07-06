@@ -1,7 +1,5 @@
 package org.dspace.content.authority;
 
-import org.dspace.content.Collection;
-
 /**
  * This authority will be used if you want to use and edit the authority hidden inputs,
  * without using a set of authorities predefined in some place. In combination
@@ -16,25 +14,36 @@ public class EmptyAuthority implements ChoiceAuthority {
 	 * @return empty Choices.
 	 */
 	@Override
-	public Choices getMatches(String field, String text, Collection collection,
-			int start, int limit, String locale) {
+	public Choices getMatches(String text, int start, int limit, String locale) {
 		Choice v[]= new Choice[1];
 		v[0]= new Choice("0",text,"0");
 		return new Choices(v,0,v.length,Choices.CF_ACCEPTED,false,0);
 	}
 
 	@Override
-	public Choices getBestMatch(String field, String text, Collection collection,
-			String locale) {
-		return getMatches(field, text, collection, 0, 0, locale);
+	public Choices getBestMatch(String text, String locale) {
+		return getMatches(text, 0, 0, locale);
 	}
 
 	/**
 	 * @return an empty label.
 	 */
-	public String getLabel(String field, String key, String locale) {
+	@Override
+	public String getLabel(String key, String locale) {
 		
 		return new String();
 	}
+
+	@Override
+	public String getPluginInstanceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPluginInstanceName(String name) {
+		// TODO Auto-generated method stub
+	}
+
 
 }

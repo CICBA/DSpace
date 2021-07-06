@@ -4,7 +4,8 @@ import org.apache.log4j.Logger;
 import org.dspace.content.authority.Choice;
 import org.dspace.content.authority.ChoiceAuthority;
 import org.dspace.content.authority.Choices;
-import org.dspace.core.ConfigurationManager;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.content.Collection;
 
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
@@ -40,7 +41,8 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	}
 	
 	protected String getSparqlEndpoint() {
-		String endpoint = ConfigurationManager.getProperty("sparql-authorities", "endpoint.url");
+		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+		String endpoint = configurationService.getProperty("sparql-authorities", "endpoint.url");
 		if (endpoint != null) {
 			return endpoint;
 		} else {
@@ -49,15 +51,14 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	}
 
 	@Override
-	public Choices getMatches(String field, String text, Collection collection,
-			int start, int limit, String locale) {
+	public Choices getMatches(String text, int start, int limit, String locale) {
 		if (text == null)
 			text = "";
 		else 
 			text = text.replace("\"", "");
 
 		ParameterizedSparqlString query = this.getSparqlSearch(
-				field, text, locale,false);
+				text, locale,false);
 		Choice[] choices = this.evalSparql(query, start, limit);
 		log.trace(choices.length + "matches found for text " + text);
 		return new Choices(choices, start, limit, Choices.CF_ACCEPTED, false);
@@ -65,16 +66,14 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 	}
 
 	@Override
-	public final Choices getBestMatch(String field, String text,
-			Collection collection, String locale) {
-		return this.getMatches(field, text, collection, 0, 1, locale);
+	public final Choices getBestMatch(String text, String locale) {
+		return this.getMatches(text, 0, 1, locale);
 	}
 
 	@Override
-	public String getLabel(String field, String key, String locale) {
+	public String getLabel(String field, String locale) {
 
-		ParameterizedSparqlString query = this.getSparqlSearch(field,
-				key, locale,true);
+		ParameterizedSparqlString query = this.getSparqlSearch(field, locale,true);
 		Choice[] choices = this.evalSparql(query, 0,0);
 		if (choices.length == 0)
 			return null;
@@ -87,7 +86,7 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
      *
      *  @param idSearch Determina el tipo de query, si se hará la busqueda por id (key) de autoridad o por texto
      */
-	protected abstract ParameterizedSparqlString getSparqlSearch(String field, String filter, String locale,boolean idSearch);
+	protected abstract ParameterizedSparqlString getSparqlSearch(String filter, String locale,boolean idSearch);
 
 	protected abstract Choice[] extractChoicesfromQuery(QueryEngineHTTP httpQuery);
 
@@ -148,6 +147,17 @@ public abstract class SPARQLAuthorityProvider implements ChoiceAuthority {
 			text = text.replace(")", "\\\\)");
 		}
 		return text;
+	}
+
+	@Override
+	public String getPluginInstanceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPluginInstanceName(String name) {
+		// TODO Auto-generated method stub
 	}
 
 }

@@ -102,8 +102,8 @@ public class PDFFilter extends MediaFilter {
                 if (source instanceof FileInputStream) {
 
                   long fileSize = ((FileInputStream) source).getChannel().size();
-                  long minSize  = ConfigurationManager.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5) * 1024 * 1024;
-                  float xmxFactor = (float) ConfigurationManager.getIntProperty("pdffilter.maxSizeHeapPercentage", 100) / 100;
+                  long minSize  = configurationService.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5) * 1024 * 1024;
+                  float xmxFactor = (float) configurationService.getIntProperty("pdffilter.maxSizeHeapPercentage", 100) / 100;
 
                   if (((FileInputStream) source).getChannel().size() < minSize) {
                       pdfDoc = PDDocument.load(source);

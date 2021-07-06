@@ -63,15 +63,14 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 	}
 
 	@Override
-	protected ParameterizedSparqlString getSparqlSearch(String field, String filter, String locale, boolean idSearch) {
+	protected ParameterizedSparqlString getSparqlSearch(String filter, String locale, boolean idSearch) {
 		if (idSearch)
-			return this.getSparqlSearchByIdQuery(field, filter, locale);
+			return this.getSparqlSearchByIdQuery(filter, locale);
 		else
-			return this.getSparqlSearchByTextQuery(field, filter, locale);
+			return this.getSparqlSearchByTextQuery(filter, locale);
 	}
 
-	protected ParameterizedSparqlString getSparqlSearchByIdQuery(String field,
-			String key, String locale) {
+	protected ParameterizedSparqlString getSparqlSearchByIdQuery(String key, String locale) {
 		ParameterizedSparqlString pqs = new ParameterizedSparqlString();
 
 		pqs.setNsPrefix("foaf", NS_FOAF);
@@ -88,8 +87,7 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 		return pqs;
 	}
 
-	protected ParameterizedSparqlString getSparqlSearchByTextQuery(
-			String field, String text, String locale) {
+	protected ParameterizedSparqlString getSparqlSearchByTextQuery(String text, String locale) {
 		ParameterizedSparqlString pqs = new ParameterizedSparqlString();
 		text = normalizeTextForParserSPARQL10(text);
 
@@ -170,7 +168,7 @@ public class Author_CICBA_Authority extends SPARQLAuthorityProvider {
 
 	public ParameterizedSparqlString getSparqlEmailByTextQuery(String field,
 			String text, String locale) {
-		return  this.getSparqlSearchByTextQuery(field,text,locale);		
+		return  this.getSparqlSearchByTextQuery(text,locale);
 	}
 	
 	

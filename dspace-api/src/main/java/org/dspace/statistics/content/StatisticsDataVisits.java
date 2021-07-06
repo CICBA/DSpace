@@ -288,7 +288,7 @@ public class StatisticsDataVisits extends StatisticsData {
             ObjectCount[] topCounts1 = null;
 //            if (firsDataset.getQueries().size() == 1) {
             topCounts1 =
-                queryFacetField(firsDataset, firsDataset.getQueries().get(0).getQuery(), filterQuery, facetMinCount);
+                queryFacetField(firsDataset, firsDataset.getQueries().get(0).getQuery(), filterQuery, showTotal, facetMinCount);
 //            } else {
 //                TODO: do this
 //            }
@@ -297,7 +297,7 @@ public class StatisticsDataVisits extends StatisticsData {
                 DatasetQuery secondDataSet = datasetQueries.get(1);
                 // Now do the second one
                 ObjectCount[] topCounts2 = queryFacetField(secondDataSet, secondDataSet.getQueries().get(0).getQuery(),
-                                                           filterQuery, facetMinCount);
+                                                           filterQuery, showTotal, facetMinCount);
                 // Now that have results for both of them lets do x.y queries
                 List<String> facetQueries = new ArrayList<>();
                 for (ObjectCount count2 : topCounts2) {
@@ -709,7 +709,7 @@ public class StatisticsDataVisits extends StatisticsData {
 
 
     protected ObjectCount[] queryFacetField(DatasetQuery dataset, String query,
-            String filterQuery, boolean showTotal, int facetMinCount) throws SolrServerException
+            String filterQuery, boolean showTotal, int facetMinCount) throws SolrServerException, IOException
     {
         String facetType = dataset.getFacetField() == null ? "id" : dataset
             .getFacetField();

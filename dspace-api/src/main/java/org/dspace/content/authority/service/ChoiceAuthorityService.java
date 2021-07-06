@@ -155,13 +155,6 @@ public interface ChoiceAuthorityService {
     public boolean isClosed(String fieldKey);
     
     /**
-     * Get the configured "minLength" value for this field.
-     *
-     * @return configured minLength value for this field, or null if none found
-    */
-    public Integer getMinLength(String fieldKey);
-
-    /**
      * Wrapper to call plugin's getVariants().
      *
      * @param metadataValue metadata value

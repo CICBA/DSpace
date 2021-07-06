@@ -50,7 +50,9 @@ import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CollectionService;
 import org.dspace.content.service.CommunityService;
 import org.dspace.content.service.ItemService;
+import org.dspace.core.Constants;
 import org.dspace.core.Context;
+import org.dspace.core.ReloadableEntity;
 import org.dspace.discovery.IndexableObject;
 import org.dspace.discovery.indexobject.IndexableCollection;
 import org.dspace.discovery.indexobject.IndexableCommunity;
@@ -189,8 +191,8 @@ public class SyndicationFeed {
      * @param dsobjects array of objects
      * @param labels label map
      */
-    public void populate(HttpServletRequest request, Context context, DSpaceObject scope,
-                         List<?extends DSpaceObject> dsobjects, Map<String, String> labels)
+    public void populate(HttpServletRequest request, Context context, IndexableObject idxDso,
+                         List<IndexableObject> idxObjects, Map<String, String> labels)
     {
         String logoURL = null;
         String objectURL = null;
@@ -199,7 +201,7 @@ public class SyndicationFeed {
         this.request = request;
 
         // scope is null for the whole site, or a search without scope
-        if (scope == null)
+        if (idxDso == null)
         {
             defaultTitle = configurationService.getProperty("dspace.name");
             feed.setDescription(localize(labels, MSG_FEED_DESCRIPTION));
@@ -208,6 +210,7 @@ public class SyndicationFeed {
         } else {
             Bitstream logo = null;
 
+            DSpaceObject scope = ((IndexableItem) idxDso).getIndexedObject();
             defaultTitle = scope.getName();
             feed.setDescription(contentServiceFactory.getDSpaceObjectService(scope).getMetadata(scope, "short_description"));
             
@@ -255,11 +258,14 @@ public class SyndicationFeed {
         }
 
         // add entries for items
-        if (dsobjects != null)
+        if (idxObjects != null)
         {
             List<SyndEntry> entries = new ArrayList<SyndEntry>();
-            for (DSpaceObject dso : dsobjects)
-            {
+            for (IndexableObject idxObj : idxObjects) {
+                if (!(idxObj instanceof IndexableItem)) {
+                    continue;
+                }
+                DSpaceObject dso = ((IndexableItem) idxObj).getIndexedObject();
                 boolean hasDate = false;
                 SyndEntry entry = new SyndEntryImpl();
                 entries.add(entry);
@@ -372,7 +378,7 @@ public class SyndicationFeed {
                     // Add enclosure(s)
                     List<SyndEnclosure> enclosures = new ArrayList();
                     try {
-                        List<Bundle> bunds = itemService.getBundles(item, "ORIGINAL");
+                        List<Bundle> bunds = itemService.getBundles((Item) dso, "ORIGINAL");
                         if (bunds.get(0) != null) {
                             List<Bitstream> bits = bunds.get(0).getBitstreams();
                             for (Bitstream bit : bits) {

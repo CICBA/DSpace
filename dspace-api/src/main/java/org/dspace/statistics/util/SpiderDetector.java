@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-import org.dspace.core.ConfigurationManager;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.statistics.factory.StatisticsServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,8 @@ public class SpiderDetector {
         } else {
             try 
             {
-                String filePath = ConfigurationManager.getProperty("dspace.dir");
+                ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+                String filePath = configurationService.getProperty("dspace.dir");
                 File spiderDir = new File(filePath, "config/spiders/" + spiderPatternDirectory);
                 
                 if (spiderDir.exists() && spiderDir.isDirectory()) {

@@ -513,6 +513,7 @@ public class Curator {
             }
             Context context = curationContext();
             Iterator<Item> iter = itemService.findByCollection(context, coll);
+            List<Item> items =  new ArrayList<Item>();
             while (iter.hasNext()) {
                 items.add(iter.next());
             }
