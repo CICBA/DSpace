@@ -21,21 +21,27 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 
 	private final String CHOICES_ID_FIELD_PREFIX;
 
+	private final String CHOICES_AUTH_KEY_PREFIX;
+
 	private final String ID_FIELD;
 
 	private final String FILTER_FIELD;
 
-	private ConfigurationService configurationService;
+	private final String AUTH_KEY_PREFIX_FILTER;
+
+	protected ConfigurationService configurationService;
 
 	public RestAuthorityProvider() {
 		// Set config properties name prefix
 		this.CHOICES_ENDPOINT_PATH_PREFIX = "choices.endpointPath.";
 		this.CHOICES_FILTER_FIELD_PREFIX = "choices.filterField.";
 		this.CHOICES_ID_FIELD_PREFIX = "choices.idField.";
+		this.CHOICES_AUTH_KEY_PREFIX = "choices.authKeyPrefix.";
 		// Default value for id field
 		this.ID_FIELD = "auth_key";
 		// Default value for text filter field
 		this.FILTER_FIELD = "title";
+		this.AUTH_KEY_PREFIX_FILTER = "";
 		this.configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
 	}
 
@@ -78,6 +84,19 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 	};
 
 	/**
+    *
+    * @param field metadata field responsible for the query
+    * @return prefix applied to authority value when query by the ID_FIELD.
+    *         filtering
+    */
+   protected final String getAuthKeyPrefixFilter(String field) {
+       String metadataField = field.replace("_", ".");
+       // Gets the value from conf file if set, else uses default value
+       String authKeyPrefix = configurationService.getProperty(CHOICES_AUTH_KEY_PREFIX + metadataField, this.AUTH_KEY_PREFIX_FILTER);
+       return authKeyPrefix;
+   };
+
+	/**
 	 *
 	 * @param field metadata field responsible for the query
 	 * @param singleResult one of the results returned by the query as a Map
@@ -102,7 +121,11 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 
 	private Choice[] doChoicesIdQuery(String field, String key) {
 		String idField = getIdField(field);
+		String authKeyPrefix = this.getAuthKeyPrefixFilter(field);
 		HashMap<String, String> params = new HashMap<String, String>();
+		if (!authKeyPrefix.isEmpty()) {
+		    key = key.replace(authKeyPrefix, "");
+		}
 		params.put(idField, key);
 		return doChoicesQuery(field, params);
 	}
@@ -111,10 +134,11 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		String filterField = getFilterField(field);
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(filterField, filter);
+		this.addExtraQueryTextParams(field, params);
 		return doChoicesQuery(field, params);
 	}
 
-	@Override
+    @Override
 	public final Choices getMatches(String field, String text, Collection collection, int start, int limit,
 			String locale) {
 		Choice[] choices = this.doChoicesTextQuery(field, text);
@@ -134,5 +158,7 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		else
 			return choices[0].label;
 	}
+
+	protected abstract void addExtraQueryTextParams(String field, Map<String, String> params);
 
 }

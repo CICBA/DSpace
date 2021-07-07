@@ -13,4 +13,9 @@ public class TaxonomiesRestAuthorityProvider extends RestAuthorityProvider {
 		return new Choice(key, value, value);
 	}
 
+    @Override
+    protected void addExtraQueryTextParams(String field, Map<String, String> params) {
+        // TODO Auto-generated method stub
+    }
+
 }
