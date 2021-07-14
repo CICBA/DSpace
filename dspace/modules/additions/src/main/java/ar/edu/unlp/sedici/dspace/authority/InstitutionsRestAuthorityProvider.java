@@ -53,13 +53,16 @@ public class InstitutionsRestAuthorityProvider extends RestAuthorityProvider {
    }
 
     @Override
-    protected Choice extractChoice(String field, Map<String, Object> singleResult) {
-        String value = singleResult.get("title").toString();
+    protected Choice extractChoice(String field, Map<String, Object> singleResult, boolean searchById) {
+        String value = singleResult.get(this.getFilterField(field)).toString();
         String label = value;
-        if (singleResult.containsKey("acronym") && !singleResult.get("acronym").toString().isEmpty()) {
-            label += " (" + singleResult.get("acronym")  + ")";
+        // If searching by id (in example, if indexing using Discovery, then don't show acronym)...
+        if (!searchById) {
+            if (singleResult.containsKey("acronym") && !singleResult.get("acronym").toString().isEmpty()) {
+                label += " (" + singleResult.get("acronym")  + ")";
+            }
         }
-        return new Choice(singleResult.get("auth_key").toString(), value, label);
+        return new Choice(singleResult.get(this.getIdField(field)).toString(), value, label);
     }
 
 }

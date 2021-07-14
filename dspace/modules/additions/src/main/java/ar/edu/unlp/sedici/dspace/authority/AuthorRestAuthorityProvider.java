@@ -6,11 +6,25 @@ import org.dspace.content.authority.Choice;
 
 public class AuthorRestAuthorityProvider extends RestAuthorityProvider {
 
+    private final String FILIACION_FIELD;
+    
+    public AuthorRestAuthorityProvider() {
+        super();
+        this.FILIACION_FIELD = "field_institucion";
+    }
+    
     @Override
-    protected Choice extractChoice(String field, Map<String, Object> singleResult) {
+    protected Choice extractChoice(String field, Map<String, Object> singleResult, boolean searchById) {
         String value = (String) singleResult.get(this.getFilterField(field));
         String key = (String) singleResult.get(this.getIdField(field));
-        return new Choice(key, value, value);
+        String label = value;
+        // If searching by id (in example, if indexing using Discovery, then don't show acronym)...
+        if (!searchById) {
+            if (singleResult.containsKey(FILIACION_FIELD) && !singleResult.get(FILIACION_FIELD).toString().isEmpty()) {
+                label += " (" + singleResult.get(FILIACION_FIELD)  + ")";
+            }
+        }
+        return new Choice(key, value, label);
     }
 
     @Override

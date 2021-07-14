@@ -100,23 +100,24 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 	 *
 	 * @param field metadata field responsible for the query
 	 * @param singleResult one of the results returned by the query as a Map
+	 * @param searchById specify if searching by authority key (ID)
 	 * @return a Choice object made from de json object result
 	 */
-	protected abstract Choice extractChoice(String field, Map<String, Object> singleResult);
+	protected abstract Choice extractChoice(String field, Map<String, Object> singleResult, boolean searchById);
 
-	private Choice[] extractChoicesfromQuery(String field, JSONArray response) {
+	private Choice[] extractChoicesfromQuery(String field, JSONArray response, boolean searchById) {
 		List<Choice> choices = new LinkedList<Choice>();
 		for (int i = 0; i < response.length(); i++) {
 			Map<String, Object> singleResult = response.getJSONObject(i).toMap();
-			choices.add(this.extractChoice(field, singleResult));
+			choices.add(this.extractChoice(field, singleResult, searchById));
 		}
 		return choices.toArray(new Choice[0]);
 	}
 
-	private Choice[] doChoicesQuery(String field, HashMap<String, String> params) {
+	private Choice[] doChoicesQuery(String field, HashMap<String, String> params, boolean searchById) {
 		String path = getPath(field);
 		JSONArray response = RestAuthorityConnector.executeGetRequest(path, params);
-		return extractChoicesfromQuery(field, response);
+		return extractChoicesfromQuery(field, response, searchById);
 	}
 
 	private Choice[] doChoicesIdQuery(String field, String key) {
@@ -127,7 +128,7 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		    key = key.replace(authKeyPrefix, "");
 		}
 		params.put(idField, key);
-		return doChoicesQuery(field, params);
+		return doChoicesQuery(field, params, true);
 	}
 
 	private Choice[] doChoicesTextQuery(String field, String filter) {
@@ -135,7 +136,7 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(filterField, filter);
 		this.addExtraQueryTextParams(field, params);
-		return doChoicesQuery(field, params);
+		return doChoicesQuery(field, params, false);
 	}
 
     @Override
