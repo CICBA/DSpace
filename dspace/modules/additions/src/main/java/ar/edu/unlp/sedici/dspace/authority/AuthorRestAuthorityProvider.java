@@ -6,11 +6,13 @@ import org.dspace.content.authority.Choice;
 
 public class AuthorRestAuthorityProvider extends RestAuthorityProvider {
 
-    private final String FILIACION_FIELD;
+    private final String FILIACION_NAME_FIELD;
+    private final String FILIACION_ACRONYM_FIELD;
     
     public AuthorRestAuthorityProvider() {
         super();
-        this.FILIACION_FIELD = "field_institucion";
+        this.FILIACION_NAME_FIELD = "institution_title";
+        this.FILIACION_ACRONYM_FIELD = "institution_acronym";
     }
     
     @Override
@@ -20,9 +22,13 @@ public class AuthorRestAuthorityProvider extends RestAuthorityProvider {
         String label = value;
         // If searching by id (in example, if indexing using Discovery, then don't show acronym)...
         if (!searchById) {
-            if (singleResult.containsKey(FILIACION_FIELD) && !singleResult.get(FILIACION_FIELD).toString().isEmpty()) {
-                label += " (" + singleResult.get(FILIACION_FIELD)  + ")";
-            }
+			if (singleResult.containsKey(FILIACION_ACRONYM_FIELD)
+					&& !singleResult.get(FILIACION_ACRONYM_FIELD).toString().isEmpty()) {
+				label += " (" + singleResult.get(FILIACION_ACRONYM_FIELD) + ")";
+			} else if (singleResult.containsKey(FILIACION_NAME_FIELD)
+					&& !singleResult.get(FILIACION_NAME_FIELD).toString().isEmpty()) {
+				label += " (" + singleResult.get(FILIACION_NAME_FIELD) + ")";
+			}
         }
         return new Choice(key, value, label);
     }
