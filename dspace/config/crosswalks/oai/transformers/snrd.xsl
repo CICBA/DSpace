@@ -146,6 +146,21 @@
 <!-- 		<xsl:text>info:eu-repo/semantics/openAccess</xsl:text> -->
 <!-- 	</xsl:template> -->
 
+	<!-- Formatting dcterms.relation -->
+	<xsl:template
+		match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='value']/text()">
+		<xsl:variable name="authority"
+			select="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='authority']" />
+		<xsl:choose>
+			<xsl:when test="starts-with($authority, 'http')">
+				<xsl:value-of select="$authority" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'http')">
+				<xsl:value-of select="." />
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
 	<!-- AUXILIARY TEMPLATES -->
 	
 	<xsl:template name="type-driver-version">
