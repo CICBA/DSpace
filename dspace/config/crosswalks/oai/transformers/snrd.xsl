@@ -146,6 +146,12 @@
 <!-- 		<xsl:text>info:eu-repo/semantics/openAccess</xsl:text> -->
 <!-- 	</xsl:template> -->
 
+	<!--  Removing dcterms.extent -->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='extent']" />
+
+	<!--  Removing dcterms.medium -->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='medium']" />
+
 	<!-- Formatting dcterms.relation -->
 	<xsl:template
 		match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='value']/text()">
