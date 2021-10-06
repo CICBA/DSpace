@@ -75,7 +75,7 @@
 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='identifier']/doc:element[@name='uri']/doc:element/doc:field[@name='value']/text()">
 		<xsl:variable name="handle" select="/doc:metadata/doc:element[@name='others']/doc:field[@name='handle']"/>
 		<xsl:choose>
-			<xsl:when test="not(contains(.,'http://digital.cic.gba.gob.ar/'))">
+			<xsl:when test="not(contains(.,'https://digital.cic.gba.gob.ar/'))">
 				<xsl:value-of select="concat(.,$handle)"/>	
 			</xsl:when>
 			<xsl:otherwise>
