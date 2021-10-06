@@ -101,11 +101,11 @@
 				<xsl:variable name="identificador" select="normalize-space(substring-after(.,':'))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:when>
-			<xsl:otherwise>
+			<xsl:when test="contains(.,' ')">
 				<xsl:variable name="esquema" select="substring-before(.,' ')"/>
 				<xsl:variable name="identificador" select="normalize-space(substring-after(.,' '))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
-			</xsl:otherwise>
+			</xsl:when>
 		</xsl:choose>
 					
 	</xsl:template>
