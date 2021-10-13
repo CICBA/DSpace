@@ -43,14 +43,12 @@ DATEMTH=date +%m
 ##  AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH AUTH ##
 ##################################################################################
 
-#backups de configuraciones (todos los 1ro de mes a las 4:38hs)
-38 4 2 * *	root	tar --directory $DSPACE_INSTALL_DIR -czf $DSPACE_BACKUP_DIR/config/config.backup.$($DATESTR).tgz config/
+#backups de drupal cic para autoridades (de lunes a viernes a las 19:00)
+00 19 * * 1,2,3,4,5      root    tar -czf $BACKUP_DIR/auth-cic-9/auth-cic-9.$($DATESTR).tar.gz /var/www/auth-cic-9
+00 19 * * 1,2,3,4,5      root    /usr/local/bin/drush -r /var/www/auth-cic-9 sql:dump --gzip > $BACKUP_DIR/auth-cic-9/auth-cic-9.$($DATESTR).sql.gz
 
-#backups de drupal para autoridades de CIC-DIGITAL (de lunes a viernes a las 4:50AM)
-50 4 * * 1,2,3,4,5	root	drush -r /var/www/auth archive-dump --destination=$DSPACE_BACKUP_DIR/auth/auth.htdocs.$($DATESTR).tar.gz -q > /dev/null
-
-#rotación de backups de drupal (todos los dias a las 05:00hs). Se eliminan aquellos mas antiguos a 30 dias de creación pero se conservan los de primero de cada mes 
-0 5 * * 1,2,3,4,5       root  find $DSPACE_BACKUP_DIR/auth -maxdepth 1 -name "auth.htdocs.20??-??-??*.tar.gz" -mtime +30 -not -name "auth.htdocs.20??-??-01*.tar.gz" -exec rm {} \; > /dev/null
+#rotación de backups de drupal cic (todos los dias a las 19:30hs). Se eliminan aquellos mas antiguos a 7 dias de creación pero se conservan los de primero de cada mes
+30 20 * * 1,2,3,4,5       root  find $BACKUP_DIR/auth-cic-9 -maxdepth 1 -name "auth-cic.20??-??-??*.???.gz" -mtime +7 -not -name "auth-cic.20??-??-01*.???.gz" -exec rm {} \; > /dev/null
 
 ##################################################################################
 ##  SOLR
