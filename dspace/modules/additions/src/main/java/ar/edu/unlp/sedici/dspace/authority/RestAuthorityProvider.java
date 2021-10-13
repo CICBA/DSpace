@@ -139,25 +139,55 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		return doChoicesQuery(field, params, false);
 	}
 
-    @Override
+	// TO DO Re implementar estos metodos para DSpace 7
+	//@Override
 	public final Choices getMatches(String field, String text, Collection collection, int start, int limit,
 			String locale) {
 		Choice[] choices = this.doChoicesTextQuery(field, text);
 		return new Choices(choices, start, limit, Choices.CF_ACCEPTED, false);
 	}
 
-	@Override
+	//@Override
 	public final Choices getBestMatch(String field, String text, Collection collection, String locale) {
 		return this.getMatches(field, text, collection, 0, 1, locale);
 	}
 
-	@Override
+	//@Override
 	public final String getLabel(String field, String key, String locale) {
 		Choice[] choices = this.doChoicesIdQuery(field, key);
 		if (choices.length == 0)
 			return null;
 		else
 			return choices[0].label;
+	}
+
+	@Override
+	public Choices getMatches(String text, int start, int limit, String locale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Choices getBestMatch(String text, String locale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getLabel(String key, String locale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPluginInstanceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPluginInstanceName(String name) {
+		// TODO Auto-generated method stub
 	}
 
 	protected abstract void addExtraQueryTextParams(String field, Map<String, String> params);
