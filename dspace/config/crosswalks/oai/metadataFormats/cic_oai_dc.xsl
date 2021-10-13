@@ -102,6 +102,10 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='cic']/doc:element[@name='thesis']/doc:element[@name='degree']/doc:element/doc:field[@name='value']">
 				<dc:description><xsl:value-of select="." /></dc:description>
 			</xsl:for-each>
+			<!-- dcterms.format dataset description -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='format']/doc:element/doc:field[@name='value']">
+				<dc:description><xsl:value-of select="." /></dc:description>
+			</xsl:for-each>
 			<!-- dcterms.issued -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='issued']/doc:element/doc:field[@name='value']">
 				<dc:date><xsl:value-of select="." /></dc:date>
@@ -121,10 +125,6 @@
             </xsl:for-each>
 			<!-- dcterms.extent -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='extent']/doc:element/doc:field[@name='value']">
-				<dc:format><xsl:value-of select="." /></dc:format>
-			</xsl:for-each>
-			<!-- dcterms.format -->
-			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='format']/doc:element/doc:field[@name='value']">
 				<dc:format><xsl:value-of select="." /></dc:format>
 			</xsl:for-each>
 			<!-- dcterms.medium -->
@@ -147,9 +147,17 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='language']/doc:element/doc:field[@name='value']">
 				<dc:language><xsl:value-of select="." /></dc:language>
 			</xsl:for-each>
+			<!-- dcterms.relation -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='value']">
+				<xsl:if test="./text()">
+					<dc:relation><xsl:value-of select="." /></dc:relation>
+				</xsl:if>
+			</xsl:for-each>
 			<!-- dcterms.identifier.other -->
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='other']/doc:element/doc:field[@name='value']">
-				<dc:relation><xsl:value-of select="." /></dc:relation>
+				<xsl:if test="./text()">
+					<dc:relation><xsl:value-of select="." /></dc:relation>
+				</xsl:if>
 			</xsl:for-each>
 			<!-- dc.rights -->
 			<!-- En el contexto snrd mostrar dc:rights dependiendo de si tiene o no embargo -->

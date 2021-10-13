@@ -75,7 +75,7 @@
 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='identifier']/doc:element[@name='uri']/doc:element/doc:field[@name='value']/text()">
 		<xsl:variable name="handle" select="/doc:metadata/doc:element[@name='others']/doc:field[@name='handle']"/>
 		<xsl:choose>
-			<xsl:when test="not(contains(.,'http://digital.cic.gba.gob.ar/'))">
+			<xsl:when test="not(contains(.,'https://digital.cic.gba.gob.ar/'))">
 				<xsl:value-of select="concat(.,$handle)"/>	
 			</xsl:when>
 			<xsl:otherwise>
@@ -101,11 +101,11 @@
 				<xsl:variable name="identificador" select="normalize-space(substring-after(.,':'))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
 			</xsl:when>
-			<xsl:otherwise>
+			<xsl:when test="contains(.,' ')">
 				<xsl:variable name="esquema" select="substring-before(.,' ')"/>
 				<xsl:variable name="identificador" select="normalize-space(substring-after(.,' '))"/>
 				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
-			</xsl:otherwise>
+			</xsl:when>
 		</xsl:choose>
 					
 	</xsl:template>
@@ -145,6 +145,27 @@
 <!-- 	<xsl:template match="/doc:metadata/doc:element[@name='dc']/doc:element[@name='rights']/doc:element/doc:field/text()"> -->
 <!-- 		<xsl:text>info:eu-repo/semantics/openAccess</xsl:text> -->
 <!-- 	</xsl:template> -->
+
+	<!--  Removing dcterms.extent -->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='extent']" />
+
+	<!--  Removing dcterms.medium -->
+	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='medium']" />
+
+	<!-- Formatting dcterms.relation -->
+	<xsl:template
+		match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='value']/text()">
+		<xsl:variable name="authority"
+			select="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='relation']/doc:element/doc:field[@name='authority']" />
+		<xsl:choose>
+			<xsl:when test="starts-with($authority, 'http')">
+				<xsl:value-of select="$authority" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'http')">
+				<xsl:value-of select="." />
+			</xsl:when>
+		</xsl:choose>
+	</xsl:template>
 
 	<!-- AUXILIARY TEMPLATES -->
 	
