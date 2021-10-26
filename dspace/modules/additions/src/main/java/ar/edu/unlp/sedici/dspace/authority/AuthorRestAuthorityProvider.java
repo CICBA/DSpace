@@ -16,9 +16,9 @@ public class AuthorRestAuthorityProvider extends RestAuthorityProvider {
     }
     
     @Override
-    protected Choice extractChoice(String field, Map<String, Object> singleResult, boolean searchById) {
-        String value = (String) singleResult.get(this.getFilterField(field));
-        String key = (String) singleResult.get(this.getIdField(field));
+    protected Choice extractChoice(Map<String, Object> singleResult, boolean searchById) {
+        String value = (String) singleResult.get(this.getFilterField());
+        String key = (String) singleResult.get(this.getIdField());
         String label = value;
         // If searching by id (in example, if indexing using Discovery, then don't show acronym)...
         if (!searchById) {
@@ -34,7 +34,7 @@ public class AuthorRestAuthorityProvider extends RestAuthorityProvider {
     }
 
     @Override
-    protected void addExtraQueryTextParams(String field, Map<String, String> params) {
+    protected void addExtraQueryTextParams(Map<String, String> params) {
         // TODO Auto-generated method stub
     }
 
