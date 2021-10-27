@@ -167,7 +167,7 @@ public abstract class RestAuthorityProvider implements ChoiceAuthority {
 		return this.getMatches(text, 0, 1, locale);
 	}
 
-	// @Override
+	@Override
 	public final String getLabel(String key, String locale) {
 		Choice[] choices = this.doChoicesIdQuery(key);
 		if (choices.length == 0)
