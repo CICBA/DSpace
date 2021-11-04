@@ -1,23 +1,24 @@
-# Rejection email message
-#
-# {0}  Title of submission
-# {1}  Name of collection
-# {2}  Name of the rejector
-# {3}  Reason for the rejection
-# {4}  Link to 'My DSpace' page
-#
+## Rejection email message
+##
+## {0}  Title of submission
+## {1}  Name of collection
+## {2}  Name of the rejector
+## {3}  Reason for the rejection
+## {4}  Link to 'My DSpace' page
+##
+#set($subject = 'DSpace: Submission Rejected')
 Subject: CIC-Digital: Submission Rejected
 
-You submitted: {0}
+You submitted: ${params[0]}
 
-To collection: {1}
+To collection: ${params[1]}
 
-Your submission has been rejected by {2}
+Your submission has been rejected by ${params[2]}
 with the following explanation:
 
-{3}
+${params[3]}
 
 Your submission has not been deleted. You can access it from the 
-"Submissions" page on "My Account" section: {4}
+"Submissions" page on "My Account" section: ${params[4]}
 
 CIC-Digital

@@ -7,7 +7,11 @@
 #
 
 # This will be deployed as dspace/dspace-postgres-pgcrpyto:loadsql
+<<<<<<< HEAD
 FROM postgres
+=======
+FROM postgres:11
+>>>>>>> migracion
 
 ENV POSTGRES_DB dspace
 ENV POSTGRES_USER dspace

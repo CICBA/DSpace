@@ -14,7 +14,8 @@ import org.dspace.service.ClientInfoService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 
 /**
- * Abstract factory to get services for the core package, use CoreServiceFactory.getInstance() to retrieve an implementation
+ * Abstract factory to get services for the core package, use CoreServiceFactory.getInstance() to retrieve an
+ * implementation
  *
  * @author kevinvandevelde at atmire.com
  */

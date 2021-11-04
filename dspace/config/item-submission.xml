@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE item-submission SYSTEM "item-submission.dtd">
 
-<!-- Configurable Submission configuration file  -->
+<!-- Configurable Submission configuration file -->
 
-<!-- This XML configuration file allows you to configure the ordering     -->
-<!-- and number of the steps that occur in the Item Submission Process.   -->
+<!-- This XML configuration file allows you to configure the ordering -->
+<!-- and number of the steps that occur in the Item Submission Process. -->
 <item-submission>
 
  <!-- The process-map maps collection handles to a particular Item         -->

@@ -19,9 +19,11 @@ import java.io.Writer;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.dspace.content.Item;
-import org.dspace.core.ConfigurationManager;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 
 /*
  *
@@ -29,24 +31,20 @@ import org.dspace.core.ConfigurationManager;
  * instantiate filter - bitstream format doesn't exist
  *
  */
-public class PDFFilter extends MediaFilter
-{
+public class PDFFilter extends MediaFilter {
 
-    private static Logger log = Logger.getLogger(PDFFilter.class);
+    private static Logger log = org.apache.logging.log4j.LogManager.getLogger(PDFFilter.class);
 
     @Override
-    public String getFilteredName(String oldFilename)
-    {
+    public String getFilteredName(String oldFilename) {
         return oldFilename + ".txt";
     }
 
     /**
      * @return String bundle name
-     *
      */
     @Override
-    public String getBundleName()
-    {
+    public String getBundleName() {
         return "TEXT";
     }
 
@@ -54,8 +52,7 @@ public class PDFFilter extends MediaFilter
      * @return String bitstreamformat
      */
     @Override
-    public String getFormatString()
-    {
+    public String getFormatString() {
         return "Text";
     }
 
@@ -63,26 +60,24 @@ public class PDFFilter extends MediaFilter
      * @return String description
      */
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Extracted text";
     }
 
     /**
      * @param currentItem item
-     * @param source source input stream
-     * @param verbose verbose mode
-     *
+     * @param source      source input stream
+     * @param verbose     verbose mode
      * @return InputStream the resulting input stream
      * @throws Exception if error
      */
     @Override
     public InputStream getDestinationStream(Item currentItem, InputStream source, boolean verbose)
-            throws Exception
-    {
-        try
-        {
-            boolean useTemporaryFile = ConfigurationManager.getBooleanProperty("pdffilter.largepdfs", false);
+        throws Exception {
+        ConfigurationService configurationService
+                = DSpaceServicesFactory.getInstance().getConfigurationService();
+        try {
+            boolean useTemporaryFile = configurationService.getBooleanProperty("pdffilter.largepdfs", false);
 
             // get input stream from bitstream
             // pass to filter, get string back
@@ -93,14 +88,11 @@ public class PDFFilter extends MediaFilter
             File tempTextFile = null;
             ByteArrayOutputStream byteStream = null;
 
-            if (useTemporaryFile)
-            {
+            if (useTemporaryFile) {
                 tempTextFile = File.createTempFile("dspacepdfextract" + source.hashCode(), ".txt");
                 tempTextFile.deleteOnExit();
                 writer = new OutputStreamWriter(new FileOutputStream(tempTextFile));
-            }
-            else
-            {
+            } else {
                 byteStream = new ByteArrayOutputStream();
                 writer = new OutputStreamWriter(byteStream);
             }
@@ -126,6 +118,10 @@ public class PDFFilter extends MediaFilter
                   }
                   pts.writeText(pdfDoc, writer);
                 }
+            } catch (InvalidPasswordException ex) {
+                log.error("PDF is encrypted. Cannot extract text (item: {})",
+                    () -> currentItem.getHandle());
+                return null;
             }
             finally
             {
@@ -135,37 +131,26 @@ public class PDFFilter extends MediaFilter
                     {
                         pdfDoc.close();
                     }
-                }
-                catch(Exception e)
-                {
-                   log.error("Error closing PDF file: " + e.getMessage(), e);
+                } catch (Exception e) {
+                    log.error("Error closing PDF file: " + e.getMessage(), e);
                 }
 
-                try
-                {
+                try {
                     writer.close();
-                }
-                catch(Exception e)
-                {
-                   log.error("Error closing temporary extract file: " + e.getMessage(), e);
+                } catch (Exception e) {
+                    log.error("Error closing temporary extract file: " + e.getMessage(), e);
                 }
             }
 
-            if (useTemporaryFile)
-            {
+            if (useTemporaryFile) {
                 return new FileInputStream(tempTextFile);
-            }
-            else
-            {
+            } else {
                 byte[] bytes = byteStream.toByteArray();
                 return new ByteArrayInputStream(bytes);
             }
-        }
-        catch (OutOfMemoryError oome)
-        {
+        } catch (OutOfMemoryError oome) {
             log.error("Error parsing PDF document " + oome.getMessage(), oome);
-            if (!ConfigurationManager.getBooleanProperty("pdffilter.skiponmemoryexception", false))
-            {
+            if (!configurationService.getBooleanProperty("pdffilter.skiponmemoryexception", false)) {
                 throw oome;
             }
         }

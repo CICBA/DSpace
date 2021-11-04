@@ -14,7 +14,8 @@ import org.dspace.service.ClientInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Factory implementation to get services for the core package, use CoreServiceFactory.getInstance() to retrieve an implementation
+ * Factory implementation to get services for the core package, use CoreServiceFactory.getInstance() to retrieve an
+ * implementation
  *
  * @author kevinvandevelde at atmire.com
  */
