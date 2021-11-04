@@ -82,6 +82,7 @@ public class SpiderDetector {
             }
         }
         return spiderPatternsList;
+    }
 
     private SpiderDetector() { }
 
@@ -112,7 +113,9 @@ public class SpiderDetector {
      */
     public static Set<String> getSpiderDomains() {
         return getSpiderFrom(SpiderDetector.SPIDER_DOMAINS_DIRNAME);
-
+    }
+    
+    /**
      * Utility method which reads lines from a file & returns them in a Set.
      *
      * @param patternFile the location of our spider file
