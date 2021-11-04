@@ -13,7 +13,8 @@ import org.dspace.content.MetadataValue;
 import org.dspace.content.authority.service.ChoiceAuthorityService;
 import org.dspace.content.authority.service.MetadataAuthorityService;
 import org.dspace.content.service.ItemService;
-import org.dspace.core.ConfigurationManager;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.core.Context;
 import org.dspace.core.service.PluginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,8 @@ public class CICRequestItemMetadataAuthority extends RequestItemSubmitterStrateg
 			query.setLimit(Query.NOLIMIT);
 		else
 			query.setLimit(limit);
-		String endpoint = ConfigurationManager.getProperty("sparql-authorities", "endpoint.url");
+		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+		String endpoint = configurationService.getProperty("sparql-authorities", "endpoint.url");
 		QueryEngineHTTP httpQuery = new QueryEngineHTTP(endpoint, query);
 		httpQuery.setAllowDeflate(false);
 		httpQuery.setAllowGZip(false);
