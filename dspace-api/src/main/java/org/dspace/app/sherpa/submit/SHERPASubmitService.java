@@ -13,12 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-<<<<<<< HEAD
-import org.apache.log4j.Logger;
-import org.dspace.app.sherpa.v2.SHERPAResponse;
-=======
 import org.apache.logging.log4j.Logger;
->>>>>>> migracion
 import org.dspace.app.sherpa.SHERPAService;
 import org.dspace.app.sherpa.v2.SHERPAResponse;
 import org.dspace.content.Item;
@@ -61,8 +56,6 @@ public class SHERPASubmitService {
         this.sherpaService = sherpaService;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Search SHERPA for journal policies matching the ISSNs in the item.
      * Rather than a 'search' query for any/all ISSNs, the v2 API requires a separate
@@ -75,7 +68,6 @@ public class SHERPASubmitService {
      * @param item      DSpace item containing ISSNs to be checked
      * @return          SHERPA v2 API response (policy data)
      */
->>>>>>> migracion
     public List<SHERPAResponse> searchRelatedJournals(Context context, Item item) {
         Set<String> issns = getISSNs(context, item);
         if (issns == null || issns.size() == 0) {
@@ -89,12 +81,8 @@ public class SHERPASubmitService {
                 SHERPAResponse response = sherpaService.searchByJournalISSN(issn);
                 if (response.isError()) {
                     // Continue with loop
-<<<<<<< HEAD
-                    log.warn("Failed to look up SHERPA ROMeO result for ISSN: " + issn);
-=======
                     log.warn("Failed to look up SHERPA ROMeO result for ISSN: " + issn
                         + ": " + response.getMessage());
->>>>>>> migracion
                 }
                 // Store this response, even if it has an error (useful for UI reporting)
                 responses.add(response);
@@ -117,15 +105,6 @@ public class SHERPASubmitService {
         return sherpaService.searchByJournalISSN(issn);
     }
 
-<<<<<<< HEAD
-    public Set<String> getISSNs(Context context, Item item)
-    {
-        Set<String> issns = new LinkedHashSet<>();
-        if (configuration.getIssnItemExtractors() == null)
-        {
-            log.warn(LogManager.getHeader(context, "searchRelatedJournals",
-                    "no issnItemExtractors defined"));
-=======
     /**
      * Using the configured itemIssnExtractors from SHERPA configuration, extract
      * ISSNs from item metadata or authority values
@@ -138,7 +117,6 @@ public class SHERPASubmitService {
         if (configuration.getIssnItemExtractors() == null) {
             log.warn(LogHelper.getHeader(context, "searchRelatedJournals",
                                           "no issnItemExtractors defined"));
->>>>>>> migracion
             return null;
         }
         for (ISSNItemExtractor extractor : configuration.getIssnItemExtractors()) {

@@ -516,23 +516,11 @@ public class Curator {
             }
             Context context = curationContext();
             Iterator<Item> iter = itemService.findByCollection(context, coll);
-<<<<<<< HEAD
-            List<Item> items =  new ArrayList<Item>();
-            while (iter.hasNext()) {
-                items.add(iter.next());
-            }
-            for (Item item : items) {
-                boolean shouldContinue = tr.run(item);
-                context.uncacheEntity(item);
-                if (!shouldContinue)
-                {
-=======
             while (iter.hasNext()) {
                 Item item = iter.next();
                 boolean shouldContinue = tr.run(item);
                 context.uncacheEntity(item);
                 if (!shouldContinue) {
->>>>>>> migracion
                     return false;
                 }
             }
@@ -549,27 +537,11 @@ public class Curator {
      * @param dso the DSpace object
      * @throws IOException A general class of exceptions produced by failed or interrupted I/O operations.
      */
-<<<<<<< HEAD
-    protected void visit(DSpaceObject dso) throws IOException
-    {
-    	Context curCtx = curationCtx.get();
-    	if (curCtx != null)
-    	{
-            if (txScope.equals(TxScope.OBJECT))
-            {
-                try {
-                    curCtx.commit();
-                }
-                catch (SQLException sqlE) {
-                    throw new IOException(sqlE.getMessage(), sqlE);
-                }
-=======
     protected void visit(DSpaceObject dso) throws IOException {
         Context curCtx = curationCtx.get();
         if (curCtx != null) {
             if (txScope.equals(TxScope.OBJECT)) {
                 curCtx.dispatchEvents();
->>>>>>> migracion
             }
         }
     }

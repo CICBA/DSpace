@@ -30,11 +30,7 @@ Prior versions of DSpace (v6.x and below) used two different UIs (XMLUI and JSPU
 
 ## Documentation / Installation
 
-<<<<<<< HEAD
-Documentation for each release may be viewed online or downloaded via our [Documentation Wiki](https://wiki.duraspace.org/display/DSDOC/).
-=======
 Documentation for each release may be viewed online or downloaded via our [Documentation Wiki](https://wiki.lyrasis.org/display/DSDOC/).
->>>>>>> migracion
 
 The latest DSpace Installation instructions are available at:
 https://wiki.lyrasis.org/display/DSDOC7x/Installing+DSpace
@@ -43,17 +39,12 @@ Please be aware that, as a Java web application, DSpace requires a database (Pos
 and a servlet container (usually Tomcat) in order to function.
 More information about these and all other prerequisites can be found in the Installation instructions above.
 
-<<<<<<< HEAD
-## Running DSpace 6 in Docker
-See [Running DSpace 6 with Docker Compose](dspace/src/main/docker-compose/README.md)
-=======
 ## Running DSpace 7 in Docker
 
 NOTE: At this time, we do not have production-ready Docker images for DSpace.
 That said, we do have quick-start Docker Compose scripts for development or testing purposes.
 
 See [Running DSpace 7 with Docker Compose](dspace/src/main/docker-compose/README.md)
->>>>>>> migracion
 
 ## Contributing
 
@@ -144,9 +135,4 @@ run automatically by [GitHub Actions](https://github.com/DSpace/DSpace/actions?q
 ## License
 
 DSpace source code is freely available under a standard [BSD 3-Clause license](https://opensource.org/licenses/BSD-3-Clause).
-<<<<<<< HEAD
-The full license is available at http://www.dspace.org/license/
-
-=======
 The full license is available in the [LICENSE](LICENSE) file or online at http://www.dspace.org/license/
->>>>>>> migracion
