@@ -60,7 +60,7 @@ public class CICRequestItemMetadataAuthority extends RequestItemSubmitterStrateg
 					}else if (metadata.length == 3){
 						fieldKey = metadataAuthorityService.makeFieldKey(metadata[0],metadata[1],metadata[2]);
 					}
-					if(choiceAuthorityService.isChoicesConfigured(fieldKey)){
+					if(choiceAuthorityService.isChoicesConfigured(fieldKey, item.getOwningCollection())){
 						this.getNameAndEmail(fieldKey, value,item.getOwningCollection(), 0, 0, null);					
 					}
 					//Check if we have an email and an author. If the author authority have them, then send an email, if not keep looking...
