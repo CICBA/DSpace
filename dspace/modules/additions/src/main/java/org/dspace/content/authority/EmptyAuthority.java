@@ -27,12 +27,20 @@ public class EmptyAuthority implements ChoiceAuthority {
 		return getMatches(text, 0, 0, locale);
 	}
 
-	/**
-	 * @return an empty label.
-	 */
-	public String getLabel(String field, String key, String locale) {
+	@Override
+	public String getLabel(String key, String locale) {
 		
 		return new String();
 	}
 
+	@Override
+	public String getPluginInstanceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPluginInstanceName(String name) {
+		// TODO Auto-generated method stub
+	}
 }

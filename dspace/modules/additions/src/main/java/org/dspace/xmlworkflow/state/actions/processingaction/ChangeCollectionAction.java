@@ -2,6 +2,7 @@ package org.dspace.xmlworkflow.state.actions.processingaction;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,10 +11,8 @@ import org.dspace.content.Collection;
 import org.dspace.content.DSpaceObject;
 import org.dspace.core.Context;
 import org.dspace.handle.factory.HandleServiceFactory;
-import org.dspace.xmlworkflow.WorkflowConfigurationException;
 import org.dspace.xmlworkflow.factory.XmlWorkflowServiceFactory;
 import org.dspace.xmlworkflow.state.Step;
-import org.dspace.xmlworkflow.state.Workflow;
 import org.dspace.xmlworkflow.state.actions.ActionResult;
 import org.dspace.xmlworkflow.storedcomponents.ClaimedTask;
 import org.dspace.xmlworkflow.storedcomponents.XmlWorkflowItem;
@@ -48,6 +47,12 @@ public class ChangeCollectionAction extends ProcessingAction {
             //We pressed the "cancel" button so return to our submissions page
             return new ActionResult(ActionResult.TYPE.TYPE_CANCEL);
         }
+	}
+
+	@Override
+	public List<String> getOptions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
