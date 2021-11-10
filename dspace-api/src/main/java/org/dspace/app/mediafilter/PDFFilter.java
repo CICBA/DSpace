@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
@@ -102,8 +102,8 @@ public class PDFFilter extends MediaFilter {
                 if (source instanceof FileInputStream) {
 
                   long fileSize = ((FileInputStream) source).getChannel().size();
-                  long minSize  = ConfigurationManager.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5) * 1024 * 1024;
-                  float xmxFactor = (float) ConfigurationManager.getIntProperty("pdffilter.maxSizeHeapPercentage", 100) / 100;
+                  long minSize  = configurationService.getLongProperty("pdffilter.memoryToTempFileLimitInMb", 5) * 1024 * 1024;
+                  float xmxFactor = (float) configurationService.getIntProperty("pdffilter.maxSizeHeapPercentage", 100) / 100;
 
                   if (((FileInputStream) source).getChannel().size() < minSize) {
                       pdfDoc = PDDocument.load(source);

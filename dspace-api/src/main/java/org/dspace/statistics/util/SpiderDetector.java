@@ -59,7 +59,7 @@ public class SpiderDetector {
             try 
             {
                 ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
-                String filePath = ConfigurationManager.getProperty("dspace.dir");
+                String filePath = configurationService.getProperty("dspace.dir");
                 File spiderDir = new File(filePath, "config/spiders/" + spiderPatternDirectory);
                 
                 if (spiderDir.exists() && spiderDir.isDirectory()) {
