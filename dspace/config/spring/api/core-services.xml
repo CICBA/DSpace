@@ -105,9 +105,6 @@
     <bean id="spiderDetectorService" class="org.dspace.statistics.util.SpiderDetectorServiceImpl"/>
     <bean id="clientInfoService" class="org.dspace.service.impl.ClientInfoServiceImpl"/>
 
-    <bean id="spiderDetectorService" class="org.dspace.statistics.util.SpiderDetectorServiceImpl"/>
-    <bean id="clientInfoService" class="org.dspace.service.impl.ClientInfoServiceImpl"/>
-
     <bean class="org.dspace.versioning.VersionHistoryServiceImpl"/>
 
     <!-- Configurable workflow services -->
@@ -117,9 +114,6 @@
     <bean class="org.dspace.xmlworkflow.storedcomponents.PoolTaskServiceImpl"/>
     <bean class="org.dspace.xmlworkflow.storedcomponents.WorkflowItemRoleServiceImpl"/>
     <bean class="org.dspace.xmlworkflow.storedcomponents.XmlWorkflowItemServiceImpl"/>
-
-
-    <!--Configurable workflow services, uncomment the xml workflow beans below to enable the configurable workflow-->
     <bean class="org.dspace.xmlworkflow.XmlWorkflowServiceImpl"/>
     <bean class="org.dspace.xmlworkflow.WorkflowRequirementsServiceImpl"/>
 
