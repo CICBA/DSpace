@@ -247,18 +247,6 @@ public interface SolrLoggerService {
                                int facetMinCount, boolean defaultFilterQueries)
             throws SolrServerException, IOException;
 
-    public QueryResponse query(String query, String filterQuery,
-                               String facetField, int rows, int max, String dateType, String dateStart,
-                               String dateEnd, List<String> facetQueries, String sort, boolean ascending,
-                               boolean defaultFilterQueries)
-            throws SolrServerException;
-
-    public QueryResponse query(String query, String filterQuery,
-                               String facetField, int rows, int max, String dateType, String dateStart,
-                               String dateEnd, List<String> facetQueries, String sort, boolean ascending,
-                               boolean defaultFilterQueries, boolean includeShardField)
-        throws SolrServerException;
-
     /**
      * Returns in a filterQuery string all the ip addresses that should be ignored
      *

@@ -100,7 +100,6 @@ import org.dspace.statistics.service.SolrLoggerService;
 import org.dspace.statistics.util.LocationUtils;
 import org.dspace.statistics.util.SpiderDetector;
 import org.dspace.usage.UsageWorkflowEvent;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -805,11 +804,11 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
         /* Result Process to alter record to be identified as a bot */
         ResultProcessor processor = new ResultProcessor(){
             @Override
-            public void process(SolrDocument doc) throws IOException, SolrServerException {
-                doc.removeFields("isBot");
+            public void process(SolrInputDocument doc) throws IOException, SolrServerException {
+                doc.removeField("isBot");
                 doc.addField("isBot", true);
-                SolrInputDocument newInput = ClientUtils.toSolrInputDocument(doc);
-                solr.add(newInput);
+                solr.add(doc);
+                log.info("Marked " + doc.getFieldValue("ip") + " as bot");
             }
         };
         
@@ -1179,10 +1178,6 @@ public class SolrLoggerServiceImpl implements SolrLoggerService, InitializingBea
         SolrQuery solrQuery = new SolrQuery().setRows(rows).setQuery(query)
                                              .setFacetMinCount(facetMinCount);
         addAdditionalSolrYearCores(solrQuery);
-
-        if (includeShardField) {
-            solrQuery.setParam("fl", "[shard],*");
-        }
 
         // Set the date facet if present
         if (dateType != null) {
