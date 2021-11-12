@@ -126,7 +126,7 @@
             <list>
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterLugarDesarrollo" />
+<!--                 <ref bean="searchFilterLugarDesarrollo" /> -->
                 <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterKeyword"/>
@@ -142,7 +142,7 @@
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterLugarDesarrollo" />
+<!--                 <ref bean="searchFilterLugarDesarrollo" /> -->
                 <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterKeyword"/>
@@ -190,7 +190,6 @@
         </property>
         <!--Default result per page  -->
         <property name="defaultRpp" value="10" />
-        <property name="maxRpp" value="100" />
         <property name="hitHighlightingConfiguration">
             <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightingConfiguration">
                 <property name="metadataFields">
@@ -2195,6 +2194,7 @@
     <bean id="sortDateIssued" class="org.dspace.discovery.configuration.DiscoverySortFieldConfiguration">
         <property name="metadataField" value="dcterms.issued"/>
         <property name="type" value="date"/>
+        <property name="defaultSortOrder" value="desc"/>
     </bean>
     
     <bean id="sortDateAccessioned" class="org.dspace.discovery.configuration.DiscoverySortFieldConfiguration">
