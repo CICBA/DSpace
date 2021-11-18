@@ -30,7 +30,7 @@
     </property>
     <property name="actions">
       <list>
-        <ref bean="changecollection"/>
+<!--         <ref bean="changecollection"/> -->
         <ref bean="editaction"/>
       </list>
     </property>
