@@ -8,7 +8,7 @@
 					<dc-element>type</dc-element>
 					<repeatable>false</repeatable>
 					<label>Tipo</label>
-					<input-type>onebox</input-type>
+					<input-type value-pairs-name="cic_types">dropdown</input-type>
 					<hint>Tipo de documento (artículo, tesis, libro, etc.).</hint>
 					<required>Debe seleccionar una tipología documental</required>
 				</field>
@@ -402,7 +402,7 @@
 					<repeatable>false</repeatable>
 					<label>Grado alcanzado</label>
 					<type-bind>Tesis</type-bind>
-					<input-type>textarea</input-type>
+					<input-type>onebox</input-type>
 					<hint>Grado al que se aspira con el trabajo de tesis realizado.</hint>
 					<required>Debe indicar el grado aspirado mediante la realización de
 						la Tesis.</required>
@@ -568,7 +568,7 @@
 					<dc-element>type</dc-element>
 					<repeatable>false</repeatable>
 					<label>Tipo</label>
-					<input-type>onebox</input-type>
+					<input-type value-pairs-name="cic_types">dropdown</input-type>
 					<hint>Tipo de documento (artículo, tesis, libro, etc.).</hint>
 					<required>Debe seleccionar una tipología documental</required>
 				</field>
@@ -794,7 +794,7 @@
 					<repeatable>false</repeatable>
 					<label>Grado alcanzado</label>
 					<type-bind>Tesis</type-bind>
-					<input-type>textarea</input-type>
+					<input-type>onebox</input-type>
 					<hint>Grado al que se aspira con el trabajo de tesis realizado.</hint>
 					<required>Debe indicar el grado aspirado mediante la realización de
 						la Tesis.</required>

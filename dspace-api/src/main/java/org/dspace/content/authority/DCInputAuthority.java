@@ -76,7 +76,7 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
     public boolean storeAuthorityInMetadata() {
         // For backward compatibility value pairs don't store authority in
         // the metadatavalue
-        return false;
+        return true;
     }
     public static void reset() {
         pluginNames = null;
@@ -177,9 +177,9 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
         String[] valuesLocale = values.get(currentLocale.getLanguage());
         String[] labelsLocale = labels.get(currentLocale.getLanguage());
         for (int i = 0; i < valuesLocale.length; ++i) {
-            if (text.equalsIgnoreCase(labelsLocale[i])) {
+            if (text.equalsIgnoreCase(valuesLocale[i])) {
                 Choice v[] = new Choice[1];
-                v[0] = new Choice(String.valueOf(i), labelsLocale[i], labelsLocale[i]);
+                v[0] = new Choice(valuesLocale[i], labelsLocale[i], labelsLocale[i]);
                 return new Choices(v, 0, v.length, Choices.CF_UNCERTAIN, false, 0);
             }
         }
@@ -195,10 +195,11 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
             locale = I18nUtil.getDefaultLocale().getLanguage();
         }
 
+        String[] valuesLocale = values.get(locale);
         String[] labelsLocale = labels.get(locale);
         int pos = -1;
-        for (int i = 0; i < labelsLocale.length; i++) {
-            if (labelsLocale[i].equals(key)) {
+        for (int i = 0; i < valuesLocale.length; i++) {
+            if (valuesLocale[i].equals(key)) {
                 pos = i;
                 break;
             }
@@ -214,4 +215,5 @@ public class DCInputAuthority extends SelfNamedPlugin implements ChoiceAuthority
     public boolean isScrollable() {
         return true;
     }
+
 }
