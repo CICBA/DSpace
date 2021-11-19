@@ -91,25 +91,88 @@
 			<xsl:with-param name="prefix" select="'isbn:'"/>
 		</xsl:call-template>
 	</xsl:template>
-	
-	<!--  Formatting dcterms.identifier.other -->
+
+	<!-- Formatting dcterms.identifier.other -->
 	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='other']/doc:element/doc:field[@name='value']/text()">
 		<xsl:variable name="prefix" select="'info:eu-repo/semantics/altIdentifier/'"/>
 		<xsl:choose>
-			<xsl:when test="contains(.,':')">
-				<xsl:variable name="esquema" select="substring-before(.,':')"/>
-				<xsl:variable name="identificador" select="normalize-space(substring-after(.,':'))"/>
-				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
+			<xsl:when test="contains(., 'doi.org')">
+				<xsl:variable name="doiStartIndex"
+					select="string-length(substring-before(., '10.'))+1" />
+				<xsl:variable name="esquema">doi</xsl:variable>
+				<xsl:variable name="identificador" select="substring(., $doiStartIndex)" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
 			</xsl:when>
-			<xsl:when test="contains(.,' ')">
-				<xsl:variable name="esquema" select="substring-before(.,' ')"/>
-				<xsl:variable name="identificador" select="normalize-space(substring-after(.,' '))"/>
-				<xsl:value-of select="concat($prefix,$esquema,'/',$identificador)"/>
+			<xsl:when test="starts-with(., 'DOI')">
+				<xsl:variable name="doiStartIndex" select="string-length(substring-before(., '10.'))+1" />
+				<xsl:variable name="esquema">doi</xsl:variable>
+				<xsl:variable name="identificador" select="substring(., $doiStartIndex)" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'doi')">
+				<xsl:variable name="doiStartIndex" select="string-length(substring-before(., '10.'))+1" />
+				<xsl:variable name="esquema">doi</xsl:variable>
+				<xsl:variable name="identificador" select="substring(., $doiStartIndex)" />
+				<xsl:value-of select="concat($prefix, $esquema,'/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="contains(., 'hdl.handle.net')">
+				<xsl:variable name="esquema">hdl</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'hdl.handle.net/')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'hdl: ')">
+				<xsl:variable name="esquema">hdl</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'hdl: ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'hdl:')">
+				<xsl:variable name="esquema">hdl</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'hdl:')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="contains(., 'handle/')">
+				<xsl:variable name="esquema">hdl</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'handle/')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="contains(., 'hdl ')">
+				<xsl:variable name="esquema">hdl</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'hdl ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISBN: ')">
+				<xsl:variable name="esquema">isbn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISBN: ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISBN:')">
+				<xsl:variable name="esquema">isbn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISBN:')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISBN ')">
+				<xsl:variable name="esquema">isbn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISBN ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISSN: ')">
+				<xsl:variable name="esquema">issn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISSN: ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISSN:')">
+				<xsl:variable name="esquema">issn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISSN:')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
+			</xsl:when>
+			<xsl:when test="starts-with(., 'ISSN ')">
+				<xsl:variable name="esquema">issn</xsl:variable>
+				<xsl:variable name="identificador" select="substring-after(., 'ISSN ')" />
+				<xsl:value-of select="concat($prefix, $esquema, '/', $identificador)" />
 			</xsl:when>
 		</xsl:choose>
-					
 	</xsl:template>
-	
+
 	<!--  Removing dcterms.identifier.url-->
 	<xsl:template match="/doc:metadata/doc:element[@name='dcterms']/doc:element[@name='identifier']/doc:element[@name='url']" />
 
