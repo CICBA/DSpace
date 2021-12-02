@@ -23,7 +23,7 @@
 					<input-type value-pairs-name="cic_versiones">dropdown</input-type>
 					<hint>Version de la obra en funcion del último estadío de revisión
 						sufirda (Enviada, aceptada y publicada)</hint>
-					<required>Debe indicar la versión del documento</required>
+<!-- 					<required>Debe indicar la versión del documento</required> -->
 				</field>
 			</row>
 			<row>
@@ -236,8 +236,7 @@
 					<type-bind>Informe cientifico</type-bind>
 					<input-type>onebox</input-type>
 					<hint>Area de investigación dentro de CIC.</hint>
-					<required>Debe indicar el área de investigación en la que se
-						desarrolla el trabajo.</required>
+<!-- 					<required>Debe indicar el área de investigación en la que se desarrolla el trabajo.</required> -->
 				</field>
 			</row>
 			<row>
@@ -404,8 +403,7 @@
 					<type-bind>Tesis</type-bind>
 					<input-type>onebox</input-type>
 					<hint>Grado al que se aspira con el trabajo de tesis realizado.</hint>
-					<required>Debe indicar el grado aspirado mediante la realización de
-						la Tesis.</required>
+<!-- 					<required>Debe indicar el grado aspirado mediante la realización de la Tesis.</required> -->
 				</field>
 			</row>
 			<row>
@@ -418,7 +416,7 @@
 					<type-bind>Tesis</type-bind>
 					<input-type>onebox</input-type> <!-- TODO: select/lookup -->
 					<hint>Insitución que otorga el título.</hint>
-					<required>Debe indicar la institución emisora del título.</required>
+<!-- 					<required>Debe indicar la institución emisora del título.</required> -->
 				</field>
 			</row>
 			<row>
@@ -453,8 +451,7 @@
 					<dc-qualifier>series</dc-qualifier>
 					<repeatable>false</repeatable>
 					<label>Revista o evento</label>
-					<type-bind>Articulo,Objeto de conferencia, Publicación periódica,
-						Libro</type-bind>
+					<type-bind>Articulo,Objeto de conferencia, Publicación periódica, Libro</type-bind>
 					<input-type>onebox</input-type> <!-- TODO: select/lookup -->
 					<hint>
 						Para objetos de conferencia: Nombre evento en la que este item fue
@@ -796,8 +793,7 @@
 					<type-bind>Tesis</type-bind>
 					<input-type>onebox</input-type>
 					<hint>Grado al que se aspira con el trabajo de tesis realizado.</hint>
-					<required>Debe indicar el grado aspirado mediante la realización de
-						la Tesis.</required>
+<!-- 					<required>Debe indicar el grado aspirado mediante la realización de la Tesis.</required> -->
 				</field>
 			</row>
 			<row>
@@ -810,7 +806,7 @@
 					<type-bind>Tesis</type-bind>
 					<input-type>onebox</input-type> <!-- TODO: select/lookup -->
 					<hint>Insitución que otorga el título.</hint>
-					<required>Debe indicar la institución emisora del título.</required>
+<!-- 					<required>Debe indicar la institución emisora del título.</required> -->
 				</field>
 			</row>
 			<row>
@@ -842,7 +838,7 @@
 						Para artículos: Titulo de la revista en la que este item fue
 						publicado.
 					</hint>
-					<required>Debe indicar la revista o evento respectivo</required>
+<!-- 					<required>Debe indicar la revista o evento respectivo</required> -->
 				</field>
 			</row>
 			<row>
