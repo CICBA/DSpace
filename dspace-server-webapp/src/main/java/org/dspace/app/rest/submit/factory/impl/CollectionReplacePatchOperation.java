@@ -19,6 +19,9 @@ import org.dspace.content.service.ItemService;
 import org.dspace.content.service.WorkspaceItemService;
 import org.dspace.core.Context;
 import org.dspace.util.UUIDUtils;
+import org.dspace.workflow.WorkflowItem;
+import org.dspace.xmlworkflow.storedcomponents.XmlWorkflowItem;
+import org.dspace.xmlworkflow.storedcomponents.service.XmlWorkflowItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -34,19 +37,26 @@ public class CollectionReplacePatchOperation extends ReplacePatchOperation<Strin
     ItemService itemService;
     @Autowired
     WorkspaceItemService workspaceItemService;
+    @Autowired
+    protected XmlWorkflowItemService xmlWorkflowItemService;
 
     @Override
     void replace(Context context, HttpServletRequest currentRequest, InProgressSubmission source, String path,
             Object value) throws SQLException, DCInputsReaderException {
 
-        if (!(source instanceof WorkspaceItem)) {
+        if (!(source instanceof WorkspaceItem) && !(source instanceof WorkflowItem)) {
             throw new IllegalArgumentException("the replace operation is only supported on workspaceitem");
         }
-        WorkspaceItem wsi = (WorkspaceItem) source;
         String uuid = (String) value;
         Collection fromCollection = source.getCollection();
         Collection toCollection = collectionService.find(context, UUIDUtils.fromString(uuid));
-        workspaceItemService.move(context, wsi, fromCollection, toCollection);
+        if (source instanceof WorkspaceItem) {
+            WorkspaceItem wsi = (WorkspaceItem) source;
+            workspaceItemService.move(context, wsi, fromCollection, toCollection);
+        } else {
+            XmlWorkflowItem wfi = (XmlWorkflowItem) source;
+            xmlWorkflowItemService.move(context, wfi, fromCollection, toCollection);
+        }
 
     }
 

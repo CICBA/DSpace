@@ -9,18 +9,27 @@ package org.dspace.xmlworkflow.storedcomponents;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
+import org.dspace.app.util.DCInputsReaderException;
+import org.dspace.app.util.Util;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.Collection;
 import org.dspace.content.Item;
+import org.dspace.content.MetadataValue;
 import org.dspace.content.service.ItemService;
 import org.dspace.core.Context;
 import org.dspace.core.LogHelper;
 import org.dspace.eperson.EPerson;
+import org.dspace.xmlworkflow.WorkflowConfigurationException;
+import org.dspace.xmlworkflow.factory.XmlWorkflowServiceFactory;
 import org.dspace.xmlworkflow.service.WorkflowRequirementsService;
+import org.dspace.xmlworkflow.state.Step;
+import org.dspace.xmlworkflow.state.Workflow;
+import org.dspace.xmlworkflow.state.actions.WorkflowActionConfig;
 import org.dspace.xmlworkflow.storedcomponents.dao.XmlWorkflowItemDAO;
 import org.dspace.xmlworkflow.storedcomponents.service.ClaimedTaskService;
 import org.dspace.xmlworkflow.storedcomponents.service.PoolTaskService;
@@ -205,8 +214,48 @@ public class XmlWorkflowItemServiceImpl implements XmlWorkflowItemService {
 
 
     @Override
-    public void move(Context context, XmlWorkflowItem inProgressSubmission, Collection fromCollection,
-                     Collection toCollection) {
-        // TODO not implemented yet
+    public void move(Context context, XmlWorkflowItem wfi, Collection fromCollection,
+                     Collection toCollection) throws DCInputsReaderException {
+		wfi.setCollection(toCollection);
+
+		List<MetadataValue> remove = new ArrayList<>();
+		List<String> diff = Util.differenceInSubmissionFields(fromCollection, toCollection);
+		Item item = wfi.getItem();
+		for (String toRemove : diff) {
+			for (MetadataValue value : item.getMetadata()) {
+				if (value.getMetadataField().toString('.').equals(toRemove)) {
+					remove.add(value);
+				}
+			}
+		}
+		try {
+			XmlWorkflowServiceFactory factory = XmlWorkflowServiceFactory.getInstance();
+			Workflow workflow;
+			workflow = factory.getWorkflowFactory().getWorkflow(wfi.getCollection());
+			ClaimedTask claimedTask = claimedTaskService.findByWorkflowIdAndEPerson(context, wfi, context.getCurrentUser());
+			claimedTask.setWorkflowID(workflow.getID());
+			Step targetStep = null;
+			for (Step step : workflow.getSteps()) {
+				for (WorkflowActionConfig action : step.getActions()) {
+					if (action.getId() == claimedTask.getActionID()) {
+						targetStep = step;
+						break;
+					}
+				}
+			}
+			if (targetStep != null) {
+				claimedTask.setStepID(targetStep.getId());
+			}
+			else {
+				Step firstStep = workflow.getFirstStep();
+				claimedTask.setStepID(firstStep.getId());
+				claimedTask.setActionID(firstStep.getActions().get(0).getId());
+			}
+			itemService.removeMetadataValues(context, item, remove);
+		} catch (SQLException e) {
+			throw new DCInputsReaderException(e);
+		} catch (WorkflowConfigurationException e) {
+			throw new DCInputsReaderException(e);
+		}
     }
 }
