@@ -552,7 +552,7 @@
 					<dc-element>license</dc-element>
 					<repeatable>false</repeatable>
 					<label>Licencia</label>
-					<input-type>onebox</input-type>
+					<input-type value-pairs-name="cic_cc_licences">dropdown</input-type>
 					<hint>Elija la licencia adecuada para el ítem.</hint>
 					<required>Debe asignarle una licencia al item.</required>
 				</field>
