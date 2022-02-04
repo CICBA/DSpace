@@ -20,6 +20,10 @@
         <!-- Default submission process -->
         <name-map collection-handle="default" submission-name="traditional"/>
 
+        <name-map collection-handle="11746/2"
+            submission-name="autoarchive" />
+        <name-map collection-handle="11746/9041"
+            submission-name="autoarchive" />
         <!-- Sample Entities Collection configuration based on the demo Entities dataset available at:
              https://github.com/DSpace-Labs/AIP-Files/releases/tag/demo-entities-data
              This sets up the following Entity-based Collections in that dataset:
@@ -91,6 +95,24 @@
         </step-definition>
         <step-definition id="traditionalpagetwo" mandatory="true">
             <heading>submit.progressbar.describe.steptwo</heading>
+            <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
+            <type>submission-form</type>
+        </step-definition>
+        <step-definition mandatory="true"
+            id="traditionalpage3">
+            <heading>submit.progressbar.describe.step3</heading>
+            <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
+            <type>submission-form</type>
+        </step-definition>
+        <step-definition mandatory="true"
+            id="autoarchivepage1">
+            <heading>submit.progressbar.describe.step1</heading>
+            <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
+            <type>submission-form</type>
+        </step-definition>
+        <step-definition mandatory="true"
+            id="autoarchivepage2">
+            <heading>submit.progressbar.describe.step2</heading>
             <processing-class>org.dspace.app.rest.submit.step.DescribeStep</processing-class>
             <type>submission-form</type>
         </step-definition>
@@ -231,7 +253,7 @@
             <!--Step will be to Describe the item. -->
             <step id="traditionalpageone"/>
             <step id="traditionalpagetwo"/>
-
+            <step id="traditionalpage3" />
             <!-- Uncomment this step to allow the user to embargo or access restrict the entire item -->
             <!-- <step id="itemAccessConditions"/> -->
 
@@ -245,7 +267,13 @@
             <!--Step will be to Sign off on the required DSpace License agreement -->
             <step id="license"/>
         </submission-process>
-
+        <submission-process name="autoarchive">
+            <step id="collection" />
+            <step id="autoarchivepage1" />
+            <step id="autoarchivepage2" />
+            <step id="upload" />
+            <step id="license" />
+        </submission-process>
         <!--
         Submission Process for 'Publication' Entities.
         These are not to be confused with default Items, as Publications may be linked with other Entities
