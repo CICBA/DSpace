@@ -272,4 +272,9 @@ public class IPAuthentication implements AuthenticationMethod {
     public String getName() {
         return "ip";
     }
+
+    @Override
+    public boolean isUsed(final Context context, final HttpServletRequest request) {
+        return false;
+    }
 }
