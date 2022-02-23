@@ -53,13 +53,24 @@
         <form name="traditionalpageone">
             <row>
                 <field>
+                    <dc-schema>cic</dc-schema>
+                    <dc-element>parentType</dc-element>
+                    <repeatable>false</repeatable>
+                    <label>Tipo</label>
+                    <input-type value-pairs-name="cic_parent_types">dropdown</input-type>
+                    <hint>Tipo de documento (artículo, tesis, libro, etc.).</hint>
+                    <required>Debe seleccionar una tipología documental</required>
+                </field>
+            </row>
+            <row>
+                <field>
                     <dc-schema>dc</dc-schema>
                     <dc-element>type</dc-element>
                     <repeatable>false</repeatable>
-                    <label>Tipo</label>
+                    <label>Subtipo</label>
                     <input-type value-pairs-name="cic_types">dropdown</input-type>
-                    <hint>Tipo de documento (artículo, tesis, libro, etc.).</hint>
-                    <required>Debe seleccionar una tipología documental</required>
+                    <hint>Tipo específico del documento dentro de la tipología general (Comunicación, Tesis de Grado, Parte de libro, etc.).</hint>
+                    <required>Debe seleccionar una subtipología documental</required>
                 </field>
             </row>
             <row>
@@ -227,7 +238,7 @@
                     <dc-element>issued</dc-element>
                     <repeatable>false</repeatable>
                     <label>Fecha de publicación</label>
-                    <type-bind>!Conjunto de datos</type-bind>
+                    <type-bind>Articulo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
                     <input-type>date</input-type>
                     <hint>Fecha de publicación, distribución pública o exposición. En
                         caso de no haber difundido nunca su obra por ningún medio, indique
@@ -355,7 +366,7 @@
                     <dc-element>language</dc-element>
                     <repeatable>false</repeatable>
                     <label>Idioma</label>
-                    <input-type>onebox</input-type>
+                    <input-type value-pairs-name="cic_common_languages">dropdown</input-type>
                     <hint>Lenguaje principal del documento.</hint>
                     <required>Debe ingresar el idioma del documento.</required>
                 </field>
@@ -376,7 +387,7 @@
                     <dc-element>publisher</dc-element>
                     <repeatable>false</repeatable>
                     <label>Editorial</label>
-                    <type-bind>!Audio</type-bind>
+                    <type-bind>Articulo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Entidad responsable de la publicación de un item (editorial).</hint>
                 </field>
@@ -613,11 +624,11 @@
         <form name="autoarchivepage1">
             <row>
                 <field>
-                    <dc-schema>dc</dc-schema>
-                    <dc-element>type</dc-element>
+                    <dc-schema>cic</dc-schema>
+                    <dc-element>parentType</dc-element>
                     <repeatable>false</repeatable>
                     <label>Tipo</label>
-                    <input-type value-pairs-name="cic_types">dropdown</input-type>
+                    <input-type value-pairs-name="cic_parent_types">dropdown</input-type>
                     <hint>Tipo de documento (artículo, tesis, libro, etc.).</hint>
                     <required>Debe seleccionar una tipología documental</required>
                 </field>
@@ -641,7 +652,7 @@
                     <dc-qualifier>author</dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Autor</label>
-                    <type-bind>!Audio</type-bind>
+                    <type-bind>Articulo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Persona física creadora del contenido intelectual de la obra</hint>
                 </field>
@@ -714,7 +725,7 @@
                     <dc-element>issued</dc-element>
                     <repeatable>false</repeatable>
                     <label>Fecha de publicación</label>
-                    <type-bind>!Conjunto de datos</type-bind>
+                    <type-bind>Articulo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
                     <input-type>date</input-type>
                     <hint>Fecha de publicación, distribución o exposición. En caso de
                         no haber difundido nunca su obra por ningún medio, indique la
@@ -2209,12 +2220,60 @@
             </pair>
         </value-pairs>
 
+        <value-pairs value-pairs-name="cic_parent_types"
+            dc-term="dcterms_parentType">
+            <pair>
+                <displayed-value>Artículo</displayed-value>
+                <stored-value>Articulo</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Audio</displayed-value>
+                <stored-value>Audio</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Conjunto de datos</displayed-value>
+                <stored-value>Conjunto de datos</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Documento institucional</displayed-value>
+                <stored-value>Documento institucional</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Imagen</displayed-value>
+                <stored-value>Imagen</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Imagen en movimiento</displayed-value>
+                <stored-value>Imagen en movimiento</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Informe científico</displayed-value>
+                <stored-value>Informe cientifico</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Libro</displayed-value>
+                <stored-value>Libro</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Objeto de aprendizaje</displayed-value>
+                <stored-value>Objeto de aprendizaje</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Objeto de conferencia</displayed-value>
+                <stored-value>Objeto de conferencia</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Publicación seriada</displayed-value>
+                <stored-value>Publicacion seriada</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Tesis</displayed-value>
+                <stored-value>Tesis</stored-value>
+            </pair>
+        </value-pairs>
+
         <value-pairs value-pairs-name="cic_types"
             dc-term="dc_type">
-            <pair>
-                <displayed-value>Documento de trabajo</displayed-value>
-                <stored-value>cic:types/articulo/documentoDeTrabajo</stored-value>
-            </pair>
             <pair>
                 <displayed-value>Artículo</displayed-value>
                 <stored-value>cic:types/articulo/articulo</stored-value>
@@ -2222,6 +2281,18 @@
             <pair>
                 <displayed-value>Comunicacion</displayed-value>
                 <stored-value>cic:types/articulo/comunicación</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Contribucion a revista</displayed-value>
+                <stored-value>cic:types/articulo/contribucionARevista</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Documento de trabajo</displayed-value>
+                <stored-value>cic:types/articulo/documentoDeTrabajo</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Informe técnico</displayed-value>
+                <stored-value>cic:types/articulo/informeTecnico</stored-value>
             </pair>
             <pair>
                 <displayed-value>Revisión</displayed-value>
@@ -2232,44 +2303,48 @@
                 <stored-value>cic:types/articulo/resumen</stored-value>
             </pair>
             <pair>
-                <displayed-value>Contribucion a revista</displayed-value>
-                <stored-value>cic:types/articulo/contribucionARevista</stored-value>
+                <displayed-value>Audio</displayed-value>
+                <stored-value>cic:types/audio/audio</stored-value>
             </pair>
             <pair>
-                <displayed-value>Informe técnico</displayed-value>
-                <stored-value>cic:types/articulo/informeTecnico</stored-value>
+                <displayed-value>Conjunto de datos</displayed-value>
+                <stored-value>cic:types/conjuntoDeDatos/conjuntoDeDatos</stored-value>
             </pair>
             <pair>
-                <displayed-value>Informe de investigador</displayed-value>
-                <stored-value>cic:types/informeCientifico/informeDeInvestigador</stored-value>
+                <displayed-value>Actas de directorio</displayed-value>
+                <stored-value>cic:types/documentoInstitucional/actasDeDirectorio</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Convenio</displayed-value>
+                <stored-value>cic:types/documentoInstitucional/convenio</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Legislación</displayed-value>
+                <stored-value>cic:types/documentoInstitucional/legislacion</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Resolucion</displayed-value>
+                <stored-value>cic:types/documentoInstitucional/resolucion</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Fotografía</displayed-value>
+                <stored-value>cic:types/imagen/fotografia</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Video</displayed-value>
+                <stored-value>cic:types/imagenEnMovimiento/video</stored-value>
             </pair>
             <pair>
                 <displayed-value>Informe de becario</displayed-value>
                 <stored-value>cic:types/informeCientifico/informeDeBecario</stored-value>
             </pair>
             <pair>
+                <displayed-value>Informe de investigador</displayed-value>
+                <stored-value>cic:types/informeCientifico/informeDeInvestigador</stored-value>
+            </pair>
+            <pair>
                 <displayed-value>Informe de personal de apoyo</displayed-value>
                 <stored-value>cic:types/informeCientifico/informeDePersonalDeApoyo</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Tesis de doctorado</displayed-value>
-                <stored-value>cic:types/tesis/tesisDeDoctorado</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Tesis de maestría</displayed-value>
-                <stored-value>cic:types/tesis/tesisDeMaestria</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Trabajo de especializacion</displayed-value>
-                <stored-value>cic:types/tesis/trabajoDeEspecializacion</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Tesis de grado</displayed-value>
-                <stored-value>cic:types/tesis/tesisDeGrado</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Trabajo final de Grado</displayed-value>
-                <stored-value>cic:types/tesis/trabajoFinalDeGrado</stored-value>
             </pair>
             <pair>
                 <displayed-value>Libro</displayed-value>
@@ -2280,48 +2355,36 @@
                 <stored-value>cic:types/libro/parteDeLibro</stored-value>
             </pair>
             <pair>
-                <displayed-value>Documento de conferencia</displayed-value>
-                <stored-value>cic:types/objetoDeConferencia/documentoDeConferencia</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Resolucion</displayed-value>
-                <stored-value>cic:types/documentoInstitucional/resolucion</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Actas de directorio</displayed-value>
-                <stored-value>cic:types/documentoInstitucional/actasDeDirectorio</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Legislación</displayed-value>
-                <stored-value>cic:types/documentoInstitucional/legislacion</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Convenio</displayed-value>
-                <stored-value>cic:types/documentoInstitucional/convenio</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Fotografía</displayed-value>
-                <stored-value>cic:types/imagen/fotografia</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Audio</displayed-value>
-                <stored-value>cic:types/audio/audio</stored-value>
-            </pair>
-            <pair>
                 <displayed-value>Objeto de Aprendizaje</displayed-value>
                 <stored-value>cic:types/objetoDeAprendizaje/objetoDeAprendizaje</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Documento de conferencia</displayed-value>
+                <stored-value>cic:types/objetoDeConferencia/documentoDeConferencia</stored-value>
             </pair>
             <pair>
                 <displayed-value>Publicación periódica</displayed-value>
                 <stored-value>cic:types/publicacionSeriada/publicacionPeriodica</stored-value>
             </pair>
             <pair>
-                <displayed-value>Video</displayed-value>
-                <stored-value>cic:types/imagenEnMovimiento/video</stored-value>
+                <displayed-value>Tesis de doctorado</displayed-value>
+                <stored-value>cic:types/tesis/tesisDeDoctorado</stored-value>
             </pair>
             <pair>
-                <displayed-value>Conjunto de datos</displayed-value>
-                <stored-value>cic:types/conjuntoDeDatos/conjuntoDeDatos</stored-value>
+                <displayed-value>Tesis de grado</displayed-value>
+                <stored-value>cic:types/tesis/tesisDeGrado</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Tesis de maestría</displayed-value>
+                <stored-value>cic:types/tesis/tesisDeMaestria</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Trabajo de especializacion</displayed-value>
+                <stored-value>cic:types/tesis/trabajoDeEspecializacion</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Trabajo final de Grado</displayed-value>
+                <stored-value>cic:types/tesis/trabajoFinalDeGrado</stored-value>
             </pair>
         </value-pairs>
 
