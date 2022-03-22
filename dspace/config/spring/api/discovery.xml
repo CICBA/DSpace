@@ -126,12 +126,11 @@
             <list>
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterAuthor" />
-<!--                 <ref bean="searchFilterLugarDesarrollo" /> -->
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterLugarDesarrollo" />
                 <ref bean="searchFilterIssued" />
-                <ref bean="searchFilterKeyword"/>
-                <ref bean="searchFilterContentInOriginalBundle"/>
+                <ref bean="searchFilterMateria"/>
                 <ref bean="searchFilterEntityType"/>
+                <ref bean="searchFilterKeyword"/>
             </list>
         </property>
         <!-- Set TagCloud configuration per discovery configuration -->
@@ -142,9 +141,9 @@
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-<!--                 <ref bean="searchFilterLugarDesarrollo" /> -->
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterLugarDesarrollo" />
                 <ref bean="searchFilterIssued" />
+                <ref bean="searchFilterMateria"/>
                 <ref bean="searchFilterKeyword"/>
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -290,7 +289,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -303,7 +302,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -433,7 +432,7 @@
                 <ref bean="searchFilterDiscoverable" />
                 <ref bean="searchFilterWithdrawn" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -448,7 +447,7 @@
                 <ref bean="searchFilterWithdrawn" />
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -570,11 +569,11 @@
     	<property name="metadataFields">
     		<list>
     			<value>dcterms.subject</value>
-    			<value>dcterms.subject.materia</value>
     			<value>dcterms.spatial</value>
     		</list>
     	</property>
     </bean>
+
 
     <!--The Homepage specific configuration settings for discovery-->
     <bean id="homepageConfiguration" class="org.dspace.discovery.configuration.DiscoveryConfiguration" scope="prototype">
@@ -582,7 +581,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -595,7 +594,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -920,7 +919,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -933,7 +932,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -1049,13 +1048,13 @@
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
             <list>
-                <ref bean="searchFilterSubject"/>
+                <ref bean="searchFilterMateria"/>
             </list>
         </property>
         <!--The search filters which can be used on the discovery search page-->
         <property name="searchFilters">
             <list>
-                <ref bean="searchFilterSubject"/>
+                <ref bean="searchFilterMateria"/>
                 <ref bean="searchFilterIdentifier"/>
                 <ref bean="searchFilterIsOrgUnitOfProjectRelation"/>
                 <ref bean="searchFilterIsPersonOfProjectRelation"/>
@@ -1460,7 +1459,7 @@
         <!-- List of tagclouds to appear, one for every search filter, one after the other -->
         <property name="tagCloudFacets">
             <list>
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
             </list>
         </property>
     </bean>
@@ -1472,7 +1471,7 @@
         <!-- List of tagclouds to appear, one for every search filter, one after the other -->
         <property name="tagCloudFacets">
             <list>
-                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterMateria" />
             </list>
         </property>
     </bean>
@@ -1639,8 +1638,25 @@
         <property name="indexFieldName" value="author"/>
         <property name="metadataFields">
             <list>
-                <value>dc.contributor.author</value>
-                <value>dc.creator</value>
+                <value>dcterms.creator.author</value>
+                <value>dcterms.creator.compilator</value>
+                <value>dcterms.creator.corporate</value>
+                <value>dcterms.creator.editor</value>
+            </list>
+        </property>
+        <property name="facetLimit" value="5"/>
+        <property name="sortOrderSidebar" value="COUNT"/>
+        <property name="sortOrderFilterPage" value="COUNT"/>
+        <property name="isOpenByDefault" value="true"/>
+        <property name="pageSize" value="10"/>
+        <property name="exposeMinAndMaxValue" value="true"/>
+    </bean>
+
+    <bean id="searchFilterLugarDesarrollo" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="lugarDesarrollo"/>
+        <property name="metadataFields">
+            <list>
+                <value>cic.lugarDesarrollo</value>
             </list>
         </property>
         <property name="facetLimit" value="5"/>
@@ -1665,18 +1681,16 @@
 
     </bean>
 
-    <bean id="searchFilterSubject" class="org.dspace.discovery.configuration.HierarchicalSidebarFacetConfiguration">
-        <property name="indexFieldName" value="subject"/>
+    <bean id="searchFilterMateria" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="materia"/>
         <property name="metadataFields">
             <list>
-                <value>dc.subject.*</value>
+                <value>dc.subject.materia</value>
             </list>
         </property>
         <property name="facetLimit" value="5"/>
         <property name="sortOrderSidebar" value="COUNT"/>
         <property name="sortOrderFilterPage" value="COUNT"/>
-        <property name="splitter" value="::"/>
-
     </bean>
 
     <bean id="searchFilterIssued" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
