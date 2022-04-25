@@ -951,6 +951,8 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
             Collection c = ((IndexableCollection) solrCollections).getIndexedObject();
             collections.add(c);
         }
+        // Return the collections, sorted alphabetically by community parent name
+        Collections.sort(collections, new CollectionNameComparatorByParent());
         return collections;
     }
 
