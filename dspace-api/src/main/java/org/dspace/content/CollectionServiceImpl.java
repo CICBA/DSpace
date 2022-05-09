@@ -1011,8 +1011,12 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
         if (StringUtils.isNotBlank(q)) {
             StringBuilder buildQuery = new StringBuilder();
-            String escapedQuery = ClientUtils.escapeQueryChars(q);
-            buildQuery.append("(").append(escapedQuery).append(" OR ").append(escapedQuery).append("*").append(")");
+            String[] words = q.split(" ");
+            for (int i = 0; i < words.length; i++) {
+                words[i] = ClientUtils.escapeQueryChars(words[i]);
+            }
+            String escapedQuery = String.join(" ", words) ;
+            buildQuery.append("(").append("(").append(escapedQuery).append(")").append(" OR ").append("(").append(escapedQuery).append("*").append(")").append(")");
             discoverQuery.setQuery(buildQuery.toString());
         }
         DiscoverResult resp = searchService.search(context, discoverQuery);
