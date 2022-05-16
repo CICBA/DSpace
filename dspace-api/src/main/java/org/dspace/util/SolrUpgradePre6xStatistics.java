@@ -17,17 +17,17 @@ import java.util.UUID;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
@@ -52,19 +52,19 @@ import org.dspace.services.factory.DSpaceServicesFactory;
 
 /**
  * CLI tool to upgrade legacy id references in SOLR statistics to DSpace 6 UUID's.
- * 
+ *
  * This command will need to be run iteratively over each statistics shard until all legacy id values have
  * been replaced.
- * 
+ *
  * If a legacy id cannot be resolved from the database, the id will remain unchanged.
  *   "field:* AND NOT(field:*-*)" can be used to locate legacy ids
- * 
+ *
  * See DS-3602 for the origin of this issue.  This code is targeted for inclusion in the DSpace 6.1 release.
- * 
+ *
  * Recommendation: for a large repository, run this command with -Xmx2000m if possible.
- * 
+ *
  * To process 1,000,000 statistics records, it took 60 min to complete.
- * 
+ *
  * @author Terry Brady, Georgetown University Library
  */
 
@@ -93,7 +93,7 @@ public class SolrUpgradePre6xStatistics {
     private int numProcessed = 0;
     private long totalCache = 0;
     private long numUncache = 0;
-    private List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
+    private final List<SolrInputDocument> docs = new ArrayList<>();
     private Context context;
 
     //Enum to identify the named SOLR statistics fields to update
@@ -110,7 +110,7 @@ public class SolrUpgradePre6xStatistics {
     }
 
     //Logger
-    private static final Logger log = Logger.getLogger(SolrUpgradePre6xStatistics.class);
+    private static final Logger log = LogManager.getLogger();
 
     //DSpace Servcies
     private ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
@@ -123,7 +123,7 @@ public class SolrUpgradePre6xStatistics {
 
     // This code will operate on one shard at a time, therefore the SOLR web service will be accessed directly rather
     // than make use of the DSpace Solr Logger which only writes to the current shard
-    private HttpSolrServer server;
+    private final HttpSolrClient server;
 
     //Allows for smart use of hibernate cache
     private Item lastItem = null;
@@ -138,6 +138,7 @@ public class SolrUpgradePre6xStatistics {
      * Construct the utility class from the command line options
      * @param indexName name of the statistics shard to update
      * @param numRec    maximum number of records to process
+     * @param batchSize batch this many documents before updating.
      * @throws IOException
      * @throws SolrServerException
      */
@@ -146,8 +147,8 @@ public class SolrUpgradePre6xStatistics {
         String serverPath = configurationService.getProperty("solr-statistics.server");
         serverPath = serverPath.replaceAll("statistics$", indexName);
         System.out.println("Connecting to " + serverPath);
-        server = new HttpSolrServer(serverPath);
-        server.setMaxTotalConnections(1);
+        server = new HttpSolrClient.Builder(serverPath)
+                .build();
         this.numRec = numRec;
         this.batchSize = batchSize;
         refreshContext();
@@ -190,7 +191,7 @@ public class SolrUpgradePre6xStatistics {
         long count = 0;
         try {
             count = context.getCacheSize();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             //no action
         }
         count += this.numUncache;
@@ -202,7 +203,7 @@ public class SolrUpgradePre6xStatistics {
 
     /**
      * Compute the time since the last batch was processed
-     * 
+     *
      * @param fromStart
      *            if true, report on processing time since the start of the program
      * @return the time in ms since the start time
@@ -223,9 +224,9 @@ public class SolrUpgradePre6xStatistics {
 
     /*
      * Format ms count as h:mm:ss
-     * 
+     *
      * @param dur Duration in ms
-     * 
+     *
      * @return duration formatted as h:mm:ss
      */
     private String duration(long dur) {
@@ -238,7 +239,7 @@ public class SolrUpgradePre6xStatistics {
 
     /**
      * Print a status message appended with the processing time for the operation
-     * 
+     *
      * @param header
      *            Message to display
      * @param fromStart
@@ -313,14 +314,14 @@ public class SolrUpgradePre6xStatistics {
 
     /**
      * Entry point for command-line invocation
-     * 
+     *
      * @param args
      *            command-line arguments; see help for description
      * @throws ParseException
      *             if the command-line arguments cannot be parsed
      */
     public static void main(String[] args) throws ParseException {
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
         Options options = makeOptions();
 
         System.out.println(" * This process should be run iteratively over every statistics shard ");
@@ -363,11 +364,7 @@ public class SolrUpgradePre6xStatistics {
         try {
             SolrUpgradePre6xStatistics upgradeStats = new SolrUpgradePre6xStatistics(indexName, numrec, batchSize);
             upgradeStats.run();
-        } catch (SolrServerException e) {
-            log.error("Error querying stats", e);
-        } catch (SQLException e) {
-            log.error("Error querying stats", e);
-        } catch (IOException e) {
+        } catch (SolrServerException | SQLException | IOException e) {
             log.error("Error querying stats", e);
         }
     }
@@ -375,7 +372,7 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Report on the existence of legacy id records within a shard
      */
-    private void runReport() throws SolrServerException {
+    private void runReport() throws SolrServerException, IOException {
         System.out.println();
         System.out.println("=================================================================");
         System.out.println("\t*** Statistics Records with Legacy Id ***\n");
@@ -389,10 +386,9 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Report on the existence of specific legacy id records within a shard
      */
-    private long runReportQuery() throws SolrServerException {
-        StringBuilder sb = new StringBuilder(MIGQUERY);
+    private long runReportQuery() throws SolrServerException, IOException {
         SolrQuery sQ = new SolrQuery();
-        sQ.setQuery(sb.toString());
+        sQ.setQuery(MIGQUERY);
         sQ.setFacet(true);
         sQ.addFacetField("type");
         sQ.addFacetField("scopeType");
@@ -442,7 +438,7 @@ public class SolrUpgradePre6xStatistics {
      * Process records with a legacy id. From the command line, the user may specify
      * records of a specific type to update Otherwise, the following sequence will
      * be applied in order to optimize hibernate caching.
-     * 
+     *
      * Communities and Collections - retain in the cache since each is likely to be
      * re-used Items - retain in the cache until a new item is processed Bitstreams
      * - retain in the cache until a new bitstream is processed
@@ -467,12 +463,12 @@ public class SolrUpgradePre6xStatistics {
 
     /*
      * Update records associated with a particular object id
-     * 
+     *
      * @param query Query to retrieve all of the statistics records associated with
      * a particular object
-     * 
+     *
      * @param field Field to use for grouping records
-     * 
+     *
      * @return number of items processed. 0 indicates that no more work is available
      * (or the max processed has been reached).
      */
@@ -496,7 +492,10 @@ public class SolrUpgradePre6xStatistics {
 
         for (int i = 0; i < sdl.size() && (numProcessed < numRec); i++) {
             SolrDocument sd = sdl.get(i);
-            SolrInputDocument input = ClientUtils.toSolrInputDocument(sd);
+            SolrInputDocument input = new SolrInputDocument(); //ClientUtils.toSolrInputDocument(sd);
+            for (String name : sd.getFieldNames()) { // https://stackoverflow.com/a/38536843/2916377
+                input.addField(name, sd.getFieldValue(name));
+            }
             input.remove("_version_");
             for (FIELD col : FIELD.values()) {
                 mapField(input, col);
@@ -510,14 +509,14 @@ public class SolrUpgradePre6xStatistics {
 
     /*
      * Map solr fields from legacy ids to UUIDs.
-     * 
+     *
      * The id field is interpreted by the type field. The scopeId field is
      * interpreted by scopeType field.
-     * 
+     *
      * Legacy ids will be unchanged if they cannot be mapped
-     * 
+     *
      * @param input The SOLR statistics document to be updated
-     * 
+     *
      * @param col The SOLR field to update (if present)
      */
     private void mapField(SolrInputDocument input, FIELD col) throws SQLException {
@@ -583,7 +582,7 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Determine if the last processed item should be cleared from the hibernate
      * cache
-     * 
+     *
      * @param item Current item being processed
      */
     private void checkLastItem(Item item) throws SQLException {
@@ -601,7 +600,7 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Determine if the last processed bitstream should be cleared from the
      * hibernate cache
-     * 
+     *
      * @param bitstream Current bitstream being processed
      */
     private void checkLastBitstream(Bitstream bitstream) throws SQLException {
@@ -619,9 +618,9 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Retrieve the UUID corresponding to a legacy id found in a SOLR statistics
      * record
-     * 
+     *
      * @param col Solr Statistic Field being processed
-     * 
+     *
      * @param val Value to lookup as a legacy id
      */
     private UUID mapId(FIELD col, int val) throws SQLException {
@@ -649,9 +648,9 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Retrieve the UUID corresponding to a legacy id found in a SOLR statistics
      * record
-     * 
+     *
      * @param type Identifying type field for id OR scopeType field for scopeId
-     * 
+     *
      * @param val Value to lookup as a legacy id
      */
     private UUID mapType(int type, int val) throws SQLException {
@@ -681,9 +680,9 @@ public class SolrUpgradePre6xStatistics {
     /*
      * Retrieve the UUID corresponding to a legacy owner found in a SOLR statistics
      * record Legacy owner fields are prefixed in solr with "e" or "g"
-     * 
+     *
      * @param owntype Identifying type field (e - eperson, g - group)
-     * 
+     *
      * @param val Value to lookup as a legacy id
      */
     private UUID mapOwner(String owntype, int val) throws SQLException {

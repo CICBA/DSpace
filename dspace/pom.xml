@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dspace</groupId>
@@ -15,8 +16,8 @@
     <parent>
         <groupId>org.dspace</groupId>
         <artifactId>dspace-parent</artifactId>
-        <version>6.4-SNAPSHOT</version>
-        <relativePath>..</relativePath>
+        <version>7.2.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -26,7 +27,7 @@
 
     <profiles>
 
-        <!-- Build Profile. This builds all Overlay modules for DSpace -->   
+        <!-- Build Profile. This builds all Overlay modules for DSpace -->
         <profile>
             <id>build</id>
             <activation>
@@ -38,7 +39,7 @@
             <!-- Build all Overlay submodules -->
             <modules>
                 <module>modules</module>
-            </modules> 
+            </modules>
         </profile>
 
         <!--
@@ -85,8 +86,8 @@
             </build>
         </profile>
 
-        <!-- This profile simply determines whether we are creating 
-             zip / tarball distributions to upload to SourceFore or similar. 
+        <!-- This profile simply determines whether we are creating
+             zip / tarball distributions to upload to SourceFore or similar.
              By running "mvn package -Ddistributions=true" you'll
              SKIP normal build & assembly (see above profiles) and
              INSTEAD just run the "distributions" profile below. -->
@@ -102,7 +103,7 @@
             <properties>
                 <distributions>false</distributions>
             </properties>
-        </profile> 
+        </profile>
 
 
         <!--
@@ -147,49 +148,110 @@
            </build>
         </profile>
 
+        <!-- Profile to aggregate (local) code coverage reports created by JaCoCo (jacoco.org)
+             during the Unit and Integration testing processes.
+             This plugin is disabled by default, as it is triggered by name in [src]/.travis.yml
+             See also jacoco-maven-plugin settings in Parent POM, as those
+             settings generate the module-specific reports that are aggregated here. -->
+        <profile>
+            <id>coverage-report</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Aggregate all test code coverage reports from the individual module coverage reports
+                         that are generated during unit & integration testing.
+                         Results (HTML and XML) are written to ./target/site/jacoco-aggregate/ -->
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>aggregate-test-report</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- By default, JaCoCo will lookup all *.exec in the target folders of the Reactor Build Order -->
+                                    <!-- Sets the path to the files which contain the execution data. -->
+                                    <dataFileIncludes>
+                                        <dataFileInclude>**/jacoco-ut.exec</dataFileInclude>
+                                        <dataFileInclude>**/jacoco-it.exec</dataFileInclude>
+                                    </dataFileIncludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <!-- Add all modules that should be taken into account for the coverage reports -->
+                <!-- (Excludes dspace-rest which is deprecated and doesn't build by default) -->
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-api</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-oai</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-rdf</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-iiif</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-services</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-server-webapp</artifactId>
+                    <type>war</type>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-sword</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.dspace</groupId>
+                    <artifactId>dspace-swordv2</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>org.dspace.modules</groupId>
+            <artifactId>additions</artifactId>
+            <scope>provided</scope>
+        </dependency>
     	<!-- This dependency ensures DSpace OAI JAR is added to [dspace]/lib/,
              so that the 'dspace oai' launcher.xml command works.  -->
     	<dependency>
             <groupId>org.dspace</groupId>
             <artifactId>dspace-oai</artifactId>
-            <type>jar</type>
-            <classifier>classes</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.lyncode</groupId>
-                    <artifactId>builder-commons</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
     	</dependency>
-        <dependency>
-            <groupId>com.lyncode</groupId>
-            <artifactId>builder-commons</artifactId>
-            <version>1.0.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
 
         <!-- The Servlet API is also needed by the 'dspace oai' launcher.xml
              command. -->
     	<dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
     	</dependency>
     </dependencies>
 </project>

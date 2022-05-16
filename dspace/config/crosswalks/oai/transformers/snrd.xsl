@@ -19,8 +19,8 @@
 
 	<xsl:template match="/doc:metadata">
 		<doc:metadata>
-			<xsl:call-template name="accessRightsAndEmbargo" />
 			<xsl:apply-templates select="@*|node()" />
+			<xsl:call-template name="accessRightsAndEmbargo" />
 		</doc:metadata>
 	</xsl:template>
 	

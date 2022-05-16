@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-import org.dspace.core.ConfigurationManager;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.dspace.statistics.factory.StatisticsServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +32,9 @@ public class SpiderDetector {
     private static final Logger log = LoggerFactory.getLogger(SpiderDetector.class);
 
     //Service where all methods get delegated to, this is instantiated by a spring-bean defined in core-services.xml
-    private static SpiderDetectorService spiderDetectorService = StatisticsServiceFactory.getInstance().getSpiderDetectorService();
+    private static SpiderDetectorService spiderDetectorService = StatisticsServiceFactory.getInstance()
+                                                                                         .getSpiderDetectorService();
 
-    /**
-     * Get an immutable Set representing all the Spider Addresses here
-     *
-     * @return a set of IP addresses as strings
-     */
-    public static Set<String> getSpiderIpAddresses() {
-
-        spiderDetectorService.loadSpiderIpAddresses();
-        return spiderDetectorService.getTable().toSet();
-    }
-    
     /** Directory name where the spider pattern files by agents are located. */
     public static String SPIDER_AGENTS_DIRNAME = "agents";
 
@@ -51,18 +42,8 @@ public class SpiderDetector {
     public static String SPIDER_DOMAINS_DIRNAME = "domains";
     
     /**
-     * Utility method which reads lines from a file & returns them in a Set.
-     *
-     * @param patternFile the location of our spider file
-     * @return a vector full of patterns
-     * @throws IOException could not happen since we check the file be4 we use it
+     * Default constructor
      */
-    public static Set<String> readPatterns(File patternFile)
-            throws IOException
-    {
-        return spiderDetectorService.readPatterns(patternFile);
-    }
-    
     /**
      * Get all patterns included in the files under the specified spider pattern directory (i.e. "agents", "domain", etc.).
      * This path is relative to the ${dspace.dir}/config/spiders location.
@@ -77,7 +58,8 @@ public class SpiderDetector {
         } else {
             try 
             {
-                String filePath = ConfigurationManager.getProperty("dspace.dir");
+                ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+                String filePath = configurationService.getProperty("dspace.dir");
                 File spiderDir = new File(filePath, "config/spiders/" + spiderPatternDirectory);
                 
                 if (spiderDir.exists() && spiderDir.isDirectory()) {
@@ -101,6 +83,19 @@ public class SpiderDetector {
         }
         return spiderPatternsList;
     }
+
+    private SpiderDetector() { }
+
+    /**
+     * Get an immutable Set representing all the Spider Addresses here
+     *
+     * @return a set of IP addresses as strings
+     */
+    public static Set<String> getSpiderIpAddresses() {
+
+        spiderDetectorService.loadSpiderIpAddresses();
+        return spiderDetectorService.getTable().toSet();
+    }
     
     /**
      * Returns the patterns specified under the spiders directory by user agent.
@@ -119,6 +114,18 @@ public class SpiderDetector {
     public static Set<String> getSpiderDomains() {
         return getSpiderFrom(SpiderDetector.SPIDER_DOMAINS_DIRNAME);
     }
+    
+    /**
+     * Utility method which reads lines from a file & returns them in a Set.
+     *
+     * @param patternFile the location of our spider file
+     * @return a vector full of patterns
+     * @throws IOException could not happen since we check the file be4 we use it
+     */
+    public static Set<String> readPatterns(File patternFile)
+        throws IOException {
+        return spiderDetectorService.readPatterns(patternFile);
+    }
 
     /**
      * Static Service Method for testing spiders against existing spider files.
@@ -129,12 +136,11 @@ public class SpiderDetector {
      * @param clientIP address of the client.
      * @param proxyIPs comma-list of X-Forwarded-For addresses, or null.
      * @param hostname domain name of host, or null.
-     * @param agent User-Agent header value, or null.
+     * @param agent    User-Agent header value, or null.
      * @return true if the client matches any spider characteristics list.
      */
     public static boolean isSpider(String clientIP, String proxyIPs,
-                                   String hostname, String agent)
-    {
+                                   String hostname, String agent) {
         return spiderDetectorService.isSpider(clientIP, proxyIPs, hostname, agent);
     }
 
@@ -144,8 +150,7 @@ public class SpiderDetector {
      * @param request
      * @return true|false if the request was detected to be from a spider.
      */
-    public static boolean isSpider(HttpServletRequest request)
-    {
+    public static boolean isSpider(HttpServletRequest request) {
         return spiderDetectorService.isSpider(request);
     }
 
