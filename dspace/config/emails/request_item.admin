@@ -13,6 +13,6 @@
 ${params[3]}, with address ${params[4]},
 requested the following document/file to be in Open Access:
 
-Document Handle:${params[1]}
+Document Handle: ${params[1]}
 File ID: ${params[0]}
-Token:${params[2]}
+Token: ${params[2]}

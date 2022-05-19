@@ -1,17 +1,16 @@
-# Registration notification email
-#
-# Parameters: {0} The name of the DSpace instance
-#             {1} The URL of the DSpace instance 
-#             {2} Name:
-#             {3} Email:
-#             {4} Registration Date:
-#
-# See org.dspace.core.Email for information on the format of this file.
-#
-Subject: CIC-Digital: Notificación de registro
+## Registration notification email
+##
+## Parameters: {0} The name of the DSpace instance
+##             {1} The URL of the DSpace instance
+##             {2} Name:
+##             {3} Email:
+##             {4} Registration Date:
+##
+## See org.dspace.core.Email for information on the format of this file.
+##
+#set($subject = 'CIC-Digital: Notificación de registro')
+Un nuevo usuario ha sido registrado en ${params[0]} como ${params[1]}:
 
-Un nuevo usuario ha sido registrado en {0} como {1}:
-
-Nombre:                   {2}
-Email:                  {3}
-Fecha de registro:                   {4}
+Nombre:            ${params[2]}
+Email:             ${params[3]}
+Fecha de registro: ${params[4]}

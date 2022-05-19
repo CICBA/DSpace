@@ -1,23 +1,23 @@
-# Workflow task email message
-#
-# {0}  Title of submission
-# {1}  Name of collection
-# {2}  submitter's name
-# {3}  Description of task
-# {4}  link to 'my DSpace' page 
-#
-Subject: CIC-Digital: Tiene una nueva tarea
+## Workflow task email message
+##
+## {0}  Title of submission
+## {1}  Name of collection
+## {2}  submitter's name
+## {3}  Description of task
+## {4}  link to 'my DSpace' page
+##
+#set($subject = 'CIC-Digital: Tiene una nueva tarea')
 
 Un nuevo ítem ha sido enviado:
 
-Título:        {0}
-Colección:   {1}
-Enviado por: {2}
+Título:      ${params[0]}
+Colección:   ${params[1]}
+Enviado por: ${params[2]}
 
-{3}
+${params[3]}
 
 Para tomar esta tarea, por favor visite la página
-de envío recientes: {4}
+"Envíos": ${params[4]}
 
 Muchas gracias.
 

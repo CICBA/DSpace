@@ -8,7 +8,7 @@
 ##
 ## See org.dspace.core.Email for information on the format of this file.
 ##
-#set($subject = 'DSpace: Registration Notification')
+#set($subject = 'CIC-Digital: Registration Notification')
 
 A new user has registered on ${params[0]} at ${params[1]}:
 

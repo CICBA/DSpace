@@ -7,7 +7,7 @@
 ## {4}  Task result
 ## {5}  Workflow action taken
 ##
-#set($subject = 'DSpace: Curation Task Report')
+#set($subject = 'CIC-Digital: Curation Task Report')
 
 Title:         ${params[0]}
 Collection:    ${params[1]}

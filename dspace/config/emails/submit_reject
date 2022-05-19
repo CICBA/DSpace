@@ -6,8 +6,7 @@
 ## {3}  Reason for the rejection
 ## {4}  Link to 'My DSpace' page
 ##
-#set($subject = 'DSpace: Submission Rejected')
-Subject: CIC-Digital: Submission Rejected
+#set($subject = 'CIC-Digital: Submission Rejected')
 
 You submitted: ${params[0]}
 
@@ -19,6 +18,6 @@ with the following explanation:
 ${params[3]}
 
 Your submission has not been deleted. You can access it from the 
-"Submissions" page on "My Account" section: ${params[4]}
+"Submissions" page on the user profile menu section: ${params[4]}
 
 CIC-Digital

@@ -1,19 +1,16 @@
-# Email sent to DSpace users when they successfully export an item or collection.
-#
-# Parameters: {0} the export error
-#             {1} the URL to the feedback page
-#             
-#
-# See org.dspace.core.Email for information on the format of this file.
-#
-Subject: CIC-Digital - La exportación del item solicitado no ha sido completada.
+## Email sent to DSpace users when they successfully export an item or collection.
+##
+## Parameters: {0} the export error
+##             {1} the URL to the feedback page
+##
+##
+## See org.dspace.core.Email for information on the format of this file.
+##
+#set($subject = 'CIC-Digital - La exportación del item solicitado no ha sido completada.')
 La exportación del item que ha solicitado no fue completada debido a las razones siguientes:
- {0}
+    ${params[0]}
 
 Para más información puede contactarse con el repositorio:
- {1}
-
-
+    ${params[0]}
 
 CIC-Digital
-

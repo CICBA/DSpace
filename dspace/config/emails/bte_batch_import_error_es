@@ -1,18 +1,16 @@
-# Email sent to DSpace users when they BTE batch import fails.
-#
-# Parameters: {0} the export error
-#             {1} the URL to the feedback page
-#             
-#
-# See org.dspace.core.Email for information on the format of this file.
-#
-Subject: DSpace - The batch import was not completed.
+## Email sent to DSpace users when they BTE batch import fails.
+##
+## Parameters: {0} the export error
+##             {1} the URL to the feedback page
+##
+##
+## See org.dspace.core.Email for information on the format of this file.
+##
+#set($subject = 'CIC-Digital - The batch import was not completed.')
 La importación batch que ha iniciado desde la interfaz de CIC-Digital, no ha sido completada debido a las siguientes razones: 
- {0}
+    ${params[0]}
 
 Para más información puede contactarse con los administradores de CIC-Digital
- {1}
-
+    ${params[1]}
 
 CIC-Digital
-

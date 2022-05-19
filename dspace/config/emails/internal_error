@@ -10,8 +10,7 @@
 ##
 ## See org.dspace.core.Email for information on the format of this file.
 ##
-#set($subject = 'DSpace: Internal Server Error')
-Subject: CIC-Digital: Internal Server Error
+#set($subject = 'CIC-Digital: Internal Server Error')
 An internal server error occurred on ${params[0]}:
 
 Date:       ${params[1]}

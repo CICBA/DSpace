@@ -1,13 +1,13 @@
-Subject: Solicitud de copia de un documento
+#set($subject = 'Solicitud de copia de un documento')
 
-Estimado {7},
+Estimado ${params[7]},
 
-Un usuario de {9}, nombrado {0} y usando el email {1}, ha requerido una copia del archivo(s) asociados a este documento: "{4}" ({3}) enviado por usted.
+Un usuario de ${params[9]}, nombrado ${params[0]} y usando el email ${params[1]}, ha requerido una copia del archivo(s) asociados a este documento: "${params[4]}" (${params[3]}) enviado por usted.
 Esta solicitud está acompañada del siguiente mensaje:
 
-"{5}"
+"${params[5]}"
 
-Para responder, clickee {6}. Si decide aceptar o rechazar la solicitud, pensamos que está en su mejor interés el responder. 
+Para responder, clickee ${params[6]}. Si decide aceptar o rechazar la solicitud, pensamos que está en su mejor interés el responder.
 
 SI NO ES EL AUTOR DE ESTE DOCUMENTO, y solo ha enviado el documento en nombre del autor, POR FAVOR REDIRECCIONE ESTE MENSAJE A SU AUTOR(ES). Sólo los autores deberían responder la solicitud de una copia.
 

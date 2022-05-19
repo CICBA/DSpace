@@ -1,22 +1,22 @@
-# Rejection email message
-#
-# {0}  Title of submission
-# {1}  Name of collection
-# {2}  Name of the rejector
-# {3}  Reason for the rejection
-# {4}  Link to 'My DSpace' page
-#
-Subject: CIC-Digital: Envío rechazado
+## Rejection email message
+##
+## {0}  Title of submission
+## {1}  Name of collection
+## {2}  Name of the rejector
+## {3}  Reason for the rejection
+## {4}  Link to 'My DSpace' page
+##
+#set($subject = 'CIC-Digital: Envío rechazado')
 
-Usted ha enviado: {0}
+Usted ha enviado: ${params[0]}
 
-A la Colección: {1}
+A la Colección: ${params[1]}
 
-Su envío ha sido rechazado por {2} con la siguiente explicación:
+Su envío ha sido rechazado por ${params[2]} con la siguiente explicación:
 
-{3}
+${params[3]}
 
 Su envío no ha sido borrado. Puede acceder al mismo desde
-la página "Envíos" dentro de la sección "Mi Cuenta" :{4}
+la página "Envíos" dentro del menú de perfil de usuario :${params[4]}
 
 CIC-Digital

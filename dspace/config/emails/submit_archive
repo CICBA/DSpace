@@ -4,8 +4,7 @@
 ## {1}  Name of collection
 ## {2}  handle
 ##
-#set($subject = 'DSpace: Submission Approved and Archived')
-Subject: CIC-Digital: Submission Approved and Archived 
+#set($subject = 'CIC-Digital: Submission Approved and Archived')
 
 You submitted: ${params[0]}
 

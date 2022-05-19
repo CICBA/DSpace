@@ -1,14 +1,13 @@
-# Email sent to DSpace users when they successfully batch import items via BTE.
-#
-# Parameters: {0} the filepath to the mapfile created by the batch import
-#          
-#
-# See org.dspace.core.Email for information on the format of this file.
-#
-Subject: CIC-Digital - Importación batch completada exitosamente
-TLa importación batch que ha iniciado desde la interfaz de CIC-Digital ha sido completada exitosamente.
+## Email sent to DSpace users when they successfully batch import items via BTE.
+##
+## Parameters: {0} the filepath to the mapfile created by the batch import
+##
+##
+## See org.dspace.core.Email for information on the format of this file.
+##
+#set($subject = 'CIC-Digital - Importación batch completada exitosamente')
+La importación batch que ha iniciado desde la interfaz de CIC-Digital ha sido completada exitosamente.
 
-Puedes encontrar el mapfile de la importación en la siguiente ruta: {0}
+Puedes encontrar el mapfile de la importación en la siguiente ruta: ${params[0]}
 
 CIC-Digital
-

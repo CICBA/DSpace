@@ -6,8 +6,7 @@
 ## {3}  Description of task
 ## {4}  link to 'my DSpace' page
 ##
-#set($subject = 'DSpace: You have a new task')
-Subject: CIC-Digital: You have a new task
+#set($subject = 'CIC-Digital: You have a new task')
 
 A new item has been submitted:
 
@@ -17,7 +16,7 @@ Submitted by: ${params[2]}
 
 ${params[3]}
 
-To claim this task, please visit your "My profile"
+To claim this task, please visit your "Submissions"
 page:  ${params[4]}
 
 Many thanks!

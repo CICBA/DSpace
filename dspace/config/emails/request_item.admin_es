@@ -1,8 +1,8 @@
-Subject: Solicitud para Acceso Abierto
+#set($subject = 'Solicitud para Acceso Abierto')
 
-{3}, con la dirección {4},
+${params[3]}, con la dirección ${params[4]},
 ha solicitado que el siguiente documento/archivo esté disponible en Acceso Abierto:
 
-Handle del Documento:{1} 
-ID del archivo: {0} 
-Token:{2}
+Handle del Documento: ${params[1]}
+ID del archivo: ${params[0]}
+Token: ${params[2]}

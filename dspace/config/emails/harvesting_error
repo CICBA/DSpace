@@ -8,8 +8,7 @@
 ##
 ## See org.dspace.core.Email for information on the format of this file.
 ##
-#set($subject = 'DSpace: Harvesting Error')
-Subject: CIC-Digital: Harvesting Error
+#set($subject = 'CIC-Digital: Harvesting Error')
 Collection ${params[0]} failed on harvest:
 
 Date:       	${params[1]}

@@ -1,20 +1,20 @@
-# E-mail sent to designated address when a harvest process fails
-#
-# Parameters: {0} Collection id
-#             {1} Date & time
-#             {2} Status flag
-#             {3} Exception message
-#             {4} Exception stack trace
-#
-# See org.dspace.core.Email for information on the format of this file.
-#
-Subject: CIC-Digital: Error de Cosechamiento
-Colección {0} falló durante la cosecha:
+## E-mail sent to designated address when a harvest process fails
+##
+## Parameters: {0} Collection id
+##             {1} Date & time
+##             {2} Status flag
+##             {3} Exception message
+##             {4} Exception stack trace
+##
+## See org.dspace.core.Email for information on the format of this file.
+##
+#set($subject = 'CIC-Digital: Error de Cosechamiento')
+Colección ${params[0]} falló durante la cosecha:
 
-Fecha:       	{1}
-Status Flag: 	{2}
+Fecha:       	${params[1]}
+Status Flag: 	${params[2]}
 
-{3}
+${params[3]}
 
 Excepción:
-{4}
+${params[4]}
