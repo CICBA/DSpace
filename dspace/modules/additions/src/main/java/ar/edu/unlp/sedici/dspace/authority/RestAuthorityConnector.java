@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dspace.services.ConfigurationService;
 import org.dspace.services.factory.DSpaceServicesFactory;
 import org.json.JSONArray;
 
 public class RestAuthorityConnector {
 
-	protected static Logger log = Logger.getLogger(RestAuthorityProvider.class);
+	protected static Logger log = LogManager.getLogger(RestAuthorityProvider.class);
 
 	private static String getRestEndpoint() {
 		ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
