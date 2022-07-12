@@ -159,9 +159,9 @@
             <list>
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterAuthor" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterLugarDesarrollo" />
                 <ref bean="searchFilterIssued" />
-                <ref bean="searchFilterMateria"/>
                 <ref bean="searchFilterEntityType"/>
                 <ref bean="searchFilterKeyword"/>
             </list>
@@ -174,9 +174,9 @@
                 <ref bean="searchFilterType" />
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterLugarDesarrollo" />
                 <ref bean="searchFilterIssued" />
-                <ref bean="searchFilterMateria"/>
                 <ref bean="searchFilterKeyword"/>
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -458,7 +458,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -471,7 +471,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -601,7 +601,7 @@
                 <ref bean="searchFilterDiscoverable" />
                 <ref bean="searchFilterWithdrawn" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -616,7 +616,7 @@
                 <ref bean="searchFilterWithdrawn" />
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -750,7 +750,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -763,7 +763,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -1088,7 +1088,7 @@
         <property name="sidebarFacets">
             <list>
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterEntityType"/>
@@ -1101,7 +1101,7 @@
             <list>
                 <ref bean="searchFilterTitle" />
                 <ref bean="searchFilterAuthor" />
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
                 <ref bean="searchFilterIssued" />
                 <ref bean="searchFilterContentInOriginalBundle"/>
                 <ref bean="searchFilterFileNameInOriginalBundle" />
@@ -2092,7 +2092,7 @@
         <!-- List of tagclouds to appear, one for every search filter, one after the other -->
         <property name="tagCloudFacets">
             <list>
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
             </list>
         </property>
     </bean>
@@ -2104,7 +2104,7 @@
         <!-- List of tagclouds to appear, one for every search filter, one after the other -->
         <property name="tagCloudFacets">
             <list>
-                <ref bean="searchFilterMateria" />
+                <ref bean="searchFilterSubject" />
             </list>
         </property>
     </bean>
@@ -2314,23 +2314,11 @@
 
     </bean>
 
-    <bean id="searchFilterMateria" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
-        <property name="indexFieldName" value="materia"/>
-        <property name="metadataFields">
-            <list>
-                <value>dc.subject.materia</value>
-            </list>
-        </property>
-        <property name="facetLimit" value="5"/>
-        <property name="sortOrderSidebar" value="COUNT"/>
-        <property name="sortOrderFilterPage" value="COUNT"/>
-    </bean>
-
     <bean id="searchFilterSubject" class="org.dspace.discovery.configuration.HierarchicalSidebarFacetConfiguration">
         <property name="indexFieldName" value="subject"/>
         <property name="metadataFields">
             <list>
-                <value>dc.subject.*</value>
+                <value>dc.subject.materia</value>
             </list>
         </property>
         <property name="facetLimit" value="5"/>
