@@ -234,8 +234,7 @@ public class DCInput {
 
             String[] types = typeBindDef.split(",");
             for (String type : types) {
-        		//Depurate the string, normalizing UNICODE symbols to the NFD Form and replacing all UNICODE chars that are not in ASCII range. 
-        		typeBind.add( Normalizer.normalize(type.trim(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
+                typeBind.add(type.trim());
             }
         }
         style = fieldMap.get("style");

@@ -79,7 +79,7 @@
                     <dc-element>version</dc-element>
                     <repeatable>false</repeatable>
                     <label>Versión</label>
-                    <type-bind>Articulo,Objeto de conferencia</type-bind>
+                    <type-bind>Artículo,Objeto de conferencia</type-bind>
                     <input-type value-pairs-name="cic_versiones">dropdown</input-type>
                     <hint>Version de la obra en funcion del último estadío de revisión
                         sufirda (Enviada, aceptada y publicada)</hint>
@@ -129,7 +129,7 @@
                     <dc-qualifier>investigacion</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Título de investigación</label>
-                    <type-bind>Informe cientifico</type-bind>
+                    <type-bind>Informe científico</type-bind>
                     <input-type>textarea</input-type>
                     <hint>Titulo/tema de una investigacion segun se indica en los
                         informes de investigación CIC, en el punto 2</hint>
@@ -190,7 +190,7 @@
                     <dc-qualifier>director</dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Director</label>
-                    <type-bind>Tesis,Informe cientifico,Publicación periódica</type-bind>
+                    <type-bind>Tesis,Informe científico,Publicación seriada</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Persona que dirige la realización de la tesis o quien dirige
                         a un investigador, personal de apoyo o becario.</hint>
@@ -238,7 +238,7 @@
                     <dc-element>issued</dc-element>
                     <repeatable>false</repeatable>
                     <label>Fecha de publicación</label>
-                    <type-bind>Articulo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
+                    <type-bind>Artículo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe científico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicación seriada, Tesis</type-bind>
                     <input-type>date</input-type>
                     <hint>Fecha de publicación, distribución pública o exposición. En
                         caso de no haber difundido nunca su obra por ningún medio, indique
@@ -293,7 +293,7 @@
                     <dc-qualifier>area</dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Area temática</label>
-                    <type-bind>Informe cientifico</type-bind>
+                    <type-bind>Informe científico</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Area de investigación dentro de CIC.</hint>
 <!--                     <required>Debe indicar el área de investigación en la que se desarrolla el trabajo.</required> -->
@@ -387,7 +387,7 @@
                     <dc-element>publisher</dc-element>
                     <repeatable>false</repeatable>
                     <label>Editorial</label>
-                    <type-bind>Articulo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
+                    <type-bind>Artículo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe científico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicación seriada, Tesis</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Entidad responsable de la publicación de un item (editorial).</hint>
                 </field>
@@ -514,7 +514,7 @@
                     <dc-qualifier>series</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Revista o evento</label>
-                    <type-bind>Articulo,Objeto de conferencia, Publicación periódica, Libro</type-bind>
+                    <type-bind>Artículo,Objeto de conferencia, Publicación seriada, Libro</type-bind>
                     <input-type>onebox</input-type> <!-- TODO: select/lookup -->
                     <hint>
                         Para objetos de conferencia: Nombre evento en la que este item fue
@@ -531,7 +531,7 @@
                     <dc-qualifier>issue</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Volumen/Instancia de Evento</label>
-                    <type-bind>Articulo,Objeto de conferencia</type-bind>
+                    <type-bind>Artículo,Objeto de conferencia</type-bind>
                     <input-type>onebox</input-type>
 
                     <hint>
@@ -560,7 +560,7 @@
                     <dc-element>hasPart</dc-element>
                     <repeatable>true</repeatable>
                     <label>Contiene</label>
-                    <type-bind>Informe cientifico</type-bind>
+                    <type-bind>Informe científico</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Enlace a los recursos que componen la obra. En el caso de
                         informes de investigación se indican las publicaciones que lo
@@ -652,7 +652,7 @@
                     <dc-qualifier>author</dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Autor</label>
-                    <type-bind>Articulo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
+                    <type-bind>Artículo, Conjunto de datos, Documento institucional, Imagen, Imagen en movimiento, Informe científico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicación seriada, Tesis</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Persona física creadora del contenido intelectual de la obra</hint>
                 </field>
@@ -676,7 +676,7 @@
                     <dc-qualifier>director</dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Director</label>
-                    <type-bind>Tesis,Informe cientifico,Publicación periódica</type-bind>
+                    <type-bind>Tesis,Informe científico,Publicación seriada</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Persona que dirige la realización de la tesis o quien dirige
                         a un investigador, personal de apoyo o becario.</hint>
@@ -725,7 +725,7 @@
                     <dc-element>issued</dc-element>
                     <repeatable>false</repeatable>
                     <label>Fecha de publicación</label>
-                    <type-bind>Articulo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe cientifico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicacion seriada, Tesis</type-bind>
+                    <type-bind>Artículo, Audio, Documento institucional, Imagen, Imagen en movimiento, Informe científico, Libro, Objeto de aprendizaje, Objeto de conferencia, Publicación seriada, Tesis</type-bind>
                     <input-type>date</input-type>
                     <hint>Fecha de publicación, distribución o exposición. En caso de
                         no haber difundido nunca su obra por ningún medio, indique la
@@ -893,7 +893,7 @@
                     <dc-qualifier>series</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Revista o evento</label>
-                    <type-bind>Articulo,Objeto de conferencia, Libro</type-bind>
+                    <type-bind>Artículo,Objeto de conferencia, Libro</type-bind>
                     <input-type>onebox</input-type> <!-- TODO: select/lookup -->
                     <hint>
                         Para objetos de conferencia: Nombre evento en la que este item fue
@@ -911,7 +911,7 @@
                     <dc-qualifier>issue</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Volumen/Instancia de Evento</label>
-                    <type-bind>Articulo,Objeto de conferencia</type-bind>
+                    <type-bind>Artículo,Objeto de conferencia</type-bind>
                     <input-type>onebox</input-type>
                     <hint>
                         Para objetos de conferencia: Nombre de la edicion del evento en la que
