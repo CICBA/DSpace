@@ -520,19 +520,10 @@ public class DCInput {
         if (typeBind.size() == 0) {
             return true;
         }
+        // If the input match with any type and there is not a denied type bind return true
+        // If there is a type denied, and this input does not match with any denied type, then returns "true".
+        return typeBind.contains(typeName) ^ negateTypeBind;
 
-		for(int i=0;i<typeBind.size();i++){
-			//build a regular expression
-			String regex = ".*" + typeBind.get(i).replaceAll(" ", "") + ".*";
-		
-			Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-			//The regex match the expression?
-			Matcher matcher = pattern.matcher(typeName);
-			if (matcher.find()) 
-				return (negateTypeBind)? false : true;
-		}
-		//If there is a type denied, and this input does not match with any denied type, then returns "true".
-		return (negateTypeBind || false);
     }
 
     public String getScope() {
