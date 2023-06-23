@@ -64,6 +64,7 @@ import org.dspace.app.rest.model.PropertyRest;
 import org.dspace.app.rest.model.ResourcePolicyRest;
 import org.dspace.app.rest.model.RestAddressableModel;
 import org.dspace.app.rest.model.RestModel;
+import org.dspace.app.rest.model.SupervisionOrderRest;
 import org.dspace.app.rest.model.VersionHistoryRest;
 import org.dspace.app.rest.model.VocabularyRest;
 import org.dspace.app.rest.model.hateoas.EmbeddedPage;
@@ -296,6 +297,9 @@ public class Utils {
         if (StringUtils.equals(modelPlural, "orcidhistories")) {
             return OrcidHistoryRest.NAME;
         }
+        if (StringUtils.equals(modelPlural, "supervisionorders")) {
+            return SupervisionOrderRest.NAME;
+        }
         return modelPlural.replaceAll("s$", "");
     }
 
@@ -370,9 +374,10 @@ public class Utils {
             }
         }
         File file = File.createTempFile(prefixTempName + "-" + suffixTempName, ".temp", uploadDir);
-        InputStream io = new BufferedInputStream(multipartFile.getInputStream());
-        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-        org.dspace.core.Utils.bufferedCopy(io, out);
+        try (InputStream io = new BufferedInputStream(multipartFile.getInputStream());
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));) {
+            org.dspace.core.Utils.bufferedCopy(io, out);
+        }
         return file;
     }
 
