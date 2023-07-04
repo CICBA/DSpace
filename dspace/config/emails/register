@@ -6,15 +6,13 @@
 ##
 #set($subject = "CIC-Digital - Account Registration")
 #set($phone = ${config.get('mail.message.helpdesk.telephone')})
-To complete registration for a DSpace account, please click the link
-below:
+To complete registration for a ${config.get('dspace.name')} account, please click the link below:
 
   ${params[0]}
 
-If you need assistance with your account, please contact the repository.
+If you need assistance with your account, please email ${config.get("mail.helpdesk")}
 #if( $phone )
-
 or call us at ${phone}.
 #end
 
-CIC-Digital
+${config.get('dspace.name')}
