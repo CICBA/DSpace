@@ -238,7 +238,14 @@
                                 <Custom ref="snrdDocumentsubtypeFilter" />
                             </LeftCondition>
                             <RightCondition>
-                                <Custom ref="anonymousAccesAllow" />
+                                <And>
+                                   <LeftCondition>
+                                        <Custom ref="isPeerReviewedFalse" />
+                                    </LeftCondition>
+                                    <RightCondition>
+                                       <Custom ref="anonymousAccesAllow" />
+                                    </RightCondition>
+                                </And>
                             </RightCondition>
                         </And>
                     </RightCondition>
@@ -658,6 +665,17 @@
                     <string>publication</string>
                     <!-- and other alternative names for publications types -->
                 </list>
+            </Configuration>
+        </CustomCondition>
+
+        <!-- This condition determines if an Item has a "cic.isPeerReviewed" field
+             in false. -->
+        <CustomCondition id="isPeerReviewedFalse">
+            <Class>org.dspace.xoai.filter.DSpaceAtLeastOneMetadataFilter</Class>
+            <Configuration>
+                <string name="field">cic.isPeerReviewed</string>
+                <string name="operator">equal</string>
+                <string name="value">true</string>
             </Configuration>
         </CustomCondition>
 
