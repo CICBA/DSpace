@@ -240,7 +240,11 @@
                             <RightCondition>
                                 <And>
                                    <LeftCondition>
-                                        <Custom ref="isPeerReviewedFalse" />
+                                        <Not>
+                                            <Condition>
+                                                <Custom ref="isPeerReviewedFalse" />
+                                            </Condition>
+                                        </Not>
                                     </LeftCondition>
                                     <RightCondition>
                                        <Custom ref="anonymousAccesAllow" />
@@ -675,7 +679,7 @@
             <Configuration>
                 <string name="field">cic.isPeerReviewed</string>
                 <string name="operator">equal</string>
-                <string name="value">true</string>
+                <string name="value">false</string>
             </Configuration>
         </CustomCondition>
 
