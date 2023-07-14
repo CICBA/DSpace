@@ -19,7 +19,18 @@
     <bean id="org.dspace.identifier.service.IdentifierService"
           class="org.dspace.identifier.IdentifierServiceImpl"
           autowire="byType"
-          scope="singleton"/>
+          scope="singleton">
+        <property name="providers">
+            <list>
+                <ref bean="org.dspace.identifier.HandleIdentifierProvider"/>
+                <ref bean="org.dspace.identifier.DOIIdentifierProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="org.dspace.identifier.HandleIdentifierProvider" class="org.dspace.identifier.VersionedHandleIdentifierProvider" scope="singleton">
+        <property name="configurationService" ref="org.dspace.services.ConfigurationService"/>
+    </bean>
 
    <!-- provider for using the versioned handle identifier instead of the default one. -->
     <!--<bean id="org.dspace.identifier.HandleIdentifierProvider" class="org.dspace.identifier.VersionedHandleIdentifierProvider"-->

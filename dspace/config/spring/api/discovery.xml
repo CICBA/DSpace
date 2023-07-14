@@ -906,8 +906,11 @@
         <!--The sort filters for the discovery search-->
         <property name="searchSortConfiguration">
             <bean class="org.dspace.discovery.configuration.DiscoverySortConfiguration">
+                <!--The default sort filter to use for the initial workspace loading-->
+                <property name="defaultSortField" ref="sortLastModified" />
                 <property name="sortFields">
                     <list>
+                        <ref bean="sortLastModified" />
                         <ref bean="sortScore" />
                         <ref bean="sortTitle" />
                         <ref bean="sortDateIssued" />
@@ -979,6 +982,8 @@
         <!--The sort filters for the discovery search-->
         <property name="searchSortConfiguration">
             <bean class="org.dspace.discovery.configuration.DiscoverySortConfiguration">
+                <!--The default sort filter to use for the initial workspace loading-->
+                <property name="defaultSortField" ref="sortLastModified" />
                 <property name="sortFields">
                     <list>
                         <ref bean="sortLastModified" />
@@ -1056,6 +1061,7 @@
             <bean class="org.dspace.discovery.configuration.DiscoverySortConfiguration">
                 <property name="sortFields">
                     <list>
+                        <ref bean="sortLastModified" />
                         <ref bean="sortScore" />
                         <ref bean="sortTitle" />
                         <ref bean="sortDateIssued" />
@@ -1323,7 +1329,7 @@
     </bean>
 
     <bean id="publicationRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration" scope="prototype">
-        <property name="id" value="publication"/>
+        <property name="id" value="publicationRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -1456,7 +1462,7 @@
     </bean>
 
     <bean id="personRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration" scope="prototype">
-        <property name="id" value="person"/>
+        <property name="id" value="personRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -1573,7 +1579,7 @@
     </bean>
 
     <bean id="projectRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration" scope="prototype">
-        <property name="id" value="project"/>
+        <property name="id" value="projectRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -1693,7 +1699,7 @@
 
     <bean id="orgUnitRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration"
           scope="prototype">
-        <property name="id" value="orgUnit"/>
+        <property name="id" value="orgUnitRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -1818,7 +1824,7 @@
 
     <bean id="journalIssueRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration"
           scope="prototype">
-        <property name="id" value="journalIssue"/>
+        <property name="id" value="journalIssueRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -1938,7 +1944,7 @@
 
     <bean id="journalVolumeRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration"
           scope="prototype">
-        <property name="id" value="journalVolume"/>
+        <property name="id" value="journalVolumeRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -2057,7 +2063,7 @@
 
     <bean id="journalRelationships" class="org.dspace.discovery.configuration.DiscoveryConfiguration"
           scope="prototype">
-        <property name="id" value="journal"/>
+        <property name="id" value="journalRelationships"/>
         <property name="indexAlways" value="true"/>
         <!--Which sidebar facets are to be displayed-->
         <property name="sidebarFacets">
@@ -2272,18 +2278,6 @@
         <property name="spellCheckEnabled" value="false"/>
     </bean>
 
-
-    <!--TagCloud configuration bean for homepage discovery configuration-->
-    <bean id="homepageTagCloudFacetConfiguration" class="org.dspace.discovery.configuration.TagCloudFacetConfiguration">
-        <!-- Actual configuration of the tagcloud (colors, sorting, etc.) -->
-        <property name="tagCloudConfiguration" ref="tagCloudConfiguration"/>
-        <!-- List of tagclouds to appear, one for every search filter, one after the other -->
-        <property name="tagCloudFacets">
-            <list>
-                <ref bean="searchFilterSubject" />
-            </list>
-        </property>
-    </bean>
 
      <!--TagCloud configuration bean for default discovery configuration-->
     <bean id="defaultTagCloudFacetConfiguration" class="org.dspace.discovery.configuration.TagCloudFacetConfiguration">

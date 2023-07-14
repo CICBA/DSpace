@@ -18,7 +18,7 @@ public class EmptyAuthority implements ChoiceAuthority {
 	@Override
 	public Choices getMatches(String text, int start, int limit, String locale) {
 		Choice v[]= new Choice[1];
-		v[0]= new Choice("0",text,"0");
+		v[0]= new Choice(text, text, text);
 		return new Choices(v,0,v.length,Choices.CF_ACCEPTED,false,0);
 	}
 
