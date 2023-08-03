@@ -221,4 +221,11 @@
 		<scope_note>Centro CIC al que pertenece la obra</scope_note>
 	</dc-type>
 
+	<dc-type>
+		<schema>dc</schema>
+		<element>description</element>
+		<qualifier>filiation</qualifier>
+		<scope_note>Filiacion</scope_note>
+	</dc-type>
+
 </dspace-dc-types>

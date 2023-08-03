@@ -168,6 +168,10 @@
 			<xsl:for-each select="doc:metadata/doc:element[@name='dcterms']/doc:element[@name='license']/doc:element/doc:field[@name='authority']">
 				<dc:rights><xsl:value-of select="." /></dc:rights>
 			</xsl:for-each>
+			<!--dc.description.filiation = description -->
+			<xsl:for-each select="doc:metadata/doc:element[@name='dc']/doc:element[@name='description']/doc:element[@name='filiation']/doc:element/doc:field[@name='value']">
+				<dc:description><xsl:value-of select="." /></dc:description>
+			</xsl:for-each>
 		</oai_dc:dc>
 	</xsl:template>
 </xsl:stylesheet>
