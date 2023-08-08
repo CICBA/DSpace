@@ -760,7 +760,6 @@
     	<property name="metadataFields">
     		<list>
     			<value>dcterms.subject</value>
-    			<value>dcterms.spatial</value>
     		</list>
     	</property>
     </bean>
@@ -2500,7 +2499,7 @@
         <property name="indexFieldName" value="subject"/>
         <property name="metadataFields">
             <list>
-                <value>dc.subject.materia</value>
+                <value>dcterms.subject.materia</value>
             </list>
         </property>
         <property name="facetLimit" value="5"/>
