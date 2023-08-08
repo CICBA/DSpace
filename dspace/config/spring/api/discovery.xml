@@ -760,7 +760,6 @@
     	<property name="metadataFields">
     		<list>
     			<value>dcterms.subject</value>
-    			<value>dcterms.spatial</value>
     		</list>
     	</property>
     </bean>
