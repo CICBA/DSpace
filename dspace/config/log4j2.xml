@@ -8,7 +8,7 @@
              NOTE: The value of 'dspace.dir' will be replaced by its value in
              your configuration when DSpace is installed. -->
         <Property name='log.dir'>${log4j:configParentLocation}/../log</Property>
-        <Property name='log.olddir'>/var/dspace/backups/old-logs</Property>
+
         <!-- Log level for all DSpace-specific code (org.dspace.*)
              Possible values (from most to least info):
 	     DEBUG, INFO, WARN, ERROR, FATAL -->
@@ -23,7 +23,7 @@
     <Appenders>
         <!-- A1 is for most DSpace activity -->
         <Appender name='A1'
-                  filePattern="${log.olddir}/dspace.log-%d{yyyy-MM-dd}.gz"
+                  filePattern="${log.dir}/dspace.log-%d{yyyy-MM-dd}"
                   type='RollingFile'
                   fileName='${log.dir}/dspace.log'
 
@@ -47,7 +47,7 @@
 
         <!-- A2 is for the checksum checker -->
         <Appender name='A2'
-                  filePattern="${log.olddir}/checker.log-%d{yyyy-MM-dd}.gz"
+                  filePattern="${log.dir}/checker.log-%d{yyyy-MM-dd}"
                   type='RollingFile'
                   fileName='${log.dir}/checker.log'>
             <Layout type='PatternLayout'
