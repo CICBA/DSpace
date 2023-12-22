@@ -1063,9 +1063,8 @@ public class SolrServiceImpl implements SearchService, IndexingService {
                         // Add information about our search fields
                         for (String field : searchFields) {
                             List<String> valuesAsString = new ArrayList<>();
-                            for (Object o : doc.getFieldValues(field)) {
-                                valuesAsString.add(String.valueOf(o));
-                            }
+                            Optional.ofNullable(doc.getFieldValues(field))
+                                    .ifPresent(l -> l.forEach(o -> valuesAsString.add(String.valueOf(o))));
                             resultDoc.addSearchField(field, valuesAsString.toArray(new String[valuesAsString.size()]));
                         }
                         result.addSearchDocument(indexableObject, resultDoc);
