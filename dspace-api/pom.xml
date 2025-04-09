@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.dspace</groupId>
         <artifactId>dspace-parent</artifactId>
-        <version>7.6.3</version>
+        <version>7.6.4-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -651,7 +651,7 @@
         <dependency>
             <groupId>dnsjava</groupId>
             <artifactId>dnsjava</artifactId>
-            <version>3.6.2</version>
+            <version>3.6.3</version>
         </dependency>
 
         <dependency>
@@ -761,7 +761,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.780</version>
+            <version>1.12.782</version>
         </dependency>
 
         <dependency>
@@ -887,32 +887,32 @@
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
           </dependency>
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
           </dependency>
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-unix-common</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
            </dependency>
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
           </dependency>
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
           </dependency>
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
-            <version>4.1.117.Final</version>
+            <version>4.2.0.Final</version>
           </dependency>
           <dependency>
             <groupId>org.apache.velocity</groupId>
