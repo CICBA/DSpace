@@ -87,7 +87,7 @@ GEOLITEv2_LICENSE_KEY=XXX-YYY-ZZZ
 # Run the checksum checker at 04:00 every Saturday
 # By default it runs through every file (-l) and also prunes old results (-p)
 # (This re-verifies the checksums of all files stored in DSpace. If any files have been changed/corrupted, checksums will differ.)
-0 4 * * 6	dspace	$DSPACE/bin/dspace checker -l
+0 4 * * *       dspace  $DSPACE/bin/dspace checker -p -d 30m | grep -v " old results from the database"
 #-p -d 1h 
   
 # Mail the results of the checksum checker (see above) to the configured "mail.admin" at 05:00 every Sunday.
