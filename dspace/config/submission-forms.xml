@@ -756,6 +756,7 @@
                     <hint>Fecha de publicación, distribución o exposición. En caso de
                         no haber difundido nunca su obra por ningún medio, indique la
                         fecha de hoy como fecha de publicación.</hint>
+                    <required>Debe indicar la fecha de publicación del documento</required>
                 </field>
             </row>
             <row>
@@ -882,7 +883,7 @@
                     <type-bind>Tesis</type-bind>
                     <input-type>onebox</input-type>
                     <hint>Grado al que se aspira con el trabajo de tesis realizado.</hint>
-<!--                     <required>Debe indicar el grado aspirado mediante la realización de la Tesis.</required> -->
+                    <required>Debe indicar el grado aspirado mediante la realización de la Tesis.</required>
                 </field>
             </row>
             <row>
@@ -927,7 +928,7 @@
                         Para artículos: Titulo de la revista en la que este item fue
                         publicado.
                     </hint>
-<!--                     <required>Debe indicar la revista o evento respectivo</required> -->
+                    <required>Debe indicar la revista o evento respectivo</required>
                 </field>
             </row>
             <row>
@@ -946,6 +947,7 @@
                         fue presentado. Ej: Vol. III, Nro 4.
                         Si la edición tiene una web (pública o no) indicar su enlace.
                     </hint>
+                    <required>Debe indicar el volumen o instancia del evento</required>
                 </field>
             </row>
         </form>
