@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.dspace</groupId>
         <artifactId>dspace-parent</artifactId>
-        <version>7.6.4-SNAPSHOT</version>
+        <version>10.1</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -28,6 +28,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
         <!-- Needed to support Spring @Configuration classes (to register servlets/beans with Spring Boot webapp) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -37,11 +43,6 @@
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-                <!-- Spring JCL is unnecessary and conflicts with commons-logging when both are on classpath -->
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-jcl</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -74,6 +75,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
+            <exclusions>
+                <!-- Later version brought in by spring-boot-starter-web above -->
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-observation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache
              Caching dependencies for iiif endpoint. -->

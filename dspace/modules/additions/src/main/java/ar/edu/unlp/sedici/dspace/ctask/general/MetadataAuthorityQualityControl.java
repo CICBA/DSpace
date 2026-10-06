@@ -12,8 +12,7 @@ import org.dspace.curate.AbstractCurationTask;
 import org.dspace.curate.Curator;
 import java.io.IOException;
 import java.util.List;
-import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP;
-import com.hp.hpl.jena.sparql.expr.ExprException;
+import org.dspace.core.Context;
 
 /**
  * Curation task that checks each authority controlled metadata of an item, reports anomalies and optionally fix them
@@ -66,9 +65,9 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	private String[] metadataToCheck;
 
 	@Override
-	public void init(Curator curator, String taskId) throws IOException {
-		super.init(curator, taskId);
-		fixmode = taskBooleanProperty("fixmode", false);
+  public void init(Context context, Curator curator, String taskId) throws IOException {
+    super.init(context, curator, taskId);
+    fixmode = taskBooleanProperty("fixmode", false);
 		if (fixmode) {
 			fixvariants = taskBooleanProperty("fixVariants", false);
 			fixMissing = taskBooleanProperty("fixMissing", false);
@@ -79,8 +78,8 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	@Override
-	public int perform(DSpaceObject dso) throws IOException {
-		int status = Curator.CURATE_UNSET;
+	public int perform(Context context, DSpaceObject dso) throws IOException {
+    int status = Curator.CURATE_UNSET;
 		StringBuilder reporter = new StringBuilder();
 		if (dso instanceof Item) {
 			Item item = (Item) dso;
@@ -98,10 +97,10 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 						&& isMetadataToCheck(mv.getMetadataField())) {
 					try {
 						checkMetadataAuthority(reporter, mv, item);
-					} catch (ExprException | QueryExceptionHTTP e) {
-						report(reporter, mv, "ERROR", "An error ocurred processing metadata: ", e.getMessage());
-						e.printStackTrace();
-					}
+					} catch (Exception e) {
+            report(reporter, mv, "ERROR", "An error ocurred processing metadata: ", e.getMessage());
+            e.printStackTrace();
+          }
 				}
 			}
 			report(reporter.toString());
@@ -156,8 +155,7 @@ public class MetadataAuthorityQualityControl extends AbstractCurationTask {
 	}
 
 	private void checkMetadataWithAuthorityKey(StringBuilder reporter, MetadataValue mv) {
-		String value = choiceAuthorityService.getLabel(mv.getMetadataField().toString(), null,  mv.getAuthority(),
-				mv.getLanguage());
+		String value = choiceAuthorityService.getLabel(mv, null, mv.getLanguage());
 		if (value == null || value.isEmpty()) {
 			// Authority not found
 			saveDanglingAuthority(reporter, mv);

@@ -28,8 +28,9 @@ import org.dspace.util.SimpleMapConverter;
  * to map to a single string value based on mapped keys.<br/>
  * Like:<br/>
  * <code>journal-article = Article<code/>
- * 
+ *
  * @author paulo-graca
+ *
  */
 public class StringJsonValueMappingMetadataProcessorService implements JsonPathMetadataProcessor {
 

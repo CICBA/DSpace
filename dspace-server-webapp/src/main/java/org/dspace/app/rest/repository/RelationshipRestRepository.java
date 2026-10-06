@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dspace.app.rest.Parameter;
@@ -52,7 +52,7 @@ import org.springframework.stereotype.Component;
 /**
  * This is the repository that is responsible to manage Relationship Rest objects
  */
-@Component(RelationshipRest.CATEGORY + "." + RelationshipRest.NAME)
+@Component(RelationshipRest.CATEGORY + "." + RelationshipRest.PLURAL_NAME)
 public class RelationshipRestRepository extends DSpaceRestRepository<RelationshipRest, Integer> {
 
     private static final Logger log = LogManager.getLogger();
@@ -79,6 +79,9 @@ public class RelationshipRestRepository extends DSpaceRestRepository<Relationshi
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Override
     @PreAuthorize("permitAll()")
@@ -238,7 +241,7 @@ public class RelationshipRestRepository extends DSpaceRestRepository<Relationshi
             RelationshipRest relationshipRest;
 
             try {
-                relationshipRest = new ObjectMapper().readValue(jsonNode.toString(), RelationshipRest.class);
+                relationshipRest = mapper.readValue(jsonNode.toString(), RelationshipRest.class);
             } catch (IOException e) {
                 throw new UnprocessableEntityException("Error parsing request body: " + e.toString());
             }

@@ -8,8 +8,8 @@
 package org.dspace.app.rest.signposting.processor.item;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dspace.app.rest.signposting.model.LinksetNode;
@@ -41,8 +41,12 @@ public class ItemDescribedbyProcessor extends ItemSignpostingProcessor {
             String signpostingPath = configurationService.getProperty("signposting.path");
             String baseUrl = configurationService.getProperty("dspace.ui.url");
             String mimeType = configurationService.getProperty("signposting.describedby.mime-type");
+            String profile = configurationService.getProperty("signposting.describedby.profile");
             String describedByUrl = baseUrl + "/" + signpostingPath + "/describedby/" + item.getID();
-            LinksetNode node = new LinksetNode(describedByUrl, getRelation(), mimeType, buildAnchor(context, item));
+            LinksetNode node = profile != null ?
+                    new LinksetNode(describedByUrl, getRelation(), mimeType, profile, buildAnchor(context, item)) :
+                    new LinksetNode(describedByUrl, getRelation(), mimeType, buildAnchor(context, item));
+
             linksetNodes.add(node);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

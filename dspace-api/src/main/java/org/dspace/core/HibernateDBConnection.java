@@ -12,7 +12,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 
-import org.dspace.authorize.ResourcePolicy;
 import org.dspace.content.Bitstream;
 import org.dspace.content.Bundle;
 import org.dspace.content.Collection;
@@ -27,7 +26,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.proxy.HibernateProxyHelper;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -270,12 +268,6 @@ public class HibernateDBConnection implements DBConnection<Session> {
                 if (Hibernate.isInitialized(dso.getHandles())) {
                     for (Handle handle : Utils.emptyIfNull(dso.getHandles())) {
                         uncacheEntity(handle);
-                    }
-                }
-
-                if (Hibernate.isInitialized(dso.getResourcePolicies())) {
-                    for (ResourcePolicy policy : Utils.emptyIfNull(dso.getResourcePolicies())) {
-                        uncacheEntity(policy);
                     }
                 }
             }
