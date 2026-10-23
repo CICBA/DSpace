@@ -1,5 +1,8 @@
 # NAME:     arieljlira/dspace
-FROM tomcat:9-jdk11
+# DSpace 10.1 requires Java 21 and uses the Jakarta Servlet API provided by
+# Tomcat 10.1. Tomcat 9 / Java 11 are only suitable for the previous DSpace 7
+# based image.
+FROM tomcat:10.1-jdk21-temurin
 
 LABEL maintainer "alira@sedici.unlp.edu.ar"
 

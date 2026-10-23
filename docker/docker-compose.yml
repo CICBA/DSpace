@@ -18,7 +18,8 @@ services:
       dockerfile: Dockerfile.cic
     command: start
     environment:
-      CATALINA_OPTS: "-Xmx1024m -Xms512m -XX:MaxPermSize=256m"
+      # MaxPermSize was removed from modern JVMs and prevents Java 21 from starting.
+      CATALINA_OPTS: "-Xmx1024m -Xms512m -Dfile.encoding=UTF-8"
       DSPACE_WEBAPPS: "${DSPACE_WEBAPPS}" # posible values: "server oai rdf sword swordv2"
       DSPACE_ROOT_WEBAPP: "${DSPACE_ROOT_WEBAPP}"
       POSTGRES_DB_HOST: "dspacedb"
