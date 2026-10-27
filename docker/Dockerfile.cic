@@ -2,7 +2,8 @@
 # DSpace 10.1 requires Java 21 and uses the Jakarta Servlet API provided by
 # Tomcat 10.1. Tomcat 9 / Java 11 are only suitable for the previous DSpace 7
 # based image.
-FROM tomcat:10.1-jdk21-temurin
+FROM maven:3.9.16-eclipse-temurin-21-noble AS maven
+FROM tomcat:10.1.61-jdk21-temurin-noble
 
 LABEL maintainer "alira@sedici.unlp.edu.ar"
 
@@ -31,7 +32,10 @@ ENV BOOTSTRAP_DUMP "${DSPACE_BASE}/bootstrap-dump.sql"
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7
 
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y --no-install-recommends  git ant maven postgresql-client
+COPY --from=maven /usr/share/maven /usr/share/maven
+RUN ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+RUN apt-get install -y --no-install-recommends  git ant postgresql-client
 RUN apt-get install -y --no-install-recommends	procps curl sudo gpg
 
 RUN apt-get autoremove -y && apt-get clean
