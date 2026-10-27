@@ -20,7 +20,6 @@ update:
 	@echo "Stopping containers for $(COMPOSE_PROJECT_NAME)..."
 	@docker compose -f docker-compose.yml -f others/docker-compose-debug.yml stop
 	docker compose -f docker-compose.yml -f others/docker-compose-debug.yml run --rm dspace update
-	sudo chown -R $(id -u):$(id -g) ../install/*
 	@echo "Starting up containers for $(COMPOSE_PROJECT_NAME)..."
 	docker compose -f docker-compose.yml -f others/docker-compose-debug.yml up -d
 
