@@ -1,16 +1,16 @@
 version: "3.7"
-#networks:
-#  default:
-#    name: ${DOCKER_EXTERNAL_NETWORK_NAME}
+networks:
+  default:
+    name: ${DOCKER_EXTERNAL_NETWORK_NAME}
 services:
   dspacedb:
-    image: postgres:11-alpine
+    image: postgres:17
     environment:
       POSTGRES_DB: "dspace"
       POSTGRES_USER: dspace
       POSTGRES_PASSWORD: dspace
     volumes:
-      - /var/lib/postgresql/data
+      - pgdata17:/var/lib/postgresql/data
   dspace:
     image: dspace:dspace_${COMPOSE_PROJECT_NAME}_latest
     build:
@@ -18,7 +18,8 @@ services:
       dockerfile: Dockerfile.cic
     command: start
     environment:
-      CATALINA_OPTS: "-Xmx1024m -Xms512m -XX:MaxPermSize=256m"
+      # MaxPermSize was removed from modern JVMs and prevents Java 21 from starting.
+      CATALINA_OPTS: "-Xmx1024m -Xms512m -Dfile.encoding=UTF-8"
       DSPACE_WEBAPPS: "${DSPACE_WEBAPPS}" # posible values: "server oai rdf sword swordv2"
       DSPACE_ROOT_WEBAPP: "${DSPACE_ROOT_WEBAPP}"
       POSTGRES_DB_HOST: "dspacedb"
@@ -33,7 +34,9 @@ services:
     depends_on:
       - dspacedb
   dspacesolr:
-    image: solr:8.11-slim
+    image: solr:9.8
+    environment:
+      SOLR_OPTS: "-Dsolr.config.lib.enabled=true"
     ports:
     - published: 8983
       target: 8983
@@ -46,19 +49,37 @@ services:
     - ../dspace/solr/oai:/opt/solr/server/solr/configsets/oai
     - ../dspace/solr/search:/opt/solr/server/solr/configsets/search
     - ../dspace/solr/statistics:/opt/solr/server/solr/configsets/statistics
+    - ../dspace/solr/qaevent:/opt/solr/server/solr/configsets/qaevent
+    - ../dspace/solr/suggestion:/opt/solr/server/solr/configsets/suggestion
+    - ../dspace/solr/audit:/opt/solr/server/solr/configsets/audit
     # Keep Solr data directory between reboots
     - solr_data:/var/solr/data
     # Initialize all DSpace Solr cores using the mounted local configsets (see above), then start Solr
+    user: root
     entrypoint:
     - /bin/bash
     - '-c'
     - |
       init-var-solr
       precreate-core authority /opt/solr/server/solr/configsets/authority
+      cp -r /opt/solr/server/solr/configsets/authority/. authority/
       precreate-core oai /opt/solr/server/solr/configsets/oai
+      cp -r /opt/solr/server/solr/configsets/oai/. oai/
       precreate-core search /opt/solr/server/solr/configsets/search
+      cp -r /opt/solr/server/solr/configsets/search/. search/
       precreate-core statistics /opt/solr/server/solr/configsets/statistics
-      exec solr -f
+      cp -r /opt/solr/server/solr/configsets/statistics/. statistics/
+      precreate-core qaevent /opt/solr/server/solr/configsets/qaevent
+      cp -r /opt/solr/server/solr/configsets/qaevent/. qaevent/
+      precreate-core suggestion /opt/solr/server/solr/configsets/suggestion
+      cp -r /opt/solr/server/solr/configsets/suggestion/. suggestion/
+      precreate-core audit /opt/solr/server/solr/configsets/audit
+      cp -r /opt/solr/server/solr/configsets/audit/. audit/
+      chown -R solr:solr /var/solr
+      exec runuser -u solr -- solr-foreground
 volumes:
   assetstore:
+  pgdata17:
+    name: cic_dspacedb17_data
   solr_data:
+    name: cic_solr9_data

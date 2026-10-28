@@ -14,14 +14,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.annotation.Nullable;
-import java.util.regex.Matcher;
 
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dspace.content.MetadataSchemaEnum;
 import org.dspace.core.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class representing a line in an input form.
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DCInput {
 
-    private static final Logger log = LoggerFactory.getLogger(DCInput.class);
+    private static final Logger log = LogManager.getLogger();
 
     /**
      * the DC element name
@@ -191,7 +190,7 @@ public class DCInput {
         }
 
         //check if the input have a language tag
-        language = Boolean.valueOf(fieldMap.get("language"));
+        language = Boolean.parseBoolean(fieldMap.get("language"));
         valueLanguageList = new ArrayList<>();
         if (language) {
             String languageNameTmp = fieldMap.get("value-pairs-name");
@@ -228,7 +227,7 @@ public class DCInput {
             || "yes".equalsIgnoreCase(closedVocabularyStr);
 
         // parsing of the <type-bind> element (using the colon as split separator)
-        typeBind = new ArrayList<String>();
+        typeBind = new ArrayList<>();
         String typeBindDef = fieldMap.get("type-bind");
         if (typeBindDef != null && typeBindDef.trim().length() > 0) {
 
@@ -539,7 +538,7 @@ public class DCInput {
      * @return true when there is no type restriction or typeName is allowed
      */
     public boolean isAllowedFor(String typeName) {
-        if (typeBind.size() == 0) {
+        if (typeBind.isEmpty()) {
             return true;
         }
         // If the input match with any type and there is not a denied type bind return true

@@ -195,7 +195,7 @@ public class BrowseIndex {
                                 }
                             }
 
-                            // for backward compatability we ignore the keywords
+                            // for backward compatibility we ignore the keywords
                             // single and full here
                             if (!sortName.equalsIgnoreCase("single")
                                 && !sortName.equalsIgnoreCase("full")
@@ -379,10 +379,10 @@ public class BrowseIndex {
     /**
      * Generate a sequence name from the given base
      *
-     * @param baseName
-     * @param isDistinct
-     * @param isMap
-     * @return
+     * @param baseName   the base name of the sequence
+     * @param isDistinct is a distinct table
+     * @param isMap      is a map table
+     * @return the name of the sequence
      */
     private static String getSequenceName(String baseName, boolean isDistinct, boolean isMap) {
         if (isDistinct) {
@@ -544,19 +544,6 @@ public class BrowseIndex {
     }
 
     /**
-     * Get the name of the column that is used to store the default value column
-     *
-     * @return the name of the value column
-     */
-    public String getValueColumn() {
-        if (!isDate()) {
-            return "sort_text_value";
-        } else {
-            return "text_value";
-        }
-    }
-
-    /**
      * Get the name of the primary key index column
      *
      * @return the name of the primary key index column
@@ -566,38 +553,9 @@ public class BrowseIndex {
     }
 
     /**
-     * Is this browse index type for a title?
-     *
-     * @return true if title type, false if not
-     */
-//    public boolean isTitle()
-//    {
-//        return "title".equals(getDataType());
-//    }
-
-    /**
-     * Is the browse index type for a date?
-     *
-     * @return true if date type, false if not
-     */
-    public boolean isDate() {
-        return "date".equals(getDataType());
-    }
-
-    /**
-     * Is the browse index type for a plain text type?
-     *
-     * @return true if plain text type, false if not
-     */
-//    public boolean isText()
-//    {
-//        return "text".equals(getDataType());
-//    }
-
-    /**
      * Is the browse index of display type single?
      *
-     * @return true if singe, false if not
+     * @return true if single, false if not
      */
     public boolean isMetadataIndex() {
         return displayType != null && displayType.startsWith("metadata");

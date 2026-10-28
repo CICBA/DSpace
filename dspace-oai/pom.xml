@@ -8,15 +8,14 @@
     <parent>
         <artifactId>dspace-parent</artifactId>
         <groupId>org.dspace</groupId>
-        <version>7.6.4-SNAPSHOT</version>
+        <version>10.1</version>
         <relativePath>..</relativePath>
     </parent>
 
     <properties>
         <!-- This is the path to the root [dspace-src] directory. -->
         <root.basedir>${basedir}/..</root.basedir>
-        <xoai.version>3.4.0</xoai.version>
-        <jtwig.version>5.87.0.RELEASE</jtwig.version>
+        <xoai.version>3.4.2</xoai.version>
     </properties>
 
     <build>
@@ -65,9 +64,8 @@
 
         <!-- Java Injection -->
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
         <!-- Needed to support Spring @Configuration classes (to register servlets/beans with Spring Boot webapp) -->
@@ -80,26 +78,19 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
-                <!-- Spring JCL is unnecessary and conflicts with commons-logging when both are on classpath -->
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-jcl</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
-        <!-- Templating Engine -->
+        <!-- Spring Boot Thymeleaf templating -->
         <dependency>
-            <groupId>org.jtwig</groupId>
-            <artifactId>jtwig-spring-boot-starter</artifactId>
-            <version>${jtwig.version}</version>
-            <exclusions>
-                <!-- We don't need spring-boot-starter-web, it is provided by our Spring Boot webapp -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- Internal -->
@@ -110,8 +101,8 @@
 
         <!-- Web API -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -119,10 +110,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
         </dependency>
 
         <!-- Testing -->
@@ -140,7 +127,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

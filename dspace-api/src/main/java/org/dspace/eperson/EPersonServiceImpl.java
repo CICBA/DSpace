@@ -11,10 +11,10 @@ import static org.dspace.content.Item.ANY;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.UUID;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.authorize.factory.AuthorizeServiceFactory;
@@ -33,6 +34,7 @@ import org.dspace.content.DSpaceObjectServiceImpl;
 import org.dspace.content.Item;
 import org.dspace.content.MetadataField;
 import org.dspace.content.MetadataValue;
+import org.dspace.content.QAEventProcessed;
 import org.dspace.content.WorkspaceItem;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.ItemService;
@@ -45,8 +47,10 @@ import org.dspace.eperson.dao.EPersonDAO;
 import org.dspace.eperson.service.EPersonService;
 import org.dspace.eperson.service.GroupService;
 import org.dspace.eperson.service.SubscribeService;
+import org.dspace.event.DetailType;
 import org.dspace.event.Event;
 import org.dspace.orcid.service.OrcidTokenService;
+import org.dspace.qaevent.dao.QAEventsDAO;
 import org.dspace.services.ConfigurationService;
 import org.dspace.util.UUIDUtils;
 import org.dspace.versioning.Version;
@@ -106,6 +110,8 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
     protected ConfigurationService configurationService;
     @Autowired
     protected OrcidTokenService orcidTokenService;
+    @Autowired
+    protected QAEventsDAO qaEventsDao;
 
     protected EPersonServiceImpl() {
         super();
@@ -339,11 +345,11 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
         try {
             delete(context, ePerson, true);
         } catch (AuthorizeException ex) {
-            log.error("This AuthorizeException: " + ex + " occured while deleting Eperson with the ID: " +
+            log.error("This AuthorizeException: " + ex + " occurred while deleting Eperson with the ID: " +
                       ePerson.getID());
             throw new AuthorizeException(ex);
         } catch (IOException ex) {
-            log.error("This IOException: " + ex + " occured while deleting Eperson with the ID: " + ePerson.getID());
+            log.error("This IOException: " + ex + " occurred while deleting Eperson with the ID: " + ePerson.getID());
             throw new AuthorizeException(ex);
         } catch (EPersonDeletionException e) {
             throw new IllegalStateException(e);
@@ -396,7 +402,7 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
 
                 while (constraintsIterator.hasNext()) {
                     String tableName = constraintsIterator.next();
-                    if (StringUtils.equals(tableName, "item") || StringUtils.equals(tableName, "workspaceitem")) {
+                    if (Strings.CS.equals(tableName, "item") || Strings.CS.equals(tableName, "workspaceitem")) {
                         Iterator<Item> itemIterator = itemService.findBySubmitter(context, ePerson, true);
 
                         VersionHistoryService versionHistoryService = VersionServiceFactory.getInstance()
@@ -428,7 +434,7 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
                                 itemService.update(context, item);
                             }
                         }
-                    } else if (StringUtils.equals(tableName, "cwf_claimtask")) {
+                    } else if (Strings.CS.equals(tableName, "cwf_claimtask")) {
                          // Unclaim all XmlWorkflow tasks
                         ClaimedTaskService claimedTaskService = XmlWorkflowServiceFactory
                                                                 .getInstance().getClaimedTaskService();
@@ -447,18 +453,18 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
                                                                               ePerson, task.getStepID());
                             } catch (WorkflowConfigurationException ex) {
                                 log.error("This WorkflowConfigurationException: " + ex +
-                                          " occured while deleting Eperson with the ID: " + ePerson.getID());
+                                          " occurred while deleting Eperson with the ID: " + ePerson.getID());
                                 throw new AuthorizeException(new EPersonDeletionException(Collections
                                                                                           .singletonList(tableName)));
                             }
                         }
-                    } else if (StringUtils.equals(tableName, "resourcepolicy")) {
+                    } else if (Strings.CS.equals(tableName, "resourcepolicy")) {
                         // we delete the EPerson, it won't need any rights anymore.
                         authorizeService.removeAllEPersonPolicies(context, ePerson);
-                    } else if (StringUtils.equals(tableName, "cwf_pooltask")) {
+                    } else if (Strings.CS.equals(tableName, "cwf_pooltask")) {
                         PoolTaskService poolTaskService = XmlWorkflowServiceFactory.getInstance().getPoolTaskService();
                         poolTaskService.deleteByEperson(context, ePerson);
-                    } else if (StringUtils.equals(tableName, "cwf_workflowitemrole")) {
+                    } else if (Strings.CS.equals(tableName, "cwf_workflowitemrole")) {
                         WorkflowItemRoleService workflowItemRoleService = XmlWorkflowServiceFactory.getInstance()
                                                                           .getWorkflowItemRoleService();
                         workflowItemRoleService.deleteByEPerson(context, ePerson);
@@ -473,7 +479,8 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
                 throw new EPersonDeletionException(constraintList);
             }
         }
-        context.addEvent(new Event(Event.DELETE, Constants.EPERSON, ePerson.getID(), ePerson.getEmail(),
+        context.addEvent(new Event(Event.DELETE, Constants.EPERSON, ePerson.getID(),
+                ePerson.getEmail(), DetailType.EPERSON_EMAIL,
                 getIdentifiers(context, ePerson)));
 
         // XXX FIXME: This sidesteps the object model code so it won't
@@ -491,6 +498,11 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
 
         // Remove any subscriptions
         subscribeService.deleteByEPerson(context, ePerson);
+
+        List<QAEventProcessed> qaEvents = qaEventsDao.findByEPerson(context, ePerson);
+        for (QAEventProcessed qaEvent : qaEvents) {
+            qaEventsDao.delete(context, qaEvent);
+        }
 
         // Remove ourself
         ePersonDAO.delete(context, ePerson);
@@ -686,7 +698,7 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
     }
 
     @Override
-    public List<EPerson> findNotActiveSince(Context context, Date date) throws SQLException {
+    public List<EPerson> findNotActiveSince(Context context, Instant date) throws SQLException {
         return ePersonDAO.findNotActiveSince(context, date);
     }
 
@@ -702,6 +714,22 @@ public class EPersonServiceImpl extends DSpaceObjectServiceImpl<EPerson> impleme
             return null;
         }
         return find(context, UUIDUtils.fromString(owners.get(0).getAuthority()));
+    }
+
+    @Override
+    public boolean isOwnerOfItem(EPerson user, Item item) {
+
+        if (user == null) {
+            return false;
+        }
+
+        return getDSpaceObjectOwnerMetadataValues(item).stream()
+            .anyMatch(metadataValue -> user.getID().toString().equals(metadataValue.getAuthority()));
+
+    }
+
+    private List<MetadataValue> getDSpaceObjectOwnerMetadataValues(Item item) {
+        return itemService.getMetadata(item, "dspace", "object", "owner", Item.ANY);
     }
 
     @Override

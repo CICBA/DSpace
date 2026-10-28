@@ -38,7 +38,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.dspace.app.rest.matcher.PageMatcher;
@@ -103,6 +103,10 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
 
     @Autowired
     MockSolrSearchCore mockSolrSearchCore;
+
+    @Autowired
+    private ObjectMapper mapper;
+
     protected Community parentCommunity;
     protected Community child1;
 
@@ -172,7 +176,6 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
                              .withAuthor("Smith, Maria")
                              .withPersonIdentifierLastName("Smith")
                              .withPersonIdentifierFirstName("Maria")
-                             .withMetadata("dspace", "entity", "type", "Person")
                              .build();
 
         author3 = ItemBuilder.createItem(context, col1)
@@ -649,7 +652,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
 
         Map<String, String> map = new HashMap<>();
         map.put("leftwardValue", leftwardValue);
-        String json = new ObjectMapper().writeValueAsString(map);
+        String json = mapper.writeValueAsString(map);
 
         // Add leftwardValue
         getClient(token).perform(put("/api/core/relationships/" + idRef)
@@ -709,7 +712,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         Map<String, String> map = new HashMap<>();
         map.put("leftwardValue", leftwardValue);
         map.put("rightwardValue", rightwardValue);
-        String json = new ObjectMapper().writeValueAsString(map);
+        String json = mapper.writeValueAsString(map);
 
         // Add leftwardValue and rightwardValue
         getClient(token).perform(put("/api/core/relationships/" + idRef)
@@ -829,7 +832,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         for (MetadataValue mdv : list) {
             // Here we want to ensure that the "plain text" metadatavalue has place 1 because it was added later than
             // the Relationship, so the "Smith, Donald" should have place 0 and "plain text" should have place 1
-            if (StringUtils.equals(mdv.getValue(), "plain text")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text")) {
                 assertEquals(1, mdv.getPlace());
             }
         }
@@ -896,7 +899,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         // "Smith, Donald", "plain text", "Smith, Maria", "plain text two"
         assertEquals(4, list.size());
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text two")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text two")) {
                 assertEquals(3, mdv.getPlace());
             }
         }
@@ -963,7 +966,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
 
         assertEquals(6, list.size());
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text three")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text three")) {
                 assertEquals(5, mdv.getPlace());
             }
         }
@@ -996,16 +999,16 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
 
         assertEquals(10, list.size());
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text four")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text four")) {
                 assertEquals(6, mdv.getPlace());
             }
-            if (StringUtils.equals(mdv.getValue(), "plain text five")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text five")) {
                 assertEquals(7, mdv.getPlace());
             }
-            if (StringUtils.equals(mdv.getValue(), "plain text six")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text six")) {
                 assertEquals(8, mdv.getPlace());
             }
-            if (StringUtils.equals(mdv.getValue(), "plain text seven")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text seven")) {
                 assertEquals(9, mdv.getPlace());
             }
         }
@@ -1035,11 +1038,11 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", Item.ANY, Item.ANY);
         assertEquals(10, list.size()); //same size as authors
         list = itemService.getMetadata(publication1, "dc", Item.ANY, Item.ANY, Item.ANY);
-        assertEquals(16, list.size()); //also includes title, 4 date fields, uri
+        assertEquals(15, list.size()); //also includes title, 3 date fields, uri
         list = itemService.getMetadata(publication1, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
         // also includes type, 3 relation.isAuthorOfPublication and 3 relation.isAuthorOfPublication.latestForDiscovery
         // values
-        assertEquals(23, list.size());
+        assertEquals(25, list.size());
 
         } finally {
             RelationshipBuilder.deleteRelationship(idRef1.get());
@@ -1121,7 +1124,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         List<MetadataValue> list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text")) {
                 // Ensure that this is indeed the second metadatavalue in the list of authors for the publication
                 assertEquals(1, mdv.getPlace());
             }
@@ -1164,7 +1167,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text two")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text two")) {
                 // Ensure that this plain text metadata value is on the fourth place (place 3) for the publication
                 assertEquals(3, mdv.getPlace());
             }
@@ -1202,7 +1205,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text three")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text three")) {
                 // Verify that this plain text value is indeed the 6th author in the list (place 5)
                 assertEquals(5, mdv.getPlace());
             }
@@ -1213,7 +1216,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         List<MetadataValue> authors = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
         List<MetadataValue> listToRemove = new LinkedList<>();
         for (MetadataValue metadataValue : authors) {
-            if (StringUtils.equals(metadataValue.getValue(), "plain text two")) {
+            if (Strings.CS.equals(metadataValue.getValue(), "plain text two")) {
                 listToRemove.add(metadataValue);
             }
         }
@@ -1228,14 +1231,14 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text")) {
                 assertEquals(1, mdv.getPlace());
             }
         }
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text three")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text three")) {
                 assertEquals(4, mdv.getPlace());
             }
         }
@@ -1330,7 +1333,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         List<MetadataValue> list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text")) {
                 // Ensure that this is indeed the second metadatavalue in the list of authors for the publication
                 assertEquals(1, mdv.getPlace());
             }
@@ -1374,7 +1377,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text two")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text two")) {
                 // Ensure that this plain text metadata value is on the fourth place (place 3) for the publication
                 assertEquals(3, mdv.getPlace());
             }
@@ -1412,7 +1415,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text three")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text three")) {
                 // Verify that this plain text value is indeed the 6th author in the list (place 5)
                 assertEquals(5, mdv.getPlace());
             }
@@ -1435,14 +1438,14 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text")) {
                 assertEquals(1, mdv.getPlace());
             }
         }
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text two")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text two")) {
                 assertEquals(2, mdv.getPlace());
             }
         }
@@ -1451,7 +1454,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         list = itemService.getMetadata(publication1, "dc", "contributor", "author", Item.ANY);
 
         for (MetadataValue mdv : list) {
-            if (StringUtils.equals(mdv.getValue(), "plain text three")) {
+            if (Strings.CS.equals(mdv.getValue(), "plain text three")) {
                 assertEquals(4, mdv.getPlace());
             }
         }
@@ -2305,7 +2308,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
         ;
 
         // Perform a GET request to the searchByLabel endpoint, asking for Relationships of type isOrgUnitOfPerson
-        // We do not specificy a DSO param, which means ALL relationships of type isOrgUnitOfPerson should be returned
+        // We do not specify a DSO param, which means ALL relationships of type isOrgUnitOfPerson should be returned
         // Which is what we're checking for, both the first relationship and the one with a different author
         // should be returned
         getClient().perform(get("/api/core/relationships/search/byLabel")
@@ -2642,7 +2645,6 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
                                               .andExpect(status().isCreated())
                                               .andReturn();
 
-        ObjectMapper mapper = new ObjectMapper();
         String content = mvcResult.getResponse().getContentAsString();
         Map<String, Object> map = mapper.readValue(content, Map.class);
         String id = String.valueOf(map.get("id"));
@@ -2690,7 +2692,6 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
                 .andExpect(status().isCreated())
                 .andReturn();
 
-            ObjectMapper mapper = new ObjectMapper();
             String content = mvcResult.getResponse().getContentAsString();
             Map<String, Object> map = mapper.readValue(content, Map.class);
             String id = String.valueOf(map.get("id"));
@@ -2703,7 +2704,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
 
             getClient(token).perform(patch("/api/core/items/" + publication1.getID())
                                          .content(getPatchContent(ops))
-                                         .contentType(javax.ws.rs.core.MediaType.APPLICATION_JSON_PATCH_JSON));
+                                         .contentType(jakarta.ws.rs.core.MediaType.APPLICATION_JSON_PATCH_JSON));
 
             // Add another relationship
             mvcResult = getClient(token)
@@ -3307,7 +3308,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
     }
 
     @Test
-    public void findByItemsAndTypeEmptyResponceTest() throws Exception {
+    public void findByItemsAndTypeEmptyResponseTest() throws Exception {
 
         context.turnOffAuthorisationSystem();
 

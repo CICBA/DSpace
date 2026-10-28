@@ -34,7 +34,7 @@ init_sources()
 	if [[ ! -f "$SOURCE_CFG_FILENAME" ]]; then
 		cp "$SOURCE_CFG_FILENAME.EXAMPLE" "$SOURCE_CFG_FILENAME"
 	fi
-	reset_permissions
+	#reset_permissions
 }
 
 # Init DSpace local.cfg with contextual settings
@@ -77,16 +77,24 @@ truncate_all (){
 
 rebuild_installer(){
 
-	init_config $SOURCE_CFG_FILENAME
-	print_info "Packaging dspace. "
-	print_info "Please be patient, it may take several minutes. "
+	init_config "$SOURCE_CFG_FILENAME"
 
-	sudo --login -u $DSPACE_USER <<EOF
-	cd $DSPACE_SOURCE
-	# See more https://stackoverflow.com/questions/19861520/maven-warning-unable-to-autodetect-javac-path-using-javac-from-the-environ/19861567#19861567
-	JAVA_HOME=$JAVA_HOME mvn package
+	local source_uid
+	local source_gid
 
-EOF
+	# FIXME: Solución temporal para los directorios del equipo local montados en el contenedor.
+	# Maven usa el UID/GID de esos directorios para no cambiar su propietario mediante chown.
+	source_uid=$(stat -c '%u' "$DSPACE_SOURCE")
+	source_gid=$(stat -c '%g' "$DSPACE_SOURCE")
+
+	print_info "Packaging DSpace as ${source_uid}:${source_gid}."
+	print_info "Please be patient, it may take several minutes."
+
+	sudo \
+		-u "#${source_uid}" \
+		-g "#${source_gid}" \
+		env HOME="$DSPACE_SOURCE" JAVA_HOME="$JAVA_HOME" \
+		mvn package
 
 }
 
@@ -212,7 +220,7 @@ id -u ${DSPACE_USER} &>/dev/null || useradd --home-dir $DSPACE_BASE --create-hom
 cd $DSPACE_BASE
 
 init_env
-reset_permissions
+#reset_permissions
 case "$1" in
   	start)
         if [ "$2" = "--debug" ]; then

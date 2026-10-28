@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.common.util.ContentStreamBase;
 import org.dspace.authorize.AuthorizeException;
@@ -73,7 +74,7 @@ public class FullTextContentStreams extends ContentStreamBase {
         List<Bundle> myBundles = parentItem.getBundles();
 
         for (Bundle myBundle : emptyIfNull(myBundles)) {
-            if (StringUtils.equals(FULLTEXT_BUNDLE, myBundle.getName())) {
+            if (Strings.CS.equals(FULLTEXT_BUNDLE, myBundle.getName())) {
                 // a-ha! grab the text out of the bitstreams
                 List<Bitstream> bitstreams = myBundle.getBitstreams();
                 log.debug("Processing full-text bitstreams. Item handle: " + sourceInfo);
