@@ -1,9 +1,8 @@
 # NAME:     arieljlira/dspace
-# DSpace 10.1 requires Java 21 and uses the Jakarta Servlet API provided by
-# Tomcat 10.1. Tomcat 9 / Java 11 are only suitable for the previous DSpace 7
-# based image.
-FROM maven:3.9.16-eclipse-temurin-21-noble AS maven
-FROM tomcat:10.1.61-jdk21-temurin-noble
+# DSpace 10.x installation requirements:
+# https://wiki.lyrasis.org/spaces/DSDOC10x/pages/408944708/Installing+DSpace
+FROM maven:3.10.0-eclipse-temurin-25-noble AS maven
+FROM tomcat:10.1.61-jdk25-temurin
 
 LABEL maintainer "alira@sedici.unlp.edu.ar"
 
